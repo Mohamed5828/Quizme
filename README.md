@@ -51,16 +51,12 @@ git pull --set-upstream --rebase origin frontend/main
 git branch --set-upstream frontend/main origin/frontend/main
 git reset --hard origin/frontend/main
 
-# now if you want to view all work trees and thier checked out branches use
+# now if you want to view all work trees and their checked out branches use
 git worktree list 
 
 # list all branches local and remote
 git branch -a
 
-# First pull
-
-# push to remote for the first time
-git push -u origin <service>/<feature>
 ```
 
 ### 3. HOW TO: Creating a branch for a feature
