@@ -34,16 +34,7 @@ git clone https://github.com/EslamRedaMohamed/Quizme
 cd Quizme
 ```
 
-### 2. Setup .gitignore file
-
-```sh
-# this is very important to ignore all the nested work trees and keep the main branch clean
-echo '*' >> .gitignore 
-# this is to keep (unignore) the README.md for the project
-echo '!README.md' >> .gitignore
-```
-
-### 3. Setup git work-tree for branches of interest
+### 2. Setup git work-tree for branches of interest
 
 ```sh
 # git worktree add <directory> <branch-name>
@@ -61,7 +52,7 @@ git branch -a
 git push -u origin <service>/<feature>
 ```
 
-### 4. HOW TO: Creating a branch for a feature
+### 3. HOW TO: Creating a branch for a feature
 
 ```sh
 # cd to the base dir of the service you want to add the feature to
@@ -72,7 +63,7 @@ cd frontend
 git checkout -b frontend/userprofile
 ```
 
-### 5. HOW TO: Adding services
+### 4. HOW TO: Adding services
 
 ```sh
 # make sure you are in the repo root and on the semi-empty main branch
