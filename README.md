@@ -30,7 +30,7 @@ The project consists of the following components:
 
 ```sh
 # If you want to fork then clone the fork url otherwise execute the command below
-git clone https://github.com/EslamRedaMohamed/Quizme
+git clone https://github.com/EslamRedaMohamed/Quizme # or your fork url 
 cd Quizme
 ```
 
@@ -42,11 +42,22 @@ cd Quizme
 git worktree add --lock ./backend -b backend/main
 git worktree add --lock ./frontend -b frontend/main
 
+cd backend
+git branch --set-upstream backend/main origin/backend/main
+git reset --hard origin/backend/main
+
+cd ../frontend
+git pull --set-upstream --rebase origin frontend/main
+git branch --set-upstream frontend/main origin/frontend/main
+git reset --hard origin/frontend/main
+
 # now if you want to view all work trees and thier checked out branches use
 git worktree list 
 
 # list all branches local and remote
 git branch -a
+
+# First pull
 
 # push to remote for the first time
 git push -u origin <service>/<feature>
