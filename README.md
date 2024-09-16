@@ -43,12 +43,12 @@ git worktree add --lock ./backend -b backend/main
 git worktree add --lock ./frontend -b frontend/main
 
 cd backend
-git branch --set-upstream backend/main origin/backend/main
+git branch --set-upstream-to=origin/backend/main backend/main 
 git reset --hard origin/backend/main
 
 cd ../frontend
 git pull --set-upstream --rebase origin frontend/main
-git branch --set-upstream frontend/main origin/frontend/main
+git branch --set-upstream-to=origin/frontend/main frontend/main 
 git reset --hard origin/frontend/main
 
 # now if you want to view all work trees and their checked out branches use
