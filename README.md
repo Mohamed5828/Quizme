@@ -47,7 +47,6 @@ git branch --set-upstream-to=origin/backend/main backend/main
 git reset --hard origin/backend/main
 
 cd ../frontend
-git pull --set-upstream --rebase origin frontend/main
 git branch --set-upstream-to=origin/frontend/main frontend/main 
 git reset --hard origin/frontend/main
 
