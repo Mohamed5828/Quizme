@@ -14,6 +14,9 @@ from pathlib import Path
 from datetime import timedelta
 
 
+from dotenv import load_dotenv
+import dj_database_url
+import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -79,12 +82,12 @@ AUTH_USER_MODEL = 'authentication.CustomUser'
 
 
 REST_FRAMEWORK = {
-    
+
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        
+
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     )
-    
+
 }
 
 
@@ -138,12 +141,7 @@ WSGI_APPLICATION = 'quizme.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
+DATABASES = {"default": dj_database_url.config(default=os.getenv("QUIZME_DATABASE_URL"))}
 
 
 # Password validation
