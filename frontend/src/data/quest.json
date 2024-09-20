@@ -1,0 +1,97 @@
+[
+  {
+    "id": 1,
+    "question": "What is the time complexity of binary search?",
+    "answers": ["O(n)", "O(log n)", "O(n^2)", "O(n log n)"],
+    "correct_answer": 1,
+    "type": "multiple-choice"
+  },
+  {
+    "id": 2,
+    "question": "Which of the following is a mutable data structure in Python?",
+    "answers": ["tuple", "set", "string", "frozenset"],
+    "correct_answer": 1,
+    "type": "multiple-choice"
+  },
+  {
+    "id": 3,
+    "question": "Which of these is a front-end framework?",
+    "answers": ["Django", "React", "Flask", "Node.js"],
+    "correct_answer": 1,
+    "type": "multiple-choice"
+  },
+  {
+    "id": 4,
+    "question": "Which keyword is used to declare a variable in JavaScript?",
+    "answers": ["let", "const", "var", "All of the above"],
+    "correct_answer": 3,
+    "type": "multiple-choice"
+  },
+  {
+    "id": 5,
+    "question": "What does SQL stand for?",
+    "answers": [
+      "Structured Query Language",
+      "Standard Query List",
+      "Simple Query Language",
+      "Sample Query Language"
+    ],
+    "correct_answer": 0,
+    "type": "multiple-choice"
+  },
+  {
+    "id": 6,
+    "question": "What is the default port number for HTTP?",
+    "answers": ["21", "22", "80", "443"],
+    "correct_answer": 2,
+    "type": "multiple-choice"
+  },
+  {
+    "id": 7,
+    "question": "Which one of these is a NoSQL database?",
+    "answers": ["MySQL", "MongoDB", "PostgreSQL", "Oracle"],
+    "correct_answer": 1,
+    "type": "multiple-choice"
+  },
+  {
+    "id": 8,
+    "question": "Which method is used to add an element to the end of an array in JavaScript?",
+    "answers": ["push()", "pop()", "shift()", "unshift()"],
+    "correct_answer": 0,
+    "type": "multiple-choice"
+  },
+  {
+    "id": 9,
+    "question": "What is the output of the following: console.log(typeof null) in JavaScript?",
+    "answers": ["'null'", "'object'", "'undefined'", "'boolean'"],
+    "correct_answer": 1,
+    "type": "multiple-choice"
+  },
+  {
+    "id": 10,
+    "question": "Which of these languages is used for data analysis and machine learning?",
+    "answers": ["Python", "HTML", "CSS", "PHP"],
+    "correct_answer": 0,
+    "type": "multiple-choice"
+  },
+  {
+    "id": 11,
+    "question": "Maximizing the Value of the Loot Problem",
+    "type": "code",
+    "description": "Problem Introduction\nA thief finds much more loot than his bag can fit. Help him to find the most valuable combination of items assuming that any fraction of a loot item can be put into his bag.\nProblem Description\nTask. The goal of this code problem is to implement an algorithm for the fractional knapsack problem.\nInput Format. The first line of the input contains the number 𝑛 of items and the capacity 𝑊 of a knapsack.\nThe next 𝑛 lines define the values and weights of the items. The 𝑖-th line contains integers 𝑣𝑖 and 𝑤𝑖—the value and the weight of 𝑖-th item, respectively.\nConstraints. 1 ≤ 𝑛 ≤ 103, 0 ≤ 𝑊 ≤ 2 · 106; 0 ≤ 𝑣𝑖 ≤ 2 · 106, 0 < 𝑤𝑖 ≤ 2 · 106 for all 1 ≤ 𝑖 ≤ 𝑛. All the numbers are integers.\nOutput Format. Output the maximal value of fractions of items that fit into the knapsack. The absolute value of the difference between the answer of your program and the optimal value should be at most 10−3. To ensure this, output your answer with at least four digits after the decimal point (otherwise your answer, while being computed correctly, can turn out to be wrong because of rounding issues).",
+    "starter_code": [
+      {
+        "language": "Java",
+        "code": "import java.util.Scanner;\npublic class FractionalKnapsack {\n    private static double getOptimalValue(int capacity, int[] values, int[] weights) {\n        double value = 0;\n        //write your code here\n\n        return value;\n    }\n\n    public static void main(String args[]) {\n        Scanner scanner = new Scanner(System.in);\n        int n = scanner.nextInt();\n        int capacity = scanner.nextInt();\n        int[] values = new int[n];\n        int[] weights = new int[n];\n        for (int i = 0; i < n; i++) {\n            values[i] = scanner.nextInt();\n            weights[i] = scanner.nextInt();\n        }\n        System.out.println(getOptimalValue(capacity, values, weights));\n    }\n}"
+      },
+      {
+        "language": "JavaScript",
+        "code": "const readline = require(\"readline\");\nconst rl = readline.createInterface({\n    input: process.stdin,\n    terminal: false\n});\n\nprocess.stdin.setEncoding(\"utf8\");\n\nrl.once(\"line\", line => {\n    const [itemsCount, knapsackCapacity] = line.toString().split().map(Number);\n    const values = [];\n    const weights = [];\n    let count = 0;\n\n    rl.on(\"line\", line => {\n        const [v, w] = readLine(line);\n        values.push(v);\n        weights.push(w);\n\n        if (++count >= itemsCount) {\n            console.log(max(itemsCount, knapsackCapacity, values, weights));\n            process.exit();\n        }\n    });\n});\n\nfunction readLine(line) {\n    const v = parseInt(line.toString().split()[0], 10);\n    const w = parseInt(line.toString().split()[1], 10);\n    return [v, w];\n}\n\nfunction max(count, capacity, values, weights) {\n    // write your code here\n}\n\nmodule.exports = max;"
+      },
+      {
+        "language": "Python",
+        "code": "from sys import stdin\n\ndef optimal_value(capacity, weights, values):\n    value = 0.\n    # write your code here\n\n    return value\n\nif __name__ == \"__main__\":\n    data = list(map(int, stdin.read().split()))\n    n, capacity = data[0:2]\n    values = data[2:(2 * n + 2):2]\n    weights = data[3:(2 * n + 2):2]\n    opt_value = optimal_value(capacity, weights, values)\n    print(\"{:.10f}\".format(opt_value))"
+      }
+    ]
+  }
+]
