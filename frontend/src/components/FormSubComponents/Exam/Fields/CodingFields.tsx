@@ -86,7 +86,7 @@ const CodingFields = ({ index }: QuestionFieldsProps) => {
               <input
                 type="text"
                 placeholder="Input"
-                {...register(`questions.${index}.choices.${tIndex}.input`, {
+                {...register(`questions.${index}.testCases.${tIndex}.input`, {
                   required: true,
                   minLength: 1,
                 })}
@@ -94,7 +94,7 @@ const CodingFields = ({ index }: QuestionFieldsProps) => {
               <input
                 type="text"
                 placeholder="Output"
-                {...register(`questions.${index}.choices.${tIndex}.output`, {
+                {...register(`questions.${index}.testCases.${tIndex}.output`, {
                   required: true,
                   minLength: 1,
                 })}

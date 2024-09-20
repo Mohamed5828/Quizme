@@ -20,11 +20,22 @@ const STEPS = [
   { index: 4, name: "Review", body: <ReviewStep /> },
 ];
 
-const ExamCreationForm = () => {
+interface ExamCreationFormProps {
+  defaultValues?: FieldValues;
+}
+
+const initialProps = {
+  defaultValues: {},
+};
+const ExamCreationForm = ({
+  defaultValues,
+}: ExamCreationFormProps = initialProps) => {
   const step = useSelector((state: RootState) => state.ExamCreationState.step);
   const dispatch = useDispatch();
 
-  const methods = useForm();
+  const methods = useForm({
+    defaultValues,
+  });
 
   const handleNext = async () => {
     const isStepValid = await methods.trigger();
@@ -36,7 +47,7 @@ const ExamCreationForm = () => {
   const handlePrev = () => {
     dispatch(decrementStep());
   };
-
+  // TODO: Connect to submit endpoint
   const handleSubmit = (data: FieldValues) => console.log(data);
 
   return (

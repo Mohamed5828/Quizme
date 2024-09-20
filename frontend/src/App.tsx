@@ -1,4 +1,4 @@
-import ExamCreationForm from "./forms/ExamCreationForm";
+import ExamCreationForm from "./components/Forms/ExamCreationForm";
 
 function App() {
   return (
