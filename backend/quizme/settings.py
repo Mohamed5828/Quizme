@@ -141,6 +141,7 @@ WSGI_APPLICATION = 'quizme.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
+load_dotenv()
 DATABASES = {"default": dj_database_url.config(default=os.getenv("QUIZME_DATABASE_URL"))}
 
 
