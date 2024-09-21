@@ -13,9 +13,6 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 from pathlib import Path
 from datetime import timedelta
 
-import os
-from urllib.parse import urlparse
-
 
 from dotenv import load_dotenv
 import dj_database_url
@@ -147,6 +144,7 @@ WSGI_APPLICATION = 'quizme.wsgi.application'
 
 load_dotenv()
 DATABASES = {"default": dj_database_url.config(default=os.getenv("QUIZME_DATABASE_URL"))}
+
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators

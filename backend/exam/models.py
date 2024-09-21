@@ -8,16 +8,16 @@ class Exam(models.Model):
     exam_code = models.CharField(max_length=100, unique=True)
     created_at = models.DateTimeField(auto_now_add=True)
     expiration_date = models.DateTimeField()
-    whitelist = models.JSONField()
+    whitelist = models.JSONField(default=dict)
     
 class Question(models.Model):
     question_id = models.AutoField(primary_key=True)
     exam_id = models.ForeignKey(Exam,on_delete=models.CASCADE)
-    question_body = models.JSONField
+    question_body = models.JSONField(default=dict)
     
 class UserAnswer(models.Model):
     student_id = models.ForeignKey(authModels.CustomUser, on_delete=models.CASCADE)
     exam_id = models.ForeignKey(Exam, on_delete=models.CASCADE)
     question_id = models.ForeignKey(Question, on_delete=models.CASCADE)
-    user_answer = models.JSONField()
+    user_answer = models.JSONField(default=dict)
     marks = models.FloatField(null=True, blank=True)
