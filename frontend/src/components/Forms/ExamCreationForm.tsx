@@ -1,17 +1,17 @@
 import { useForm, FormProvider, FieldValues } from "react-hook-form";
-import FormStepper from "../components/FormSubComponents/Exam/FormStepper.tsx";
+import FormStepper from "../FormSubComponents/Exam/FormStepper.tsx";
 import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../state/store.ts";
+import { RootState } from "../../state/store.ts";
 import {
   incrementStep,
   decrementStep,
-} from "../state/ExamCreationState/ExamCreationSlice.ts";
+} from "../../state/ExamCreationState/ExamCreationSlice.ts";
 
-import ExamDetailsStep from "../components/FormSubComponents/Exam/ExamDetailsStep.tsx";
-import QuestionsStep from "../components/FormSubComponents/Exam/QuestionsStep.tsx";
-import ReviewStep from "../components/FormSubComponents/Exam/ReviewStep.tsx";
-import ParticipantsStep from "../components/FormSubComponents/Exam/ParticipantsStep.tsx";
-import FormNav from "../components/FormSubComponents/Exam/FormNav.tsx";
+import ExamDetailsStep from "../FormSubComponents/Exam/ExamDetailsStep.tsx";
+import QuestionsStep from "../FormSubComponents/Exam/QuestionsStep.tsx";
+import ReviewStep from "../FormSubComponents/Exam/ReviewStep.tsx";
+import ParticipantsStep from "../FormSubComponents/Exam/ParticipantsStep.tsx";
+import FormNav from "../FormSubComponents/Exam/FormNav.tsx";
 
 const STEPS = [
   { index: 1, name: "Exam Details", body: <ExamDetailsStep /> },
