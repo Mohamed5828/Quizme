@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "code-execution"
+version = "0.1.0"
+description = "code compilation service"
+authors = ["mohamed5828 <mohamed.ahmed5828@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+fastapi = "^0.115.0"
+uvicorn = "^0.30.6"
+httpx = "^0.27.2"
+aiopyston = "^1.2.1"
+pydantic = "^2.9.2"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
