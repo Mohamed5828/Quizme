@@ -9,11 +9,23 @@ from rest_framework.response import Response
 from django.utils import timezone
 from .models import Exam, Question
 from rest_framework.pagination import PageNumberPagination
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
+
 
 
 class ExamQuestionsView(generics.GenericAPIView):
     serializer_class = QuestionSerializer
     permission_classes = [permissions.IsAuthenticated]
+    
+    @swagger_auto_schema(
+        operation_summary="Retrieve questions for an exam",
+        operation_description="Fetches a list of questions for a given exam. Requires authentication.",
+        manual_parameters=[
+            openapi.Parameter('exam_code', openapi.IN_PATH, description="The unique code of the exam", type=openapi.TYPE_STRING)
+        ],
+        responses={200: QuestionSerializer(many=True), 404: "Exam not found", 403: "Forbidden", 500: "Unexpected error"}
+    )
     
     def get(self, request, exam_code):
         try:
@@ -61,6 +73,13 @@ class ExamQuestionsView(generics.GenericAPIView):
 class CreateExamView(APIView):
     permission_classes = [IsAuthenticated]
 
+    @swagger_auto_schema(
+        operation_summary="Create a new exam",
+        operation_description="Allows authenticated users to create an exam. Requires authentication.",
+        request_body=ExamSerializer,
+        responses={201: ExamSerializer, 400: "Bad Request"}
+    )
+    
     def post(self, request):
         # Extract the authenticated examiner (examiner_id)
         serializer = ExamSerializer(data=request.data, context={'request': request})
@@ -75,12 +94,27 @@ class ListExamsView(generics.ListAPIView):
     serializer_class = ExamSerializer
     permission_classes = [permissions.IsAuthenticated]
 
+    @swagger_auto_schema(
+        operation_summary="List all exams for the authenticated user",
+        operation_description="Returns a list of all exams created by the authenticated user.",
+        responses={200: ExamSerializer(many=True)}
+    )
+    
     def get_queryset(self):
         return Exam.objects.filter(examiner_id=self.request.user)
     
 class DeleteExamView(APIView):
     permission_classes = [IsAuthenticated]
 
+    @swagger_auto_schema(
+        operation_summary="Delete an exam",
+        operation_description="Allows the owner of an exam to delete it. Requires authentication.",
+        manual_parameters=[
+            openapi.Parameter('exam_code', openapi.IN_PATH, description="The unique code of the exam", type=openapi.TYPE_STRING)
+        ],
+        responses={204: "Exam successfully deleted", 403: "Forbidden", 404: "Exam not found"}
+    )
+    
     def delete(self, request, exam_code):
         try:
             exam = Exam.objects.get(exam_code=exam_code)
@@ -100,6 +134,17 @@ class DeleteExamView(APIView):
 class UpdateExamQuestionView(APIView):
     permission_classes = [IsAuthenticated]
 
+    @swagger_auto_schema(
+        operation_summary="Update a question in an exam",
+        operation_description="Allows the owner of an exam to update a specific question.",
+        request_body=QuestionSerializer,
+        manual_parameters=[
+            openapi.Parameter('exam_code', openapi.IN_PATH, description="The unique code of the exam", type=openapi.TYPE_STRING),
+            openapi.Parameter('question_id', openapi.IN_PATH, description="The ID of the question to update", type=openapi.TYPE_INTEGER)
+        ],
+        responses={200: QuestionSerializer, 404: "Question or Exam not found", 403: "Forbidden"}
+    )
+    
     def put(self, request, exam_code, question_id):
         try:
             exam = Exam.objects.get(exam_code=exam_code)
