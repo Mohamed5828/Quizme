@@ -9,9 +9,7 @@ from rest_framework_simplejwt.views import TokenRefreshView
 
 
 class UserRegistrationAPIView(GenericAPIView):
-    ## access not restricedd
     permission_classes = (AllowAny,)
-    ## specifies which serliazer will be used with this vieww
     serializer_class = UserRegistrationSerializer
     
     def post(self, request, *args, **kwargs):
@@ -39,12 +37,11 @@ class UserLoginAPIView(GenericAPIView):
         refresh_token = str(token)
         
         response = Response(status=status.HTTP_200_OK)
-        # Set secure, HttpOnly cookies
         response.set_cookie(
             key='access_token',
             value=access_token,
-            httponly=True,  # JavaScript can't access this cookie
-            secure=True,  # Only send via HTTPS
+            httponly=True,  
+            secure=True,  
              
         )
         response.set_cookie(
