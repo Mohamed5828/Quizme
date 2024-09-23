@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import CreateExamView,ExamQuestionsView ,UpdateExamQuestionView ,DeleteExamView ,ListExamsView
+from .views import CreateExamView,ExamQuestionsView ,UpdateExamQuestionView ,DeleteExamView ,ListExamsView ,CodeExecutionView
 
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
@@ -26,5 +26,6 @@ urlpatterns = [
     path('<str:exam_code>/questions/<int:question_id>/', UpdateExamQuestionView.as_view(), name='update_exam_question'),
     path('<str:exam_code>/', DeleteExamView.as_view(), name='delete_exam'),
     path('list/', ListExamsView.as_view(), name='list-exams'),
+    path('execute-code/', CodeExecutionView.as_view(), name='execute-code'),
 
 ]

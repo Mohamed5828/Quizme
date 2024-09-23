@@ -1,6 +1,8 @@
 from datetime import timezone
 from rest_framework.views import APIView
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated,AllowAny
+
+from .producer import publish
 from .serializers import QuestionSerializer , ExamSerializer
 
 from rest_framework import generics, permissions, status
@@ -12,11 +14,12 @@ from rest_framework.pagination import PageNumberPagination
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 
+from django.http import JsonResponse
 
 
 class ExamQuestionsView(generics.GenericAPIView):
     serializer_class = QuestionSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAuthenticated]
     
     @swagger_auto_schema(
         operation_summary="Retrieve questions for an exam",
@@ -52,7 +55,7 @@ class ExamQuestionsView(generics.GenericAPIView):
 
 class ExamQuestionsView(generics.GenericAPIView):
     serializer_class = QuestionSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request, exam_code):
         try:
@@ -169,3 +172,36 @@ class UpdateExamQuestionView(APIView):
             raise NotFound("Exam not found.")
         except Exception as e:
             return Response({"error": "An unexpected error occurred."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+        
+
+
+class CodeExecutionView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        try:
+            body = request.data
+            language = body.get("language")
+            code = body.get("code")
+            stdin = body.get("stdin", "")
+
+            if not language or not code:
+                return JsonResponse({"error": "Missing 'language' or 'code' in request body"}, status=400)
+
+            message = {
+                "language": language,
+                "code": code,
+                "stdin": stdin
+            }
+            
+            publish(message)
+
+            return JsonResponse({"status": "Code execution request submitted successfully"}, status=200)
+
+        except Exception as e:
+            print(f"Error: {str(e)}")
+            return JsonResponse({"error": str(e)}, status=500)
+
+    def get(self, request):
+        return JsonResponse({"error": "Invalid request method"}, status=400)

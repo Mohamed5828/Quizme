@@ -23,5 +23,11 @@ class UserAnswerSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserAnswer
         fields = '__all__'
+        
+
+class CodeExecutionSerializer(serializers.Serializer):
+    language = serializers.CharField(required=True)
+    code = serializers.CharField(required=True)
+    stdin = serializers.CharField(required=False, default="")
 
 
