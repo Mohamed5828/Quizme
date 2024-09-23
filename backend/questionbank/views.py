@@ -11,6 +11,8 @@ class QuestionBankViewSet(ModelViewSet):
     permission_classes = [IsAuthenticated]
     filter_backends = [SearchFilter]
     search_fields = ['desc', 'type']
+    filterset_fields = ['type', 'difficulty']
+
 
     def get_queryset(self):
         user = self.request.user
