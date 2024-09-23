@@ -33,12 +33,17 @@ schema_view = get_schema_view(
     permission_classes=[permissions.AllowAny],
 )
 
+api_v1 = [
+    path('auth/', include('authentication.urls')),
+    path('exam/', include('exam.urls')),
+    path('', include('questionbank.urls')),
+    path('', include('answers.urls')),
+]
+
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/auth/', include('authentication.urls')),
-    path('api/exam/', include('exam.urls')),
-    path('api/', include('questionbank.urls')),
-    path('api/', include('answers.urls')),
+    # api_v1
+    path('api/v1/', include(api_v1)),
     # Swagger UI
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     # ReDoc
