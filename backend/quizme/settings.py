@@ -47,6 +47,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'exam',
+    'answers',
+    'questionbank',
     'drf_yasg',
 ]
 

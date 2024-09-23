@@ -1,6 +1,7 @@
 from django.db import models
 from authentication import models as authModels
 
+
 class Exam(models.Model):
     exam_id = models.AutoField(primary_key=True)
     examiner_id = models.ForeignKey(authModels.CustomUser, on_delete=models.CASCADE)
@@ -9,15 +10,9 @@ class Exam(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     expiration_date = models.DateTimeField()
     whitelist = models.JSONField(default=dict)
-    
+
+
 class Question(models.Model):
     question_id = models.AutoField(primary_key=True)
-    exam_id = models.ForeignKey(Exam,on_delete=models.CASCADE)
-    question_body = models.JSONField(default=dict)
-    
-class UserAnswer(models.Model):
-    student_id = models.ForeignKey(authModels.CustomUser, on_delete=models.CASCADE)
     exam_id = models.ForeignKey(Exam, on_delete=models.CASCADE)
-    question_id = models.ForeignKey(Question, on_delete=models.CASCADE)
-    user_answer = models.JSONField(default=dict)
-    marks = models.FloatField(null=True, blank=True)
+    question_body = models.JSONField(default=dict)
