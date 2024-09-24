@@ -1,15 +1,13 @@
-import React, { useState } from 'react';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import axios from 'axios';
-import '../../styles/register.css';
+import React, { useState } from "react";
+import axios from "axios";
+import "../../styles/register.css";
 
 const RegisterForm: React.FC = () => {
-  
   const [formData, setFormData] = useState({
-    username: '',
-    email: '',
-    password1: '', 
-    password2: '', 
+    username: "",
+    email: "",
+    password1: "",
+    password2: "",
     termsAccepted: false,
   });
 
@@ -17,7 +15,7 @@ const RegisterForm: React.FC = () => {
     const { id, value, type, checked } = e.target;
     setFormData((prevFormData) => ({
       ...prevFormData,
-      [id]: type === 'checkbox' ? checked : value,
+      [id]: type === "checkbox" ? checked : value,
     }));
   };
 
@@ -25,30 +23,34 @@ const RegisterForm: React.FC = () => {
     e.preventDefault();
 
     if (formData.password1 !== formData.password2) {
-      alert('Passwords do not match');
+      alert("Passwords do not match");
       return;
     }
 
     if (!formData.termsAccepted) {
-      alert('You must accept the terms of service');
+      alert("You must accept the terms of service");
       return;
     }
 
     try {
-      const response = await axios.post('http://127.0.0.1:8000/api/auth/register/', {
-        username: formData.username,
-        email: formData.email,
-        password1: formData.password1, 
-        password2: formData.password2,
-    }, {
-        headers: {
-            'Content-Type': 'application/json',
+      const response = await axios.post(
+        "http://127.0.0.1:8000/api/auth/register/",
+        {
+          username: formData.username,
+          email: formData.email,
+          password1: formData.password1,
+          password2: formData.password2,
         },
-    });
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
-      console.log('Registration successful', response.data);
+      console.log("Registration successful", response.data);
     } catch (error) {
-      console.error('Error during registration', error);
+      console.error("Error during registration", error);
     }
   };
 
@@ -56,16 +58,19 @@ const RegisterForm: React.FC = () => {
     <section
       className="vh-100 bg-image"
       style={{
-        backgroundImage: "url('https://mdbcdn.b-cdn.net/img/Photos/new-templates/search-box/img4.webp')",
+        backgroundImage:
+          "url('https://mdbcdn.b-cdn.net/img/Photos/new-templates/search-box/img4.webp')",
       }}
     >
       <div className="mask d-flex align-items-center h-100 gradient-custom-3">
         <div className="container h-100">
           <div className="row d-flex justify-content-center align-items-center h-100">
             <div className="col-12 col-md-9 col-lg-7 col-xl-6">
-              <div className="card" style={{ borderRadius: '15px' }}>
+              <div className="card" style={{ borderRadius: "15px" }}>
                 <div className="card-body p-5">
-                  <h2 className="text-uppercase text-center mb-5">Create an account</h2>
+                  <h2 className="text-uppercase text-center mb-5">
+                    Create an account
+                  </h2>
 
                   <form onSubmit={handleSubmit}>
                     <div className="form-outline mb-4">
@@ -76,7 +81,9 @@ const RegisterForm: React.FC = () => {
                         value={formData.username}
                         onChange={handleChange}
                       />
-                      <label className="form-label" htmlFor="username">Your UserName</label>
+                      <label className="form-label" htmlFor="username">
+                        Your UserName
+                      </label>
                     </div>
 
                     <div className="form-outline mb-4">
@@ -87,7 +94,9 @@ const RegisterForm: React.FC = () => {
                         value={formData.email}
                         onChange={handleChange}
                       />
-                      <label className="form-label" htmlFor="email">Your Email</label>
+                      <label className="form-label" htmlFor="email">
+                        Your Email
+                      </label>
                     </div>
 
                     <div className="form-outline mb-4">
@@ -98,7 +107,9 @@ const RegisterForm: React.FC = () => {
                         value={formData.password1}
                         onChange={handleChange}
                       />
-                      <label className="form-label" htmlFor="password">Password</label>
+                      <label className="form-label" htmlFor="password">
+                        Password
+                      </label>
                     </div>
 
                     <div className="form-outline mb-4">
@@ -109,7 +120,9 @@ const RegisterForm: React.FC = () => {
                         value={formData.password2}
                         onChange={handleChange}
                       />
-                      <label className="form-label" htmlFor="confirmPassword">Repeat your password</label>
+                      <label className="form-label" htmlFor="confirmPassword">
+                        Repeat your password
+                      </label>
                     </div>
 
                     <div className="form-check d-flex justify-content-center mb-5">
@@ -120,8 +133,14 @@ const RegisterForm: React.FC = () => {
                         checked={formData.termsAccepted}
                         onChange={handleChange}
                       />
-                      <label className="form-check-label" htmlFor="termsAccepted">
-                        I agree to all statements in <a href="#!" className="text-body"><u>Terms of service</u></a>
+                      <label
+                        className="form-check-label"
+                        htmlFor="termsAccepted"
+                      >
+                        I agree to all statements in{" "}
+                        <a href="#!" className="text-body">
+                          <u>Terms of service</u>
+                        </a>
                       </label>
                     </div>
 
@@ -135,7 +154,10 @@ const RegisterForm: React.FC = () => {
                     </div>
 
                     <p className="text-center text-muted mt-5 mb-0">
-                      Already have an account? <a href="#!" className="fw-bold text-body"><u>Login here</u></a>
+                      Already have an account?{" "}
+                      <a href="#!" className="fw-bold text-body">
+                        <u>Login here</u>
+                      </a>
                     </p>
                   </form>
                 </div>
