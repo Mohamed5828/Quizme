@@ -1,0 +1,39 @@
+.gradient-custom-9 {
+  background: #fccb90;
+  
+  background: -webkit-linear-gradient(to right, #ee7724, #d8363a, #dd3675, #b44593);
+  
+  background: linear-gradient(to right, #ee7724, #d8363a, #dd3675, #b44593);
+  }
+  .text-center {
+    margin-bottom: 20px;
+  }
+  #root > section > div > div > div > div > div > div:nth-child(1) > div > form > div.text-center.pt-1.mb-5.pb-1 {
+   display: flex;
+   justify-content: center; 
+   
+   gap: 20px;
+  }
+  @media (min-width: 768px) {
+  .gradient-form {
+  height: 100vh !important; 
+  }
+  .login-btn { 
+    width: 140px;
+  }
+
+  .btn-outline-danger:active {
+    background-color: black;
+    transform: scale(1.1);
+  }
+  .login-btn:active {
+    background-color: black; 
+    transform: scale(1.1);
+}
+  }
+  @media (min-width: 769px) {
+  .gradient-custom-2 {
+  border-top-right-radius: .3rem;
+  border-bottom-right-radius: .3rem;  
+  } 
+  }

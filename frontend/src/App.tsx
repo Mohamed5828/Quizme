@@ -1,10 +1,22 @@
-import React from "react";
+
+
+import React from 'react';
+
+import setupInterceptors from './utils/axiosInterceptors';
+
+
 import { BrowserRouter as Router, Route, Switch, Link } from "react-router-dom";
 import AllQuestionsPage from "./components/Viewers/AllQuestionsPage";
 import ExamCreationForm from "./components/Forms/ExamCreationForm";
 import QuestionBank from "./components/Viewers/QuestionBank";
 
+
 function App() {
+  const App: React.FC = () => {
+    React.useEffect(() => {
+      setupInterceptors();
+    }, []);
+  
   return (
     <Router>
       <>
