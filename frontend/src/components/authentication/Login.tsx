@@ -46,84 +46,81 @@ const LoginForm: React.FC = () => {
       alert("Login failed. Please check your credentials.");
     }
   };
-
   return (
-    <section
-      className="h-100 gradient-form"
-      style={{ backgroundColor: "#eee" }}
-    >
-      <div className="container py-5 h-100">
-        <div className="row d-flex justify-content-center align-items-center h-100">
-          <div className="col-xl-10">
-            <div className="card rounded-3 text-black">
-              <div className="row g-0">
-                <div className="col-lg-6">
-                  <div className="card-body p-md-5 mx-md-4">
-                    <div className="text-center">
-                      <img src={Logo} style={{ width: "185px" }} alt="logo" />
-                      <h4 className="mt-1 mb-5 pb-1">
-                        Your ultimate Examination Platform
-                      </h4>
+    <section className="min-h-screen bg-gray-100">
+      <div className="container mx-auto py-10">
+        <div className="flex justify-center items-center min-h-screen">
+          <div className="w-full max-w-4xl">
+            <div className="bg-white shadow-lg rounded-lg overflow-hidden">
+              <div className="md:flex">
+                <div className="md:w-1/2 p-8">
+                  <div className="text-center">
+                    <img src={Logo} className="w-48 mx-auto" alt="logo" />
+                    <h4 className="mt-6 mb-5 text-xl font-semibold">
+                      Your ultimate Examination Platform
+                    </h4>
+                  </div>
+
+                  <form onSubmit={handleSubmit}>
+                    <p className="text-gray-600 mb-4">
+                      Please login to your account
+                    </p>
+
+                    <div className="mb-4">
+                      <input
+                        type="text"
+                        id="email"
+                        className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+                        placeholder="Email"
+                        value={formData.email}
+                        onChange={handleChange}
+                      />
                     </div>
 
-                    <form onSubmit={handleSubmit}>
-                      <p>Please login to your account</p>
+                    <div className="mb-6">
+                      <input
+                        type="password"
+                        id="password"
+                        className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+                        placeholder="Password"
+                        value={formData.password}
+                        onChange={handleChange}
+                      />
+                    </div>
 
-                      <div className="form-outline mb-4">
-                        <input
-                          type="text"
-                          id="email"
-                          className="form-control"
-                          placeholder="Email"
-                          value={formData.email}
-                          onChange={handleChange}
-                        />
-                        <label className="form-label" htmlFor="email">
-                          email
-                        </label>
-                      </div>
+                    <div className="text-center mb-6">
+                      <button
+                        className="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600 transition-colors"
+                        type="submit"
+                      >
+                        Log in
+                      </button>
+                      <a
+                        className="text-blue-500 hover:underline mt-3 block"
+                        href="#!"
+                      >
+                        Forgot password?
+                      </a>
+                    </div>
 
-                      <div className="form-outline mb-4">
-                        <input
-                          type="password"
-                          id="password"
-                          className="form-control"
-                          value={formData.password}
-                          onChange={handleChange}
-                        />
-                        <label className="form-label" htmlFor="password">
-                          Password
-                        </label>
-                      </div>
-
-                      <div className="text-center pt-1 mb-5 pb-1">
-                        <button
-                          className="btn btn-primary login-btn btn-block fa-lg gradient-custom-9 mb-3"
-                          type="submit"
-                        >
-                          Log in
-                        </button>
-                        <a className="text-muted" href="#!">
-                          Forgot password?
-                        </a>
-                      </div>
-
-                      <div className="d-flex align-items-center justify-content-center pb-4">
-                        <p className="mb-0 me-2">Don't have an account?</p>
-                        <Link
-                          to={"/register"}
-                          className="btn btn-outline-danger"
-                        >
-                          Create new
-                        </Link>
-                      </div>
-                    </form>
-                  </div>
+                    <div className="flex justify-center">
+                      <p className="mr-2">Don't have an account?</p>
+                      <Link
+                        to={"/register"}
+                        className="text-red-500 hover:underline"
+                      >
+                        Create new
+                      </Link>
+                    </div>
+                  </form>
                 </div>
-                <div className="col-lg-6 d-flex align-items-center gradient-custom-2">
-                  <div className="text-white px-3 py-4 p-md-5 mx-md-4">
-                    <h4 className="mb-4">More than an Examination Platform</h4>
-                    <p className="small mb-0">We Are AI Powered</p>
+
+                <div className="md:w-1/2 bg-gradient-to-r from-blue-500 to-purple-600 text-white p-8 flex items-center">
+                  <div>
+                    <h4 className="mb-4 text-2xl font-bold">
+                      More than an Examination Platform
+                    </h4>
+                    <p className="text-sm">We Are AI Powered</p>
                   </div>
                 </div>
               </div>
@@ -134,5 +131,4 @@ const LoginForm: React.FC = () => {
     </section>
   );
 };
-
 export default LoginForm;
