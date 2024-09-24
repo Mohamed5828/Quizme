@@ -8,31 +8,36 @@ from rest_framework import status
 from rest_framework_simplejwt.views import TokenRefreshView
 
 
+
 class UserRegistrationAPIView(GenericAPIView):
     permission_classes = (AllowAny,)
     serializer_class = UserRegistrationSerializer
-    
+
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.save()
         token = RefreshToken.for_user(user)
         data = serializer.data
+
         data["tokens"] = {"refresh":str(token),
         "access": str(token.access_token)}
         return Response(data, status= status.HTTP_201_CREATED)
 
 
+
+
 class UserLoginAPIView(GenericAPIView):
     permission_classes = (AllowAny,)
     serializer_class = UserLoginSerializer
-    
+
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.validated_data
         
         token = RefreshToken.for_user(user)
+
         access_token = str(token.access_token)
         refresh_token = str(token)
         
@@ -60,9 +65,14 @@ class UserLoginAPIView(GenericAPIView):
         
         return response
     
+
+      
+
+
+
 class UserLogoutAPIView(GenericAPIView):
     permission_classes = (IsAuthenticated,)
-    
+
     def post(self, request, *args, **kwargs):
         response = Response(status=status.HTTP_205_RESET_CONTENT)
         response.delete_cookie('access_token')
@@ -71,3 +81,4 @@ class UserLogoutAPIView(GenericAPIView):
 
 class CustomTokenRefreshView(TokenRefreshView):
     permission_classes = (AllowAny,)
+
