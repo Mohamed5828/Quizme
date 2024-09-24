@@ -5,6 +5,8 @@ from .serializers import *
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework_simplejwt.views import TokenRefreshView
+
 
 
 class UserRegistrationAPIView(GenericAPIView):
@@ -17,9 +19,12 @@ class UserRegistrationAPIView(GenericAPIView):
         user = serializer.save()
         token = RefreshToken.for_user(user)
         data = serializer.data
-        data["tokens"] = {"refresh": str(token),
-                          "access": str(token.access_token)}
-        return Response(data, status=status.HTTP_201_CREATED)
+
+        data["tokens"] = {"refresh":str(token),
+        "access": str(token.access_token)}
+        return Response(data, status= status.HTTP_201_CREATED)
+
+
 
 
 class UserLoginAPIView(GenericAPIView):
@@ -30,30 +35,50 @@ class UserLoginAPIView(GenericAPIView):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.validated_data
-        serializer = CustomUserSerializer(user)
+        
         token = RefreshToken.for_user(user)
-        data = serializer.data
-        data["tokens"] = {"refresh": str(token),
-                          "access": str(token.access_token)}
-        return Response(data, status=status.HTTP_200_OK)
+
+        access_token = str(token.access_token)
+        refresh_token = str(token)
+        
+        response = Response(status=status.HTTP_200_OK)
+        response.set_cookie(
+            key='access_token',
+            value=access_token,
+            httponly=True,  
+            secure=True,  
+             
+        )
+        response.set_cookie(
+            key='refresh_token',
+            value=refresh_token,
+            httponly=True,
+            secure=True,
+            samesite='Lax'
+        )
+        
+        response.data = {
+            "message": "Login successful",
+            "user": CustomUserSerializer(user).data,
+            "access_token": access_token,
+        }
+        
+        return response
+    
+
+      
+
 
 
 class UserLogoutAPIView(GenericAPIView):
     permission_classes = (IsAuthenticated,)
 
     def post(self, request, *args, **kwargs):
-        try:
-            refresh_token = request.data["refresh"]
-            token = RefreshToken(refresh_token)
-            token.blacklist()
-            return Response(status=status.HTTP_205_RESET_CONTENT)
-        except Exception as e:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+        response = Response(status=status.HTTP_205_RESET_CONTENT)
+        response.delete_cookie('access_token')
+        response.delete_cookie('refresh_token')
+        return response
 
+class CustomTokenRefreshView(TokenRefreshView):
+    permission_classes = (AllowAny,)
 
-class UserInfoAPIView(RetrieveAPIView):
-    permission_classes = (IsAuthenticated,)
-    serializer_class = CustomUserSerializer
-
-    def get_object(self):
-        return self.request.user
