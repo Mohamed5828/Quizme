@@ -19,10 +19,10 @@ class QuestionSerializer(serializers.ModelSerializer):
         model = Question
         fields = '__all__'
 
-class UserAnswerSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = UserAnswer
-        fields = '__all__'
+# class UserAnswerSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = UserAnswer
+#         fields = '__all__'
         
 
 class CodeExecutionSerializer(serializers.Serializer):
