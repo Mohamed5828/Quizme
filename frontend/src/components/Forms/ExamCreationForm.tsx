@@ -1,17 +1,17 @@
 import { useForm, FormProvider, FieldValues } from "react-hook-form";
-import FormStepper from "../components/FormSubComponents/Exam/FormStepper.tsx";
+import FormStepper from "../FormSubComponents/Exam/FormStepper.tsx";
 import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../state/store.ts";
+import { RootState } from "../../state/store.ts";
 import {
   incrementStep,
   decrementStep,
-} from "../state/ExamCreationState/ExamCreationSlice.ts";
+} from "../../state/ExamCreationState/ExamCreationSlice.ts";
 
-import ExamDetailsStep from "../components/FormSubComponents/Exam/ExamDetailsStep.tsx";
-import QuestionsStep from "../components/FormSubComponents/Exam/QuestionsStep.tsx";
-import ReviewStep from "../components/FormSubComponents/Exam/ReviewStep.tsx";
-import ParticipantsStep from "../components/FormSubComponents/Exam/ParticipantsStep.tsx";
-import FormNav from "../components/FormSubComponents/Exam/FormNav.tsx";
+import ExamDetailsStep from "../FormSubComponents/Exam/ExamDetailsStep.tsx";
+import QuestionsStep from "../FormSubComponents/Exam/QuestionsStep.tsx";
+import ReviewStep from "../FormSubComponents/Exam/ReviewStep.tsx";
+import ParticipantsStep from "../FormSubComponents/Exam/ParticipantsStep.tsx";
+import FormNav from "../FormSubComponents/Exam/FormNav.tsx";
 
 const STEPS = [
   { index: 1, name: "Exam Details", body: <ExamDetailsStep /> },
@@ -20,11 +20,22 @@ const STEPS = [
   { index: 4, name: "Review", body: <ReviewStep /> },
 ];
 
-const ExamCreationForm = () => {
+interface ExamCreationFormProps {
+  defaultValues?: FieldValues;
+}
+
+const initialProps = {
+  defaultValues: {},
+};
+const ExamCreationForm = ({
+  defaultValues,
+}: ExamCreationFormProps = initialProps) => {
   const step = useSelector((state: RootState) => state.ExamCreationState.step);
   const dispatch = useDispatch();
 
-  const methods = useForm();
+  const methods = useForm({
+    defaultValues,
+  });
 
   const handleNext = async () => {
     const isStepValid = await methods.trigger();
@@ -36,7 +47,7 @@ const ExamCreationForm = () => {
   const handlePrev = () => {
     dispatch(decrementStep());
   };
-
+  // TODO: Connect to submit endpoint
   const handleSubmit = (data: FieldValues) => console.log(data);
 
   return (
