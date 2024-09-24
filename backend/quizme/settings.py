@@ -139,6 +139,11 @@ SIMPLE_JWT = {
 
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
+<<<<<<< HEAD
+=======
+CORS_ALLOW_HEADERS = ['content-type', 'authorization', 'x-csrftoken']
+
+>>>>>>> fedf7b654bb83ec32def6c3cc7777b877a8c00ea
 
 
 WSGI_APPLICATION = 'quizme.wsgi.application'
