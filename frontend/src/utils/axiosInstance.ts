@@ -1,29 +1,34 @@
-import axios from "axios";
-// import { useAuth } from "../context/AuthContext"; // Adjust the path as needed
+// import axios from "axios";
+// import { createContext, useContext } from "react";
 
-const axiosInstance = axios.create({
-  baseURL: "http://127.0.0.1:8000/api",
-  withCredentials: true,
-  headers: {
-    common: {
-      "Content-Type": "application/json",
-    },
-  },
-});
+// // Create a context for the user data
+// const UserContext = createContext<{
+//   accessToken: string | null;
+//   refreshAccessToken: () => Promise<void>;
+// }>({
+//   accessToken: null,
+//   refreshAccessToken: async () => {},
+// });
 
-// // Add a request interceptor
+// // Custom hook to use the UserContext
+// export const useUserContext = () => useContext(UserContext);
+
+// export const axiosInstance = axios.create({
+//   baseURL: "http://127.0.0.1:8000/api",
+//   withCredentials: true,
+// });
+
+// // Add a request interceptor to include the access token if available
 // axiosInstance.interceptors.request.use(
 //   (config) => {
-//     const token = "asdf"; // Using the context to get the token
-//     // const { token } = useAuth(); // Using the context to get the token
-//     if (token) {
-//       config.headers.Authorization = `Bearer ${token}`;
+//     const { accessToken } = useUserContext();
+//     if (accessToken) {
+//       config.headers.Authorization = `Bearer ${accessToken}`;
+//       console.log("Access token added to the request:", accessToken);
+//     } else {
+//       console.log("No access token found, proceeding without credentials.");
 //     }
 //     return config;
 //   },
-//   (error) => {
-//     return Promise.reject(error);
-//   }
+//   (error) => Promise.reject(error)
 // );
-
-export { axiosInstance };

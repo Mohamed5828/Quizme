@@ -1,6 +1,7 @@
 import { AxiosError, isAxiosError } from "axios";
 import { useState, useEffect, useCallback } from "react";
-import { axiosInstance } from "../utils/axiosInstance";
+// import { axiosInstance } from "../utils/axiosInstance";
+import { useUserContext } from "../components/UserContext";
 
 interface UseFetchDataResponse<T> {
   data: T | null;
@@ -14,6 +15,8 @@ export function useFetchData<T>(url: string): UseFetchDataResponse<T> {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<AxiosError | null>(null);
 
+  const { refreshAccessToken, axiosInstance } = useUserContext();
+
   const fetchData = useCallback(async () => {
     setLoading(true);
     try {
@@ -23,13 +26,19 @@ export function useFetchData<T>(url: string): UseFetchDataResponse<T> {
     } catch (error) {
       if (isAxiosError(error)) {
         setError(error);
+        console.error("Error during request:", error.message);
+
+        if (error.response?.status === 401 && refreshAccessToken) {
+          await refreshAccessToken();
+          fetchData(); // Retry fetching after refreshing token
+        }
       } else {
         setError(new AxiosError("An unexpected error occurred"));
       }
     } finally {
       setLoading(false);
     }
-  }, [url]);
+  }, [url, refreshAccessToken]);
 
   useEffect(() => {
     fetchData();
@@ -40,27 +49,4 @@ export function useFetchData<T>(url: string): UseFetchDataResponse<T> {
   }, [fetchData]);
 
   return { data, loading, error, refetch };
-}
-
-export async function fetchData<T>(
-  url: string
-): Promise<{ data: T | null; loading: boolean; error: AxiosError | null }> {
-  let loading = true;
-  let error: AxiosError | null = null;
-  let data: T | null = null;
-
-  try {
-    const response = await axiosInstance.get<T>(url);
-    data = response.data;
-  } catch (e) {
-    if (isAxiosError(e)) {
-      error = e;
-    } else {
-      error = new AxiosError("An unexpected error occurred");
-    }
-  } finally {
-    loading = false;
-  }
-
-  return { data, loading, error };
 }

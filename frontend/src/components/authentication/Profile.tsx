@@ -2,7 +2,7 @@ import React from "react";
 import "font-awesome/css/font-awesome.min.css";
 import "../../styles/profile.css";
 import elon from "../../images/elon.png";
-import UserData from "../UserData";
+import UserData from "../useUserContext";
 
 const Profile: React.FC = () => {
   // const { user, accessToken } = UserData();  uncheck these if u want to add user data !!!

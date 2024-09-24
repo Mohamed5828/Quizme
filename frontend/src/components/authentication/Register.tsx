@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import "../../styles/register.css";
+import { Link } from "react-router-dom";
 
 const RegisterForm: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -34,7 +35,7 @@ const RegisterForm: React.FC = () => {
 
     try {
       const response = await axios.post(
-        "http://127.0.0.1:8000/api/auth/register/",
+        "http://127.0.0.1:8000/api/v1/auth/register/",
         {
           username: formData.username,
           email: formData.email,
@@ -155,9 +156,9 @@ const RegisterForm: React.FC = () => {
 
                     <p className="text-center text-muted mt-5 mb-0">
                       Already have an account?{" "}
-                      <a href="#!" className="fw-bold text-body">
+                      <Link to={"/login"} className="fw-bold text-body">
                         <u>Login here</u>
-                      </a>
+                      </Link>
                     </p>
                   </form>
                 </div>

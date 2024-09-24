@@ -5,6 +5,7 @@ import QuestionsStep from "../FormSubComponents/Exam/QuestionsStep";
 import { useFetchData } from "../../hooks/useFetchData";
 import postData from "../../utils/postData";
 import AddToExamDropdown from "../QuestionComponents/AddToExamDropdown";
+import { useUserContext } from "../UserContext";
 
 interface Question {
   id: string;
@@ -33,8 +34,8 @@ const QuestionBank: React.FC = () => {
   const [editingQuestion, setEditingQuestion] = useState<Question | null>(null);
   const { data, loading, error, refetch } = useFetchData<{
     questions: Question[];
-  }>("/v1/question-bank");
-  const { data: examsData } = useFetchData<{ exams: Exam[] }>("/v1/exams");
+  }>("/v1/questionbank");
+  const { data: examsData } = useFetchData<{ exams: Exam[] }>("/v1/exam/list");
 
   useEffect(() => {
     if (data?.questions) {
@@ -44,7 +45,7 @@ const QuestionBank: React.FC = () => {
 
   const onSubmit = useCallback(
     async (formData: FormData) => {
-      const response = await postData("/v1/question-bank", formData);
+      const response = await postData("/v1/questionbank", formData);
       if (!response.error) {
         console.log("Submission successful:", response.resData);
         refetch();
@@ -63,7 +64,7 @@ const QuestionBank: React.FC = () => {
 
   const handleDelete = async (questionId: string) => {
     const response = await postData(
-      `/v1/question-bank/${questionId}/delete`,
+      `/v1/questionbank/${questionId}/delete`,
       {}
     );
     if (!response.error) {

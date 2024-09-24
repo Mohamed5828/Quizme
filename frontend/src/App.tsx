@@ -17,17 +17,16 @@ const App: React.FC = () => {
   return (
     <UserProvider>
       <Router>
-        <>
-          {/* <Navbar /> */}
-          <Routes>
-            <Route path="/" element={<Login />} />
-            <Route path="/profile" element={<Profile />} />
-            <Route path="/register" element={<RegisterForm />} />
-            <Route path="/create-exam" Component={ExamCreationForm} />
-            <Route path="/all-questions" Component={AllQuestionsPage} />
-            <Route path="/question-bank" Component={QuestionBank} />
-          </Routes>
-        </>
+        {/* <Navbar /> */}
+        <Routes>
+          <Route path="/login" element={<Login />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/register" element={<RegisterForm />} />
+          <Route path="/" element={<RegisterForm />} />
+          <Route path="/create-exam" Component={ExamCreationForm} />
+          <Route path="/all-questions" Component={AllQuestionsPage} />
+          <Route path="/question-bank" Component={QuestionBank} />
+        </Routes>
       </Router>
     </UserProvider>
   );

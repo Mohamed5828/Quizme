@@ -1,12 +1,14 @@
 import React, { useState } from "react";
 import "../../styles/login.css";
 import Logo from "../../images/quizme-high-resolution-logo-transparent (1).png";
-import { axiosInstance } from "../../utils/axiosInstance";
-import UserData from "../UserData";
+// import { axiosInstance } from "../../utils/axiosInstance";
+
 import { Link, useNavigate } from "react-router-dom";
+import { useUserContext } from "../UserContext";
+import axios from "axios";
 
 const LoginForm: React.FC = () => {
-  const { setUserData } = UserData();
+  const { setUserData, axiosInstance } = useUserContext();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     email: "",
@@ -25,15 +27,19 @@ const LoginForm: React.FC = () => {
     e.preventDefault();
 
     try {
-      const response = await axiosInstance.post(
-        "http://127.0.0.1:8000/api/auth/login/",
+      const response = await axios.post(
+        "http://127.0.0.1:8000/api/v1/auth/login/",
         {
           email: formData.email,
           password: formData.password,
         }
       );
       console.log("Login successful", response.data);
-      setUserData(response.data.user, response.data.access_token);
+      setUserData(
+        response.data.username,
+        response.data.tokens.access,
+        response.data.tokens.refresh
+      );
       navigate("/profile");
     } catch (error) {
       console.error("Login error:", error);
