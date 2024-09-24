@@ -37,8 +37,8 @@ const LoginForm: React.FC = () => {
       console.log("Login successful", response.data);
       setUserData(
         response.data.username,
-        response.data.tokens.access,
-        response.data.tokens.refresh
+        response.data.access_token,
+        response.data.refresh_token
       );
       navigate("/profile");
     } catch (error) {
