@@ -13,13 +13,12 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 from pathlib import Path
 from datetime import timedelta
 
-
 from dotenv import load_dotenv
 import dj_database_url
 import os
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
@@ -31,7 +30,6 @@ SECRET_KEY = 'django-insecure-nw1p@4xi3fu&l(uxfcbwa()im0m3z)#0!w_!5^#zj94x1&6%#z
 DEBUG = True
 
 ALLOWED_HOSTS = []
-
 
 # Application definition
 
@@ -86,7 +84,6 @@ AUTH_USER_MODEL = 'authentication.CustomUser'
 # AUTHENTICATION_BACKENDS = ['authentication.authenticateUser.authBackend']
 
 
-
 REST_FRAMEWORK = {
 
     'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
@@ -95,7 +92,6 @@ REST_FRAMEWORK = {
     )
 
 }
-
 
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=5),
@@ -141,7 +137,7 @@ CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
 ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173", 
+    "http://localhost:5173",
 ]
 CORS_ALLOW_HEADERS = [
     'authorization',
@@ -149,16 +145,13 @@ CORS_ALLOW_HEADERS = [
     'x-csrftoken',
 ]
 
-
 WSGI_APPLICATION = 'quizme.wsgi.application'
-
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
 load_dotenv()
 DATABASES = {"default": dj_database_url.config(default=os.getenv("QUIZME_DATABASE_URL"))}
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
@@ -178,7 +171,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
 
@@ -189,7 +181,6 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/

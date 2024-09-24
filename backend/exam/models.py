@@ -9,7 +9,7 @@ class Exam(models.Model):
     exam_code = models.CharField(max_length=100, unique=True)
     created_at = models.DateTimeField(auto_now_add=True)
     expiration_date = models.DateTimeField()
-    whitelist = models.JSONField(default=dict)
+    whitelist = models.JSONField(default=list)
 
 
 class Question(models.Model):
