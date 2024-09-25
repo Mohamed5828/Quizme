@@ -5,6 +5,9 @@ from exam.models import Exam, Question
 
 # Create your models here.
 class Answer(models.Model):
+    # TODO migrate answer_body from JSON field to nullables
+    # choices = models.JSONField(default=list)
+    # code = models.TextField(null=True, blank=True)
     student_id = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     exam_id = models.ForeignKey(Exam, on_delete=models.CASCADE)
     question_id = models.ForeignKey(Question, on_delete=models.CASCADE)

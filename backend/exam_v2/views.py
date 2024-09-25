@@ -1,4 +1,5 @@
 from rest_framework.exceptions import NotFound, PermissionDenied
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 from exam.models import Exam, Question
@@ -7,11 +8,14 @@ import fnmatch
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 from authentication.permissions import AUTH_SWAGGER_PARAM
+from datetime import timedelta
 
 
 class ExamViewSet(ModelViewSet):
     queryset = Exam.objects.all()
     serializer_class = ExamSerializer2
+    permission_classes = [IsAuthenticated]
+    lookup_field = 'exam_code'
 
     def get_queryset(self):
         return Exam.objects.filter(user_id=self.request.user)
@@ -69,6 +73,7 @@ class ExamViewSet(ModelViewSet):
         manual_parameters=[AUTH_SWAGGER_PARAM]
     )
     def create(self, request, *args, **kwargs):
+        request.data['duration'] = timedelta(minutes=request.data['duration'])
         return super().create(request, *args, **kwargs)
 
     @swagger_auto_schema(
@@ -79,6 +84,7 @@ class ExamViewSet(ModelViewSet):
         manual_parameters=[AUTH_SWAGGER_PARAM]
     )
     def update(self, request, *args, **kwargs):
+        request.data['duration'] = timedelta(minutes=request.data['duration'])
         return super().update(request, *args, **kwargs)
 
     @swagger_auto_schema(
@@ -89,6 +95,8 @@ class ExamViewSet(ModelViewSet):
         manual_parameters=[AUTH_SWAGGER_PARAM]
     )
     def partial_update(self, request, *args, **kwargs):
+        if request.data.get('duration'):
+            request.data['duration'] = timedelta(minutes=request.data['duration'])
         return super().partial_update(request, *args, **kwargs)
 
     @swagger_auto_schema(
