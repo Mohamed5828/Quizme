@@ -40,10 +40,16 @@ api_v1 = [
     path('', include('answers.urls')),
 ]
 
+api_v2 = [
+    path('exam/', include('exam_v2.urls')),
+]
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     # api_v1
     path('api/v1/', include(api_v1)),
+    # api_v2
+    path('api/v2/', include(api_v2)),
     # Swagger UI
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     # ReDoc

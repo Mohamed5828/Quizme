@@ -35,12 +35,12 @@ class ExamQuestionsView(generics.GenericAPIView):
     )
     def get(self, request, exam_code):
         try:
-            exam = Exam.objects.select_related('examiner_id').get(exam_code=exam_code)
+            exam = Exam.objects.select_related('user_id').get(exam_code=exam_code)
 
             if exam.expiration_date < timezone.now():
                 raise PermissionDenied("This exam has expired.")
 
-            if request.user != exam.examiner_id and request.user.email not in exam.whitelist:
+            if request.user != exam.user_id and request.user.email not in exam.whitelist:
                 raise PermissionDenied("You are not authorized to view this exam.")
 
             questions = Question.objects.filter(exam_id=exam)
@@ -88,7 +88,7 @@ class CreateExamView(APIView):
         manual_parameters=[AUTH_SWAGGER_PARAM]
     )
     def post(self, request):
-        # Extract the authenticated examiner (examiner_id)
+        # Extract the authenticated examiner (user_id)
         serializer = ExamSerializer(data=request.data, context={'request': request})
 
         if serializer.is_valid():
@@ -103,7 +103,7 @@ class ListExamsView(generics.ListAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
-        return Exam.objects.filter(examiner_id=self.request.user)
+        return Exam.objects.filter(user_id=self.request.user.id)
 
     @swagger_auto_schema(
         operation_summary="List all exams for the authenticated user",
@@ -133,7 +133,7 @@ class DeleteExamView(APIView):
     def delete(self, request, exam_code):
         try:
             exam = Exam.objects.get(exam_code=exam_code)
-            if exam.examiner_id != request.user:
+            if exam.user_id != request.user:
                 raise PermissionDenied("You are not authorized to delete this exam.")
 
             exam.delete()
@@ -168,7 +168,7 @@ class UpdateExamQuestionView(APIView):
         try:
             exam = Exam.objects.get(exam_code=exam_code)
 
-            if request.user != exam.examiner_id:
+            if request.user != exam.user_id:
                 raise PermissionDenied("You are not authorized to update this exam.")
 
             try:
