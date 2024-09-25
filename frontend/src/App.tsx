@@ -9,7 +9,7 @@ import Profile from "./components/authentication/Profile.tsx";
 import { UserProvider } from "./components/UserContext.tsx";
 import RegisterForm from "./components/authentication/Register.tsx";
 import WebcamMonitorWrapper from "./components/Wrappers/WebcamMonitorWrapper.tsx";
-
+import Dashboard from "./components/dashboard/Dashboard.tsx";
 const App: React.FC = () => {
   //   React.useEffect(() => {
   //     axiosInstance;
@@ -34,6 +34,7 @@ const App: React.FC = () => {
             }
           />
           <Route path="/question-bank" Component={QuestionBank} />
+          <Route path="/dashboard" element={<Dashboard />} />
         </Routes>
       </Router>
     </UserProvider>
