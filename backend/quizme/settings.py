@@ -135,14 +135,13 @@ SIMPLE_JWT = {
 
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
-ALLOWED_HOSTS = ['localhost', '127.0.0.1']
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173",
-]
+
 CORS_ALLOW_HEADERS = [
     'authorization',
     'content-type',
     'x-csrftoken',
+    'accept',
+    'origin',
 ]
 
 WSGI_APPLICATION = 'quizme.wsgi.application'
