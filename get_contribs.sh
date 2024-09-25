@@ -13,7 +13,14 @@ if [ ! -z "$2" ]; then
     PREFIX="$2"
 fi
 
-echo "# Contributions listed by branch" > "$FILE_NAME"
+# Get the current date and time
+TIMESTAMP=$(date +"%Y-%m-%d %H:%M:%S")
+
+# Write the timestamp and header to the file
+{
+    echo "# Contributions listed by branch"
+    echo "Generated on: $TIMESTAMP"
+} > "$FILE_NAME"
 
 for branch in $(git branch -r --list "${PREFIX}*main"); do
     echo "## Contributors for branch: $branch" >> "$FILE_NAME"
