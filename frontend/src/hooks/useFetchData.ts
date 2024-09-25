@@ -2,6 +2,7 @@ import { AxiosError, isAxiosError } from "axios";
 import { useState, useEffect, useCallback } from "react";
 // import { axiosInstance } from "../utils/axiosInstance";
 import { useUserContext } from "../components/UserContext";
+import axiosInstance from "../utils/axiosInstance";
 
 interface UseFetchDataResponse<T> {
   data: T | null;
@@ -15,7 +16,7 @@ export function useFetchData<T>(url: string): UseFetchDataResponse<T> {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<AxiosError | null>(null);
 
-  const { refreshAccessToken, axiosInstance } = useUserContext();
+  const { refreshAccessToken } = useUserContext();
 
   const fetchData = useCallback(async () => {
     setLoading(true);

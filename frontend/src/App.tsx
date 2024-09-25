@@ -8,6 +8,7 @@ import Login from "./components/authentication/Login.tsx";
 import Profile from "./components/authentication/Profile.tsx";
 import { UserProvider } from "./components/UserContext.tsx";
 import RegisterForm from "./components/authentication/Register.tsx";
+import WebcamMonitorWrapper from "./components/Wrappers/WebcamMonitorWrapper.tsx";
 
 const App: React.FC = () => {
   //   React.useEffect(() => {
@@ -24,7 +25,14 @@ const App: React.FC = () => {
           <Route path="/register" element={<RegisterForm />} />
           <Route path="/" element={<RegisterForm />} />
           <Route path="/create-exam" Component={ExamCreationForm} />
-          <Route path="/all-questions" Component={AllQuestionsPage} />
+          <Route
+            path="/all-questions"
+            element={
+              <WebcamMonitorWrapper>
+                <AllQuestionsPage />
+              </WebcamMonitorWrapper>
+            }
+          />
           <Route path="/question-bank" Component={QuestionBank} />
         </Routes>
       </Router>

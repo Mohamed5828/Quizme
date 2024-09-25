@@ -1,5 +1,6 @@
 import { AxiosError, isAxiosError, AxiosRequestConfig } from "axios";
 import { useUserContext } from "../components/UserContext";
+import axiosInstance from "./axiosInstance";
 
 interface PostDataResponse<T> {
   resData: T | null;
@@ -12,7 +13,7 @@ async function postData<T>(
   data: any,
   headers: Record<string, string> = {}
 ): Promise<PostDataResponse<T>> {
-  const { refreshAccessToken, axiosInstance } = useUserContext();
+  const { refreshAccessToken } = useUserContext();
   let loading = true;
   let error: AxiosError | null = null;
   let resData: T | null = null;

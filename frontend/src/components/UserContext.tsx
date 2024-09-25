@@ -1,4 +1,3 @@
-import axios, { AxiosInstance } from "axios";
 import {
   createContext,
   ReactNode,
@@ -17,7 +16,6 @@ interface UserContextType {
   accessToken: string | null;
   refreshToken: string | null;
   user: User | null;
-  axiosInstance: AxiosInstance;
   setUserData: (
     user: User | null,
     accessToken: string | null,
@@ -34,25 +32,6 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({
   const [user, setUser] = useState<User | null>(null);
   const [accessToken, setAccessToken] = useState<string | null>(null);
   const [refreshToken, setRefreshToken] = useState<string | null>(null);
-
-  const axiosInstance = axios.create({
-    baseURL: "http://127.0.0.1:8000/api",
-    withCredentials: true,
-  });
-
-  // Add a request interceptor to include the access token if available
-  axiosInstance.interceptors.request.use(
-    (config) => {
-      if (accessToken) {
-        config.headers.Authorization = `Bearer ${accessToken}`;
-        console.log("Access token added to the request:", accessToken);
-      } else {
-        console.log("No access token found, proceeding without credentials.");
-      }
-      return config;
-    },
-    (error) => Promise.reject(error)
-  );
 
   useEffect(() => {
     const storedAccessToken = localStorage.getItem("accessToken");
@@ -135,7 +114,6 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({
         accessToken,
         refreshToken,
         user,
-        axiosInstance,
         setUserData,
         refreshAccessToken,
       }}
