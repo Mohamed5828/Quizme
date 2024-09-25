@@ -73,7 +73,7 @@ class ExamViewSet(ModelViewSet):
         manual_parameters=[AUTH_SWAGGER_PARAM]
     )
     def create(self, request, *args, **kwargs):
-        request.data['duration'] = timedelta(minutes=request.data['duration'])
+        request.data['duration'] = timedelta(minutes=int(request.data['duration']))
         return super().create(request, *args, **kwargs)
 
     @swagger_auto_schema(
@@ -84,7 +84,7 @@ class ExamViewSet(ModelViewSet):
         manual_parameters=[AUTH_SWAGGER_PARAM]
     )
     def update(self, request, *args, **kwargs):
-        request.data['duration'] = timedelta(minutes=request.data['duration'])
+        request.data['duration'] = timedelta(minutes=int(request.data['duration']))
         return super().update(request, *args, **kwargs)
 
     @swagger_auto_schema(
@@ -96,7 +96,7 @@ class ExamViewSet(ModelViewSet):
     )
     def partial_update(self, request, *args, **kwargs):
         if request.data.get('duration'):
-            request.data['duration'] = timedelta(minutes=request.data['duration'])
+            request.data['duration'] = timedelta(minutes=int(request.data['duration']))
         return super().partial_update(request, *args, **kwargs)
 
     @swagger_auto_schema(
