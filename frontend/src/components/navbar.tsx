@@ -1,52 +1,100 @@
-import React from 'react';
-import '../index.css'
-const Navbar: React.FC = () => {
+import React from "react";
+import { Link } from "react-router-dom";
+import "../index.css";
+import { useUserContext } from "./UserContext";
+const NAV_LOGGED_IN = [
+  {
+    name: "Home",
+    path: "/",
+  },
+  {
+    name: "Create Exam",
+    path: "/create-exam",
+  },
+  {
+    name: "Profile",
+    path: "/profile",
+  },
+];
+
+const NAV_LOGGED_OUT = [
+  {
+    name: "Home",
+    path: "/",
+  },
+  {
+    name: "Login",
+    path: "/login",
+  },
+  {
+    name: "Register",
+    path: "/register",
+  },
+];
+const Navbar = () => {
+  const [isOpen, setIsOpen] = React.useState(false);
+  const { user } = useUserContext();
+  const isAuthenticated = user ? true : false;
+  console.log(user);
+
   return (
-    <nav className="bg-white border-gray-200 dark:bg-gray-900">
-      <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
-        <a href="https://flowbite.com/" className="flex items-center space-x-3 rtl:space-x-reverse">
-          <img src="https://flowbite.com/docs/images/logo.svg" className="h-8" alt="Flowbite Logo" />
-          <span className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">Flowbite</span>
-        </a>
+    <nav className="bg-gray-200 flex flex-col px-4 py-2 sm:px-6 lg:px-8">
+      <div className="flex justify-between mx-auto max-w-7xl  w-full">
+        <Link to="/" className="text-3xl font-bold text-gray-800">
+          Quizme
+        </Link>
+        <ul className="hidden sm:flex items-center">
+          {isAuthenticated
+            ? NAV_LOGGED_IN.map((item) => (
+                <li key={item.name} className="mx-2">
+                  <Link to={item.path}>{item.name}</Link>
+                </li>
+              ))
+            : NAV_LOGGED_OUT.map((item) => (
+                <li key={item.name} className="mx-2">
+                  <Link to={item.path}>{item.name}</Link>
+                </li>
+              ))}
+        </ul>
         <button
-          data-collapse-toggle="navbar-default"
-          type="button"
-          className="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
-          aria-controls="navbar-default"
-          aria-expanded="false"
+          className="sm:hidden flex items-center border rounded text-xl text-gray-600 hover:text-gray-800"
+          onClick={() => setIsOpen(!isOpen)}
         >
-          <span className="sr-only">Open main menu</span>
           <svg
-            className="w-5 h-5"
-            aria-hidden="true"
+            className="fill-current h-6 w-6"
+            viewBox="0 0 20 20"
             xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 17 14"
           >
-            <path
-              stroke="currentColor"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M1 1h15M1 7h15M1 13h15"
-            />
+            <title>Menu</title>
+            <path d="M0 3h20v2H0V3zm0 6h20v2H0V9zm0 6h20v2H0V15z" />
           </svg>
         </button>
-        <div className="hidden w-full md:block md:w-auto" id="navbar-default">
-          <ul className="font-medium flex flex-col p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-gray-50 md:flex-row md:space-x-8 rtl:space-x-reverse md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
-            {['Home', 'About', 'Services', 'Pricing', 'Contact'].map((item) => (
-              <li key={item}>
-                <a
-                  href="#"
-                  className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent"
-                  aria-current={item === 'Home' ? 'page' : undefined}
+      </div>
+      <div
+        className={`${
+          isOpen ? "block" : "hidden"
+        } sm:hidden flex flex-col w-full
+        bg-gray-400 px-2 py-1 rounded-lg`}
+      >
+        <ul>
+          {isAuthenticated
+            ? NAV_LOGGED_IN.map((item) => (
+                <li
+                  key={item.name}
+                  className="my-1 hover:text-gray-800 hover:bg-gray-200 rounded p-2 transition"
                 >
-                  {item}
-                </a>
-              </li>
-            ))}
-          </ul>
-        </div>
+                  <Link to={item.path}>{item.name}</Link>
+                </li>
+              ))
+            : NAV_LOGGED_OUT.map((item) => (
+                <li
+                  key={item.name}
+                  className="my-1 hover:text-gray-800 hover:bg-gray-200 rounded p-2 transition"
+                >
+                  <Link to={item.path}>{item.name}</Link>
+                </li>
+              ))}
+        </ul>
       </div>
     </nav>
   );
