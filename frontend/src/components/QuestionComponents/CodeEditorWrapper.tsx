@@ -21,9 +21,8 @@ const CodeEditorWrapper: React.FC<CodeEditorWrapperProps> = ({
   const [answerCode, setAnswerCode] = useState<string>(
     starterCode[0]?.code || ""
   );
-  // const { user, isLoggedIn } = useUserContext();
-  // console.log(user);
-  // console.log(isLoggedIn);
+  const { user } = useUserContext();
+
   const handleSubmit = async () => {
     if (!answerCode || !user) return;
     const url = `/api/submit-answer/${questionId}`;
