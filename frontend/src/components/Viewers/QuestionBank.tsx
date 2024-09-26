@@ -31,14 +31,13 @@ const QuestionBank: React.FC = () => {
   });
 
   const [editingQuestion, setEditingQuestion] = useState<Question | null>(null);
-  const { data, loading, error, refetch } = useFetchData<{
-    questions: Question[];
-  }>("/v1/questionbank/");
+  const { data, loading, error, refetch } =
+    useFetchData<Question[]>("/v1/questionbank/");
   const { data: examsData } = useFetchData<{ exams: Exam[] }>("/v1/exam/list/");
 
   useEffect(() => {
-    if (data?.questions) {
-      methods.reset({ questions: data.questions });
+    if (data) {
+      methods.reset({ questions: data });
     }
   }, [data, methods]);
 
@@ -131,7 +130,7 @@ const QuestionBank: React.FC = () => {
       ) : (
         <div className="space-y-6">
           {data &&
-            data.questions.map((question) => (
+            data.map((question) => (
               <div
                 key={question.id}
                 className="bg-white border border-gray-200 p-6 rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300"

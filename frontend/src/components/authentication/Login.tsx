@@ -6,6 +6,7 @@ import Logo from "../../images/quizme-high-resolution-logo-transparent (1).png";
 import { Link, useNavigate } from "react-router-dom";
 import { useUserContext } from "../UserContext";
 import axios from "axios";
+import { toast } from "react-toastify";
 
 const LoginForm: React.FC = () => {
   const { setUserData } = useUserContext();
@@ -35,6 +36,7 @@ const LoginForm: React.FC = () => {
         }
       );
       console.log("Login successful", response.data);
+      toast.success("Login successful");
       setUserData(
         response.data.user,
         response.data.access_token,
@@ -43,7 +45,7 @@ const LoginForm: React.FC = () => {
       navigate("/profile");
     } catch (error) {
       console.error("Login error:", error);
-      alert("Login failed. Please check your credentials.");
+      toast.error("Login failed. Please check your credentials.");
     }
   };
   return (

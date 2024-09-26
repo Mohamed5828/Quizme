@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import "../../styles/register.css";
 import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const RegisterForm: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -24,12 +25,12 @@ const RegisterForm: React.FC = () => {
     e.preventDefault();
 
     if (formData.password1 !== formData.password2) {
-      alert("Passwords do not match");
+      toast.error("Passwords do not match");
       return;
     }
 
     if (!formData.termsAccepted) {
-      alert("You must accept the terms of service");
+      toast.error("You must accept the terms of service");
       return;
     }
 
@@ -49,6 +50,7 @@ const RegisterForm: React.FC = () => {
         }
       );
 
+      toast.success("Registration successful");
       console.log("Registration successful", response.data);
     } catch (error) {
       console.error("Error during registration", error);

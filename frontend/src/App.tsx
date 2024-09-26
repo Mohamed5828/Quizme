@@ -1,5 +1,4 @@
 import React from "react";
-import axiosInstance from "./utils/axiosInterceptors";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import AllQuestionsPage from "./components/Viewers/AllQuestionsPage";
 import ExamCreationForm from "./components/Forms/ExamCreationForm";
@@ -11,12 +10,10 @@ import RegisterForm from "./components/authentication/Register.tsx";
 import WebcamMonitorWrapper from "./components/Wrappers/WebcamMonitorWrapper.tsx";
 import Dashboard from "./components/dashboard/Dashboard.tsx";
 import HomeLayout from "./layouts/HomeLayout.tsx";
+import { ToastContainer } from "react-toastify";
 
+import "react-toastify/dist/ReactToastify.css";
 const App: React.FC = () => {
-  //   React.useEffect(() => {
-  //     axiosInstance;
-  //   }, []);
-
   return (
     <UserProvider>
       <Router>
@@ -25,7 +22,7 @@ const App: React.FC = () => {
             <Route path="/login" element={<Login />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/register" element={<RegisterForm />} />
-            <Route path="/" element={<RegisterForm />} />
+            <Route path="/" element={<h1>Home</h1>} />
             <Route path="/create-exam" Component={ExamCreationForm} />
             <Route
               path="/all-questions"
@@ -38,6 +35,7 @@ const App: React.FC = () => {
             <Route path="/question-bank" Component={QuestionBank} />
             <Route path="/dashboard" element={<Dashboard />} />
           </Routes>
+          <ToastContainer position="bottom-right" />
         </HomeLayout>
       </Router>
     </UserProvider>
