@@ -10,20 +10,26 @@ interface StarterCode {
 interface CodeEditorProps {
   questionId: number;
   starterCode: StarterCode[];
+  answerCode: string;
+  setAnswerCode: (code: string) => void;
 }
 
-const CodeEditor: React.FC<CodeEditorProps> = ({ questionId, starterCode }) => {
+const CodeEditor: React.FC<CodeEditorProps> = ({
+  questionId,
+  starterCode,
+  answerCode,
+  setAnswerCode,
+}) => {
   const [language, setLanguage] = useState<Language>(
     starterCode[0]?.language || ""
   );
-  const [code, setCode] = useState<string>("");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const defaultCode =
       starterCode.find((sc) => sc.language === language)?.code || "";
-    setCode(defaultCode);
+    setAnswerCode(defaultCode);
   }, [language, starterCode]);
 
   useEffect(() => {
@@ -85,7 +91,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ questionId, starterCode }) => {
         <Editor
           height="75vh"
           language={language.toLowerCase()}
-          value={code}
+          value={answerCode}
           theme="vs-dark"
           options={{
             minimap: { enabled: false },
@@ -94,7 +100,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ questionId, starterCode }) => {
             scrollBeyondLastLine: false,
             automaticLayout: true,
           }}
-          onChange={(newValue) => setCode(newValue || "")}
+          onChange={(newValue) => setAnswerCode(newValue || "")}
         />
       </div>
     </div>

@@ -28,9 +28,9 @@ const App: React.FC = () => {
           <Route
             path="/all-questions"
             element={
-              <WebcamMonitorWrapper>
-                <AllQuestionsPage />
-              </WebcamMonitorWrapper>
+              // <WebcamMonitorWrapper>
+              <AllQuestionsPage />
+              // </WebcamMonitorWrapper>
             }
           />
           <Route path="/question-bank" Component={QuestionBank} />

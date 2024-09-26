@@ -3,6 +3,7 @@ import SingleQuestionComponent from "./SingleQuestionComponent";
 import CodeEditor from "./CodeEditor";
 import questData from "../../data/quest.json";
 import { Language } from "./constants";
+import CodeEditorWrapper from "./CodeEditorWrapper";
 
 interface StarterCode {
   language: Language;
@@ -86,7 +87,7 @@ function QuestionContainer({
 
             {activeQuestion.type === "code" ? (
               <div className="mb-6">
-                <CodeEditor
+                <CodeEditorWrapper
                   questionId={activeQuestion.id}
                   starterCode={activeQuestion.starter_code || []}
                 />
