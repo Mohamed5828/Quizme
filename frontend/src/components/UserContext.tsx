@@ -9,6 +9,8 @@ import {
 
 interface User {
   email: string;
+  username: string;
+  id: number;
   // Add other user properties if needed
 }
 
@@ -37,7 +39,6 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({
     const storedAccessToken = localStorage.getItem("accessToken");
     const storedRefreshToken = localStorage.getItem("refreshToken");
     const storedUser = localStorage.getItem("user");
-
     if (storedAccessToken && storedRefreshToken && storedUser) {
       setAccessToken(storedAccessToken);
       setRefreshToken(storedRefreshToken);

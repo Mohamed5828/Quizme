@@ -36,7 +36,7 @@ const LoginForm: React.FC = () => {
       );
       console.log("Login successful", response.data);
       setUserData(
-        response.data.username,
+        response.data.user,
         response.data.access_token,
         response.data.refresh_token
       );
