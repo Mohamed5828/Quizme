@@ -8,7 +8,7 @@ import { useUserContext } from "../UserContext";
 import axios from "axios";
 
 const LoginForm: React.FC = () => {
-  const { setUserData, axiosInstance } = useUserContext();
+  const { setUserData } = useUserContext();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     email: "",

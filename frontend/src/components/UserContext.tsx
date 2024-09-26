@@ -6,18 +6,27 @@ import {
   useEffect,
   useCallback,
 } from "react";
+import { jwtDecode } from "jwt-decode";
 
 interface User {
   email: string;
   username: string;
   id: number;
+  role: string;
   // Add other user properties if needed
+}
+
+interface DecodedToken {
+  exp: number;
+  // Add other properties you expect in your JWT payload
 }
 
 interface UserContextType {
   accessToken: string | null;
   refreshToken: string | null;
   user: User | null;
+  isLoggedIn: boolean;
+  userRole: string | null;
   setUserData: (
     user: User | null,
     accessToken: string | null,
@@ -34,6 +43,7 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({
   const [user, setUser] = useState<User | null>(null);
   const [accessToken, setAccessToken] = useState<string | null>(null);
   const [refreshToken, setRefreshToken] = useState<string | null>(null);
+  const [userRole, setUserRole] = useState<string | null>(null);
 
   useEffect(() => {
     const storedAccessToken = localStorage.getItem("accessToken");
@@ -42,72 +52,90 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({
     if (storedAccessToken && storedRefreshToken && storedUser) {
       setAccessToken(storedAccessToken);
       setRefreshToken(storedRefreshToken);
-      setUser(JSON.parse(storedUser));
+      const parsedUser = JSON.parse(storedUser) as User;
+      setUser(parsedUser);
+      setUserRole(parsedUser.role);
     }
   }, []);
 
-  const setUserData = (
-    userData: User | null,
-    newAccessToken: string | null,
-    newRefreshToken: string | null
-  ) => {
-    setUser(userData);
-    setAccessToken(newAccessToken);
-    setRefreshToken(newRefreshToken);
+  const setUserData = useCallback(
+    (
+      userData: User | null,
+      newAccessToken: string | null,
+      newRefreshToken: string | null
+    ) => {
+      setUser(userData);
+      setAccessToken(newAccessToken);
+      setRefreshToken(newRefreshToken);
+      setUserRole(userData?.role || null);
 
-    if (newAccessToken) localStorage.setItem("accessToken", newAccessToken);
-    else localStorage.removeItem("accessToken");
+      if (newAccessToken) localStorage.setItem("accessToken", newAccessToken);
+      else localStorage.removeItem("accessToken");
 
-    if (newRefreshToken) localStorage.setItem("refreshToken", newRefreshToken);
-    else localStorage.removeItem("refreshToken");
+      if (newRefreshToken)
+        localStorage.setItem("refreshToken", newRefreshToken);
+      else localStorage.removeItem("refreshToken");
 
-    if (userData) localStorage.setItem("user", JSON.stringify(userData));
-    else localStorage.removeItem("user");
-  };
+      if (userData) localStorage.setItem("user", JSON.stringify(userData));
+      else localStorage.removeItem("user");
+    },
+    []
+  );
 
-  // Function to refresh the access token using the refresh token
   const refreshAccessToken = useCallback(async () => {
-    if (!refreshToken) return;
+    if (!refreshToken) {
+      console.error("No refresh token available");
+      setUserData(null, null, null);
+      return;
+    }
 
     try {
-      // Call your backend API to refresh the token using the refreshToken
       const response = await fetch("/api/v1/auth/token/refresh", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ refreshToken }),
       });
 
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
       const data = await response.json();
 
       if (data.accessToken) {
         setAccessToken(data.accessToken);
-        localStorage.setItem("accessToken", data.accessToken); // Update localStorage with the new accessToken
+        localStorage.setItem("accessToken", data.accessToken);
       } else {
-        console.error("Failed to refresh access token");
+        throw new Error("No access token in response");
       }
     } catch (error) {
       console.error("Error refreshing access token:", error);
-      // Handle error, potentially force user logout
+      setUserData(null, null, null);
     }
-  }, [refreshToken]);
+  }, [refreshToken, setUserData]);
 
-  // Auto-refresh the access token if needed when the component mounts or the token changes
   useEffect(() => {
     const checkAndRefreshToken = async () => {
       if (accessToken) {
-        const tokenPayload = JSON.parse(atob(accessToken.split(".")[1])); // Decode JWT
-        const expirationTime = tokenPayload.exp * 1000; // Convert to milliseconds
-        const currentTime = new Date().getTime();
+        try {
+          const decodedToken = jwtDecode<DecodedToken>(accessToken);
+          const expirationTime = decodedToken.exp * 1000;
+          const currentTime = new Date().getTime();
 
-        // If token is about to expire in 1 minute, refresh it
-        if (expirationTime - currentTime < 60 * 1000) {
-          await refreshAccessToken();
+          if (expirationTime - currentTime < 60 * 1000) {
+            await refreshAccessToken();
+          }
+        } catch (error) {
+          console.error("Error decoding or refreshing token:", error);
+          setUserData(null, null, null);
         }
       }
     };
 
     checkAndRefreshToken();
-  }, [accessToken, refreshAccessToken]);
+  }, [accessToken, refreshAccessToken, setUserData]);
+
+  const isLoggedIn = !!user;
 
   return (
     <UserContext.Provider
@@ -115,6 +143,8 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({
         accessToken,
         refreshToken,
         user,
+        isLoggedIn,
+        userRole,
         setUserData,
         refreshAccessToken,
       }}
