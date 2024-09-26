@@ -1,5 +1,5 @@
 # Contributions listed by branch
-Generated on: 2024-09-26 02:03:10
+Generated on: 2024-09-26 23:24:58
 ## Contributors for branch: upstream/backend/main
 Total commits: 52
 Total ctimes: 366
@@ -28,18 +28,18 @@ Total loc: 311
 | eslamreda.info@gmail.com                            |     0 |      2 |      0 | 0.0/11.8/ 0.0   |
 | mohamed.ahmed5828@gmail.com                         |     0 |      1 |      0 | 0.0/ 5.9/ 0.0   |
 ## Contributors for branch: upstream/frontend/main
-Total commits: 29
-Total ctimes: 1088
-Total files: 81
-Total loc: 11327
+Total commits: 34
+Total ctimes: 1172
+Total files: 86
+Total loc: 11509
 | Author                                              |   loc |   coms |   fils |  distribution   |
 |:----------------------------------------------------|------:|-------:|-------:|:----------------|
-| ahmedghjkhk@gmail.com                               |  6297 |     10 |     31 | 55.6/34.5/38.3  |
-| mohamed.ahmed5828@gmail.com                         |  2310 |      7 |     29 | 20.4/24.1/35.8  |
-| eslamreda.info@gmail.com                            |  1184 |      6 |      5 | 10.5/20.7/ 6.2  |
-| tokyo.hossam@gmail.com                              |  1536 |      3 |     16 | 13.6/10.3/19.8  |
-| 64080821+Mohamed5828@users.noreply.github.com       |     0 |      2 |      0 | 0.0/ 6.9/ 0.0   |
-| 104031370+EslamRedaMohamed@users.noreply.github.com |     0 |      1 |      0 | 0.0/ 3.4/ 0.0   |
+| ahmedghjkhk@gmail.com                               |  6420 |     11 |     35 | 55.8/32.4/40.7  |
+| mohamed.ahmed5828@gmail.com                         |  2412 |     11 |     30 | 21.0/32.4/34.9  |
+| eslamreda.info@gmail.com                            |  1183 |      6 |      5 | 10.3/17.6/ 5.8  |
+| tokyo.hossam@gmail.com                              |  1494 |      3 |     16 | 13.0/ 8.8/18.6  |
+| 64080821+Mohamed5828@users.noreply.github.com       |     0 |      2 |      0 | 0.0/ 5.9/ 0.0   |
+| 104031370+EslamRedaMohamed@users.noreply.github.com |     0 |      1 |      0 | 0.0/ 2.9/ 0.0   |
 ## Contributors for branch: upstream/main
 Total commits: 11
 Total ctimes: 18
