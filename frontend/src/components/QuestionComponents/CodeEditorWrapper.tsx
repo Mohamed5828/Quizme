@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import CodeEditor from "./CodeEditor";
 import { Language } from "./constants";
-import { useUserContext } from "../UserContext";
+import { useUserContext } from "../../../context/UserContext";
 import postData from "../../utils/postData";
 
 interface CodeEditorWrapperProps {

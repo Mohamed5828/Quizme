@@ -1,8 +1,9 @@
 import React, { useState } from "react";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import "../../styles/register.css";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { getAxiosInstance } from "../../utils/axiosInstance";
 
 const RegisterForm: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -11,7 +12,9 @@ const RegisterForm: React.FC = () => {
     password1: "",
     password2: "",
     termsAccepted: false,
+    role: "",
   });
+  const navigate = useNavigate();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value, type, checked } = e.target;
@@ -34,14 +37,16 @@ const RegisterForm: React.FC = () => {
       return;
     }
 
+    const axiosInstance = getAxiosInstance("v1");
     try {
-      const response = await axios.post(
-        "http://127.0.0.1:8000/api/v1/auth/register/",
+      const response = await axiosInstance.post(
+        "/auth/register/",
         {
           username: formData.username,
           email: formData.email,
           password1: formData.password1,
           password2: formData.password2,
+          role: formData.role,
         },
         {
           headers: {
@@ -51,9 +56,18 @@ const RegisterForm: React.FC = () => {
       );
 
       toast.success("Registration successful");
+      navigate("/login");
       console.log("Registration successful", response.data);
     } catch (error) {
       console.error("Error during registration", error);
+      if (error instanceof AxiosError) {
+        toast.error(
+          error.response?.data?.message ||
+            "Registration failed. Please try again."
+        );
+      } else {
+        toast.error("An unexpected error occurred. Please try again.");
+      }
     }
   };
   return (
@@ -117,6 +131,21 @@ const RegisterForm: React.FC = () => {
                       value={formData.password2}
                       onChange={handleChange}
                     />
+                  </div>
+                  <div className="mb-4">
+                    <label htmlFor="role" className="block text-gray-700 mb-2">
+                      Who are you?
+                    </label>
+                    <select
+                      id="role"
+                      value={formData.role}
+                      onChange={handleChange}
+                      className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+                    >
+                      <option value="">Select your role</option>
+                      <option value="instructor">Instructor</option>
+                      <option value="student">Student</option>
+                    </select>
                   </div>
 
                   <div className="flex items-center justify-center mb-6">

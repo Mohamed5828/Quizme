@@ -2,7 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import "../index.css";
 
-import { useUserContext } from "./UserContext";
+import { useUserContext } from "../../context/UserContext";
 const HOME_NAV = {
   name: "Home",
   path: "/",

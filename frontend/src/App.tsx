@@ -5,7 +5,7 @@ import ExamCreationForm from "./components/Forms/ExamCreationForm";
 import QuestionBank from "./components/Viewers/QuestionBank";
 import Login from "./components/authentication/Login.tsx";
 import Profile from "./components/authentication/Profile.tsx";
-import { UserProvider } from "./components/UserContext.tsx";
+import { UserProvider } from "../context/UserContext.tsx";
 import RegisterForm from "./components/authentication/Register.tsx";
 import WebcamMonitorWrapper from "./components/Wrappers/WebcamMonitorWrapper.tsx";
 import Dashboard from "./components/dashboard/Dashboard.tsx";
