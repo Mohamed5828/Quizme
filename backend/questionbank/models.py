@@ -28,7 +28,7 @@ class QuestionBank(models.Model):
 
     class Meta:
         constraints = [
-            models.UniqueConstraint(fields=['user', 'id'], name='unique_question')
+            models.UniqueConstraint(fields=['user_id', 'id'], name='unique_question')
         ]
         # indexes = [
         #     models.Index(fields=['user'])
@@ -36,4 +36,4 @@ class QuestionBank(models.Model):
         # ]
 
     def __str__(self):
-        return f"{self.type} {self.id} {self.user.username}"
+        return f"{self.type} {self.id} {self.user_id.username}"
