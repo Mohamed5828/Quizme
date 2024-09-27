@@ -1,8 +1,7 @@
 import { AxiosError, isAxiosError } from "axios";
 import { useState, useEffect, useCallback } from "react";
-// import { axiosInstance } from "../utils/axiosInstance";
-import { useUserContext } from "../components/UserContext";
-import axiosInstance from "../utils/axiosInstance";
+import { useUserContext } from "../../context/UserContext";
+import { getAxiosInstance } from "../utils/axiosInstance";
 
 interface UseFetchDataResponse<T> {
   data: T | null;
@@ -11,12 +10,16 @@ interface UseFetchDataResponse<T> {
   refetch: () => void;
 }
 
-export function useFetchData<T>(url: string): UseFetchDataResponse<T> {
+export function useFetchData<T>(
+  url: string,
+  apiVersion: string = "/v1"
+): UseFetchDataResponse<T> {
   const [data, setData] = useState<T | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<AxiosError | null>(null);
 
   const { refreshAccessToken } = useUserContext();
+  const axiosInstance = getAxiosInstance(apiVersion);
 
   const fetchData = useCallback(async () => {
     setLoading(true);
@@ -39,7 +42,7 @@ export function useFetchData<T>(url: string): UseFetchDataResponse<T> {
     } finally {
       setLoading(false);
     }
-  }, [url, refreshAccessToken]);
+  }, [url, refreshAccessToken, axiosInstance]);
 
   useEffect(() => {
     fetchData();

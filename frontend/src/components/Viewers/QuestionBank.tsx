@@ -5,6 +5,7 @@ import QuestionsStep from "../FormSubComponents/Exam/QuestionsStep";
 import { useFetchData } from "../../hooks/useFetchData";
 import postData from "../../utils/postData";
 import AddToExamDropdown from "../QuestionComponents/AddToExamDropdown";
+import { getAxiosInstance } from "../../utils/axiosInstance";
 
 interface Question {
   id: string;
@@ -22,7 +23,6 @@ interface Exam {
 interface FormData {
   questions: Question[];
 }
-
 const QuestionBank: React.FC = () => {
   const methods: UseFormReturn<FormData> = useForm<FormData>({
     defaultValues: {
@@ -31,9 +31,13 @@ const QuestionBank: React.FC = () => {
   });
 
   const [editingQuestion, setEditingQuestion] = useState<Question | null>(null);
-  const { data, loading, error, refetch } =
-    useFetchData<Question[]>("/v1/questionbank/");
-  const { data: examsData } = useFetchData<{ exams: Exam[] }>("/v1/exam/list/");
+
+  // Use the new endpoints correctly
+  const { data, loading, error, refetch } = useFetchData<Question[]>(
+    "/questionbanks/",
+    "v1"
+  ); // Correct usage for v1
+  const { data: examsData } = useFetchData<{ exams: Exam[] }>("/exams/", "v2");
 
   useEffect(() => {
     if (data) {
@@ -43,7 +47,7 @@ const QuestionBank: React.FC = () => {
 
   const onSubmit = useCallback(
     async (formData: FormData) => {
-      const response = await postData("/v1/questionbank/", formData);
+      const response = await postData("/questionbanks/", formData, "v1"); // Correct usage for v1
       if (!response.error) {
         console.log("Submission successful:", response.resData);
         refetch();
@@ -61,15 +65,13 @@ const QuestionBank: React.FC = () => {
   };
 
   const handleDelete = async (questionId: string) => {
-    const response = await postData(
-      `/v1/questionbank/${questionId}/delete/`,
-      {}
-    );
-    if (!response.error) {
+    const axiosInstance = getAxiosInstance("v1");
+    try {
+      await axiosInstance.delete(`/questionbanks/${questionId}/delete/`);
       console.log("Question deleted successfully");
       refetch();
-    } else {
-      console.error("Error deleting question:", response.error);
+    } catch (error) {
+      console.error("Error deleting question:", error);
     }
   };
 
@@ -79,9 +81,10 @@ const QuestionBank: React.FC = () => {
     isAdding: boolean
   ) => {
     const endpoint = isAdding
-      ? "/v1/exam/add-question/"
-      : "/v1/exam/remove-question/";
-    const response = await postData(endpoint, { questionId, examId });
+      ? "/exams/add-question/"
+      : "/exams/remove-question/";
+
+    const response = await postData(endpoint, { questionId, examId }, "v2");
     if (!response.error) {
       console.log(
         isAdding ? "Question added to exam" : "Question removed from exam"

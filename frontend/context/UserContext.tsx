@@ -7,6 +7,7 @@ import {
   useCallback,
 } from "react";
 import { jwtDecode } from "jwt-decode";
+import postData from "../src/utils/postData";
 
 interface User {
   email: string;
@@ -90,21 +91,19 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({
     }
 
     try {
-      const response = await fetch("/api/v1/auth/token/refresh", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ refreshToken }),
-      });
+      const { resData, error } = await postData<{ accessToken: string }>(
+        "/auth/token/refresh",
+        { refreshToken },
+        "/v1"
+      );
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+      if (error) {
+        throw error;
       }
 
-      const data = await response.json();
-
-      if (data.accessToken) {
-        setAccessToken(data.accessToken);
-        localStorage.setItem("accessToken", data.accessToken);
+      if (resData?.accessToken) {
+        setAccessToken(resData.accessToken);
+        localStorage.setItem("accessToken", resData.accessToken);
       } else {
         throw new Error("No access token in response");
       }
