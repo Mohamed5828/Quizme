@@ -35,13 +35,14 @@ schema_view = get_schema_view(
 
 api_v1 = [
     path('auth/', include('authentication.urls')),
-    path('exam/', include('exam.urls')),
+    path('exams/', include('exam.urls')),
     path('', include('questionbank.urls')),
     path('', include('answers.urls')),
+    path('', include('attempts.urls')),
 ]
 
 api_v2 = [
-    path('exam/', include('exam_v2.urls')),
+    path('exams/', include('exam_v2.urls')),
 ]
 
 urlpatterns = [

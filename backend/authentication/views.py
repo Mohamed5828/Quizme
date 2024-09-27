@@ -9,11 +9,13 @@ from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 from rest_framework_simplejwt.views import TokenRefreshView
 
+
 class UserRegistrationAPIView(GenericAPIView):
     permission_classes = (AllowAny,)
     serializer_class = UserRegistrationSerializer
 
     @swagger_auto_schema(
+        tags=["authentication"],
         operation_description="Register a new user",
         responses={201: UserRegistrationSerializer(many=False)}
     )
@@ -24,10 +26,9 @@ class UserRegistrationAPIView(GenericAPIView):
         token = RefreshToken.for_user(user)
         data = serializer.data
 
-        data["tokens"] = {"refresh":str(token),
-        "access": str(token.access_token)}
-        return Response(data, status= status.HTTP_201_CREATED)
-
+        data["tokens"] = {"refresh": str(token),
+                          "access": str(token.access_token)}
+        return Response(data, status=status.HTTP_201_CREATED)
 
 
 class UserLoginAPIView(GenericAPIView):
@@ -35,6 +36,7 @@ class UserLoginAPIView(GenericAPIView):
     serializer_class = UserLoginSerializer
 
     @swagger_auto_schema(
+        tags=["authentication"],
         operation_description="Login a user",
         responses={200: CustomUserSerializer(many=False)}
     )
@@ -42,19 +44,19 @@ class UserLoginAPIView(GenericAPIView):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.validated_data
-        
+
         token = RefreshToken.for_user(user)
 
         access_token = str(token.access_token)
         refresh_token = str(token)
-        
+
         response = Response(status=status.HTTP_200_OK)
         response.set_cookie(
             key='access_token',
             value=access_token,
-            httponly=True,  
-            secure=True,  
-             
+            httponly=True,
+            secure=True,
+
         )
         response.set_cookie(
             key='refresh_token',
@@ -63,24 +65,22 @@ class UserLoginAPIView(GenericAPIView):
             secure=True,
             samesite='Lax'
         )
-        
+
         response.data = {
             "message": "Login successful",
             "user": CustomUserSerializer(user).data,
             "access_token": access_token,
             "refresh_token": refresh_token,
         }
-        
-        return response
-    
 
-      
+        return response
 
 
 class UserLogoutAPIView(GenericAPIView):
     permission_classes = (IsAuthenticated,)
 
     @swagger_auto_schema(
+        tags=["authentication"],
         operation_description="Logout a user",
         request_body=openapi.Schema(
             type=openapi.TYPE_OBJECT,
@@ -97,11 +97,13 @@ class UserLogoutAPIView(GenericAPIView):
         response.delete_cookie('refresh_token')
         return response
 
+
 class UserInfoAPIView(RetrieveAPIView):
     permission_classes = (IsAuthenticated,)
     serializer_class = CustomUserSerializer
 
     @swagger_auto_schema(
+        tags=["authentication"],
         operation_description="Get user information",
         responses={200: CustomUserSerializer(many=False)}
     )
@@ -111,8 +113,10 @@ class UserInfoAPIView(RetrieveAPIView):
     def get_object(self):
         return self.request.user
 
+
 class CustomTokenRefreshView(TokenRefreshView):
     @swagger_auto_schema(
+        tags=["authentication"],
         operation_description="Refresh access token",
         request_body=openapi.Schema(
             type=openapi.TYPE_OBJECT,

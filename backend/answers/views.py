@@ -14,6 +14,7 @@ class AnswerViewSet(ModelViewSet):
     permission_classes = [IsAuthenticated]
 
     @swagger_auto_schema(
+        tags=['answers'],
         operation_description="Create an answer",
         request_body=AnswerSerializer,
         responses={201: AnswerSerializer()},
@@ -23,6 +24,7 @@ class AnswerViewSet(ModelViewSet):
         return super().create(request, *args, **kwargs)
 
     @swagger_auto_schema(
+        tags=['answers'],
         operation_description="List answers",
         responses={200: AnswerSerializer(many=True)},
         manual_parameters=[AUTH_SWAGGER_PARAM]
@@ -31,6 +33,7 @@ class AnswerViewSet(ModelViewSet):
         return super().list(request, *args, **kwargs)
 
     @swagger_auto_schema(
+        tags=['answers'],
         operation_description="Retrieve an answer",
         responses={200: AnswerSerializer()},
         manual_parameters=[AUTH_SWAGGER_PARAM]
@@ -39,6 +42,7 @@ class AnswerViewSet(ModelViewSet):
         return super().retrieve(request, *args, **kwargs)
 
     @swagger_auto_schema(
+        tags=['answers'],
         operation_description="Update an answer",
         request_body=AnswerSerializer,
         responses={200: AnswerSerializer()},
@@ -48,6 +52,7 @@ class AnswerViewSet(ModelViewSet):
         return super().update(request, *args, **kwargs)
 
     @swagger_auto_schema(
+        tags=['answers'],
         operation_description="Partially update an answer",
         request_body=AnswerSerializer,
         responses={200: AnswerSerializer()},
@@ -57,6 +62,7 @@ class AnswerViewSet(ModelViewSet):
         return super().partial_update(request, *args, **kwargs)
 
     @swagger_auto_schema(
+        tags=['answers'],
         operation_description="Delete an answer",
         responses={204: "No Content"},
         manual_parameters=[AUTH_SWAGGER_PARAM]

@@ -28,6 +28,7 @@ class ExamViewSet(ModelViewSet):
             raise NotFound("Exam not found.")
 
     @swagger_auto_schema(
+        tags=['exams', 'v2'],
         operation_summary="Retrieve an exam",
         operation_description="Fetches an exam by its unique code. Requires authentication. allowed for exam owner or whitelisted users",
         manual_parameters=[
@@ -36,7 +37,6 @@ class ExamViewSet(ModelViewSet):
             AUTH_SWAGGER_PARAM
         ],
         responses={200: ExamSerializer2, 404: "Exam not found", 403: "Forbidden"},
-        tags=['exams']
     )
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
@@ -54,6 +54,7 @@ class ExamViewSet(ModelViewSet):
         raise PermissionDenied("You are not authorized to view this exam.")
 
     @swagger_auto_schema(
+        tags=['exams', 'v2'],
         operation_summary="List exams",
         operation_description="Fetches all exams created by the authenticated user. Requires authentication.",
         manual_parameters=[
@@ -61,41 +62,41 @@ class ExamViewSet(ModelViewSet):
                               type=openapi.TYPE_STRING),
             AUTH_SWAGGER_PARAM
         ],
-        responses={200: ExamSerializer2, 404: "Exam not found"},
-        tags=['exams']
+        responses={200: ExamSerializer2(), 404: "Exam not found"},
     )
     def list(self, request, *args, **kwargs):
         return super().list(request, *args, **kwargs)
 
     @swagger_auto_schema(
+        tags=['exams', 'v2'],
         operation_summary="Create an exam",
         operation_description="Allows authenticated users to create an exam. Requires authentication.",
         request_body=ExamSerializer2,
-        responses={201: ExamSerializer2, 400: "Bad Request"},
+        responses={201: ExamSerializer2(), 400: "Bad Request"},
         manual_parameters=[AUTH_SWAGGER_PARAM],
-        tags=['exams']
     )
     def create(self, request, *args, **kwargs):
         request.data['duration'] = timedelta(minutes=int(request.data['duration']))
         return super().create(request, *args, **kwargs)
 
     @swagger_auto_schema(
+        tags=['exams', 'v2'],
         operation_summary="Update an exam",
         operation_description="Allows authenticated users to update an exam. Requires authentication.",
         request_body=ExamSerializer2,
-        responses={200: ExamSerializer2, 400: "Bad Request"},
+        responses={200: ExamSerializer2(), 400: "Bad Request"},
         manual_parameters=[AUTH_SWAGGER_PARAM],
-        tags=['exams']
     )
     def update(self, request, *args, **kwargs):
         request.data['duration'] = timedelta(minutes=int(request.data['duration']))
         return super().update(request, *args, **kwargs)
 
     @swagger_auto_schema(
+        tags=['exams', 'v2'],
         operation_summary="Partially update an exam",
         operation_description="Allows authenticated users to partially update an exam. Requires authentication.",
         request_body=ExamSerializer2,
-        responses={200: ExamSerializer2, 400: "Bad Request"},
+        responses={200: ExamSerializer2(), 400: "Bad Request"},
         manual_parameters=[AUTH_SWAGGER_PARAM]
     )
     def partial_update(self, request, *args, **kwargs):
@@ -104,6 +105,7 @@ class ExamViewSet(ModelViewSet):
         return super().partial_update(request, *args, **kwargs)
 
     @swagger_auto_schema(
+        tags=['exams', 'v2'],
         operation_summary="Delete an exam",
         operation_description="Allows authenticated users to delete an exam. Requires authentication.",
         responses={204: "No Content"},

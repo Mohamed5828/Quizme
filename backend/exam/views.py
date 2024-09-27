@@ -24,6 +24,7 @@ class ExamQuestionsView(generics.GenericAPIView):
     permission_classes = [IsAuthenticated]
 
     @swagger_auto_schema(
+        tags=["exams"],
         operation_summary="Retrieve questions for an exam",
         operation_description="Fetches a list of questions for a given exam. Requires authentication.",
         manual_parameters=[
@@ -81,6 +82,7 @@ class CreateExamView(APIView):
     permission_classes = [IsAuthenticated]
 
     @swagger_auto_schema(
+        tags=["exams"],
         operation_summary="Create a new exam",
         operation_description="Allows authenticated users to create an exam. Requires authentication.",
         request_body=ExamSerializer,
@@ -106,6 +108,7 @@ class ListExamsView(generics.ListAPIView):
         return Exam.objects.filter(user_id=self.request.user.id)
 
     @swagger_auto_schema(
+        tags=["exams"],
         operation_summary="List all exams for the authenticated user",
         operation_description="Returns a list of all exams created by the authenticated user.",
         responses={200: ExamSerializer(many=True)},
@@ -121,6 +124,7 @@ class DeleteExamView(APIView):
     permission_classes = [IsAuthenticated]
 
     @swagger_auto_schema(
+        tags=["exams"],
         operation_summary="Delete an exam",
         operation_description="Allows the owner of an exam to delete it. Requires authentication.",
         manual_parameters=[
@@ -152,6 +156,7 @@ class UpdateExamQuestionView(APIView):
     permission_classes = [IsAuthenticated]
 
     @swagger_auto_schema(
+        tags=["exams"],
         operation_summary="Update a question in an exam",
         operation_description="Allows the owner of an exam to update a specific question.",
         request_body=QuestionSerializer,
