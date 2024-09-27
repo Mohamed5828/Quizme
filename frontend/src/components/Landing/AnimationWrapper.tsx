@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 interface ScrollAnimationWrapperProps {
   children: ReactNode;
   className?: string;
-  [key: string]: unknown;  // Allow other props if necessary
+  [key: string]: unknown;  
 }
 
 export default function ScrollAnimationWrapper({

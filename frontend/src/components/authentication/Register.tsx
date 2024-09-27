@@ -59,16 +59,17 @@ const RegisterForm: React.FC = () => {
   return (
     <section
       className="min-h-screen bg-cover bg-center"
-      style={{
-        backgroundImage:
-          "url('https://mdbcdn.b-cdn.net/img/Photos/new-templates/search-box/img4.webp')",
-      }}
+      // style={{
+      //   backgroundImage:
+      //     "url('https://mdbcdn.b-cdn.net/img/Photos/new-templates/search-box/img4.webp')",
+      // }}
     >
-      <div className="bg-black bg-opacity-50 min-h-screen flex items-center">
+      <div className="bg-white bg-opacity-50 min-h-screen flex items-center">
         <div className="container mx-auto">
+          
           <div className="flex justify-center items-center min-h-screen">
             <div className="w-full max-w-lg">
-              <div className="bg-white shadow-lg rounded-lg p-6">
+              <div className="bg-Cultured shadow-lg rounded-lg p-6">
                 <h2 className="text-2xl font-bold text-center mb-6">
                   Create an account
                 </h2>
