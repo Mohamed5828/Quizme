@@ -132,29 +132,28 @@ const PricingTable: React.FC = () => {
             yearly={isAnnual}
             popular={true}
             planName="Perform"
-            price={{ yearly: 49, monthly: 55 }}
-            planDescription="There are many variations available, but the majority have suffered."
+            price={{ yearly: 39, monthly: 49 }}
+            planDescription="A more flexible plan offering better experience"
             features={[
-              "Unlimited placeholder texts",
-              "Consectetur adipiscing elit",
-              "Excepteur sint occaecat cupidatat",
-              "Officia deserunt mollit anim",
-              "Predefined chunks as necessary",
+              "Unlimited Exams",
+              "Get Exam results send to your email",
+              "Unlimited Examinees",
+              "Browser Monitoring",
+              
             ]}
           />
   
           <PricingTab
             yearly={isAnnual}
             planName="Enterprise"
-            price={{ yearly: 79, monthly: 85 }}
-            planDescription="There are many variations available, but the majority have suffered."
+            price={{ yearly: 72, monthly: 90 }}
+            planDescription="Get Access to all Features Available!"
             features={[
-              "Unlimited placeholder texts",
-              "Consectetur adipiscing elit",
-              "Excepteur sint occaecat cupidatat",
-              "Officia deserunt mollit anim",
-              "Predefined chunks as necessary",
-              "Free from repetition",
+                "Unlimited Exams",
+                "Get Exam results send to your email",
+                "Unlimited Examinees",
+                "Browser Monitoring",
+                "Camera Monitoring",
             ]}
           />
         </div>
