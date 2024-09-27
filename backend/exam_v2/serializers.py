@@ -1,8 +1,6 @@
 from rest_framework import serializers
 from exam.models import Exam, Question
-
-from drf_yasg.utils import swagger_serializer_method
-from drf_yasg import openapi
+from django.db import transaction
 
 
 class QuestionSerializer2(serializers.ModelSerializer):
@@ -22,38 +20,22 @@ class ExamSerializer2(serializers.ModelSerializer):
     def create(self, validated_data):
         # remove questions from validated_data
         questions_list = validated_data.pop('questions')
-        # save the exam
+        # create and save the exam
         exam = Exam.objects.create(**validated_data)
         # save the questions
-        for question in questions_list:
-            question['exam_id'] = exam
-
-        Question.objects.bulk_create(Question(**question) for question in questions_list)
+        Question.objects.bulk_create([Question(**question, exam_id=exam.id) for question in questions_list])
+        # return the exam
         return exam
 
     def update(self, instance, validated_data):
         # remove questions from validated_data
         questions_list = validated_data.pop('questions')
-        # update the exam
-        exam = super().update(instance, validated_data)
-        # save the questions
-        # TODO: find which operation is better overall (faster, less buggy/actually works)
-        # * Operation 1
-        for question in questions_list:
-            question['exam_id'] = exam
-            question_id = question.get('question_id')
-            if question_id:
-                question = Question.objects.get(question_id=question_id)
-                question.__dict__.update(**question)
-                question.save()
-            else:
-                Question.objects.create(**question, exam_id=exam)
-        # # * Operation 2
-        # # delete all related questions
-        # Question.objects.filter(exam_id=exam).delete()
-        # # save the new questions
-        # Question.objects.bulk_create(Question(**question) for question in questions_list)
-        return exam
+        with transaction.atomic():
+            # delete all related questions
+            Question.objects.filter(exam_id=instance.id).delete()
+            # save the new questions
+            Question.objects.bulk_create([Question(**question, exam_id=instance.id) for question in questions_list])
+        return super().update(instance, validated_data)
 
     def validate(self, attrs):
         start_date = attrs.get('start_date')

@@ -1,15 +1,35 @@
+from drf_yasg.openapi import Response
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import viewsets
+from rest_framework.exceptions import NotFound
+from rest_framework.views import APIView
 
 from attempts.models import Attempt
 from attempts.serializers import AttemptSerializer
 from authentication.permissions import AUTH_SWAGGER_PARAM
+from exam.models import Exam
 
 
 # TODO Can make this follow the same convention as exam v2 (make the answers coupled to the attempt)
 class AttemptViewSet(viewsets.ModelViewSet):
     serializer_class = AttemptSerializer
     queryset = Attempt.objects.all()
+
+    def get_queryset(self):
+        if self.request.user.role == 'student':
+            return Attempt.objects.filter(student_id=self.request.user.id)
+        else:
+            exam_id = self.request.query_params.get('exam_id')
+            if exam_id:
+                try:
+                    exam = Exam.objects.get(id=exam_id)
+                    if exam.user_id != self.request.user.id:
+                        raise NotFound
+                    return Attempt.objects.filter(exam_id=exam_id)
+                except Exam.DoesNotExist:
+                    raise NotFound("Exam does not exist")
+            instructor_exams = Exam.objects.filter(user_id=self.request.user.id)
+            return Attempt.objects.filter(exam_id__in=instructor_exams)
 
     @swagger_auto_schema(
         operation_summary="Create an attempt",
@@ -73,3 +93,11 @@ class AttemptViewSet(viewsets.ModelViewSet):
     )
     def list(self, request, *args, **kwargs):
         return super().list(request, *args, **kwargs)
+
+
+class EvaluateAttemptView(APIView):
+    # ! Unused for now
+    def post(self, request, *args, **kwargs):
+        attempt_id = kwargs.get('attempt_id')
+        # TODO: Implement evaluation logic within celery tasks
+        return Response()
