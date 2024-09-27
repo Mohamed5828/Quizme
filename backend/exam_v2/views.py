@@ -1,8 +1,9 @@
-from rest_framework.exceptions import NotFound, PermissionDenied
+from django.utils import timezone
+from rest_framework.exceptions import NotFound, ParseError
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
-from exam.models import Exam, Question
+from exam.models import Exam
 from exam_v2.serializers import ExamSerializer2
 import fnmatch
 from drf_yasg.utils import swagger_auto_schema
@@ -88,7 +89,11 @@ class ExamViewSet(ModelViewSet):
         manual_parameters=[AUTH_SWAGGER_PARAM],
     )
     def update(self, request, *args, **kwargs):
-        request.data['duration'] = timedelta(minutes=int(request.data['duration']))
+        instance = self.get_object()
+        if instance.start_date and instance.start_date < timezone.now():
+            raise ParseError("Cannot update an exam that has already started.")
+        if request.data.get('duration') and str.isnumeric(str(request.data.get('duration'))):
+            request.data['duration'] = timedelta(minutes=int(request.data['duration']))
         return super().update(request, *args, **kwargs)
 
     @swagger_auto_schema(
@@ -100,8 +105,6 @@ class ExamViewSet(ModelViewSet):
         manual_parameters=[AUTH_SWAGGER_PARAM]
     )
     def partial_update(self, request, *args, **kwargs):
-        if request.data.get('duration'):
-            request.data['duration'] = timedelta(minutes=int(request.data['duration']))
         return super().partial_update(request, *args, **kwargs)
 
     @swagger_auto_schema(

@@ -1,17 +1,17 @@
-from rest_framework.serializers import ModelSerializer
+from rest_framework import serializers
 from exam.models import Exam, Question
 
 from drf_yasg.utils import swagger_serializer_method
 from drf_yasg import openapi
 
 
-class QuestionSerializer2(ModelSerializer):
+class QuestionSerializer2(serializers.ModelSerializer):
     class Meta:
         model = Question
         exclude = ['exam_id']
 
 
-class ExamSerializer2(ModelSerializer):
+class ExamSerializer2(serializers.ModelSerializer):
     questions = QuestionSerializer2(many=True)
 
     class Meta:
@@ -54,3 +54,13 @@ class ExamSerializer2(ModelSerializer):
         # # save the new questions
         # Question.objects.bulk_create(Question(**question) for question in questions_list)
         return exam
+
+    def validate(self, attrs):
+        start_date = attrs.get('start_date')
+        expiration_date = attrs.get('expiration_date')
+
+        if start_date and expiration_date:
+            if start_date > expiration_date:
+                raise serializers.ValidationError("Start date must be before expiration date.")
+
+        return super().validate(attrs)

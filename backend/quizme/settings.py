@@ -56,6 +56,11 @@ INSTALLED_APPS = [
     'drf_yasg',
     # 'django_extensions' if DEBUG else '',
 ]
+
+# Time zones
+USE_TZ = True
+TIME_ZONE = 'UTC'
+
 # grap_models settings
 # GRAPH_MODELS = {
 #     'all_applications': True,
