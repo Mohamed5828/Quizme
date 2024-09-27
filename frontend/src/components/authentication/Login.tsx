@@ -1,12 +1,11 @@
 import React, { useState } from "react";
 import "../../styles/login.css";
 import Logo from "../../images/quizme-high-resolution-logo-transparent (1).png";
-// import { axiosInstance } from "../../utils/axiosInstance";
-
 import { Link, useNavigate } from "react-router-dom";
-import { useUserContext } from "../UserContext";
+import { useUserContext } from "../../../context/UserContext";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { getAxiosInstance } from "../../utils/axiosInstance";
 
 const LoginForm: React.FC = () => {
   const { setUserData } = useUserContext();
@@ -27,14 +26,12 @@ const LoginForm: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    const axiosInstance = getAxiosInstance("v1");
     try {
-      const response = await axios.post(
-        "http://127.0.0.1:8000/api/v1/auth/login/",
-        {
-          email: formData.email,
-          password: formData.password,
-        }
-      );
+      const response = await axiosInstance.post("/auth/login/", {
+        email: formData.email,
+        password: formData.password,
+      });
       console.log("Login successful", response.data);
       toast.success("Login successful");
       setUserData(
@@ -48,6 +45,7 @@ const LoginForm: React.FC = () => {
       toast.error("Login failed. Please check your credentials.");
     }
   };
+
   return (
     <section className="min-h-screen bg-gray-100">
       <div className="container mx-auto py-10">

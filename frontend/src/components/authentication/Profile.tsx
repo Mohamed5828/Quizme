@@ -1,11 +1,12 @@
 import React, { useEffect } from "react";
 import "font-awesome/css/font-awesome.min.css";
 import "../../styles/profile.css";
-import { useUserContext } from "../UserContext";
+import { useUserContext } from "../../../context/UserContext";
 import ProfileForm from "../Forms/ProfileForm";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import axiosInstance from "../../utils/axiosInstance";
+import { getAxiosInstance } from "../../utils/axiosInstance";
+
 const Profile: React.FC = () => {
   const { user, refreshToken, setUserData } = useUserContext();
 
@@ -24,13 +25,13 @@ const Profile: React.FC = () => {
         <button
           className="bg-red-400 text-white px-6 py-2 rounded-lg hover:bg-red-500 transition-colors duration-200"
           onClick={() => {
+            const axiosInstance = getAxiosInstance("v1");
             axiosInstance
-              .post("http://127.0.0.1:8000/api/v1/auth/logout/", {
+              .post("/auth/logout/", {
                 refresh: refreshToken,
               })
               .then(() => {
                 toast.success("Logged out successfully");
-                // localStorage.clear();
                 localStorage.removeItem("accessToken");
                 localStorage.removeItem("refreshToken");
                 localStorage.removeItem("user");
@@ -38,7 +39,10 @@ const Profile: React.FC = () => {
                 navigate("/");
               })
               .catch((error) => {
-                toast.error(error.response.data.message);
+                toast.error(
+                  error.response?.data?.message ||
+                    "Logout failed. Please try again."
+                );
               });
           }}
         >
