@@ -9,15 +9,20 @@ class isWhitelisted(BasePermission):
     def has_permission(self, request, view):
         return request.user.is_whitelisted
 
+class isOwner(BasePermission):
+    def has_object_permission(self, request, view, obj):
+        return obj.user_id == request.user.id
+
 
 class IsInstructor(BasePermission):
     def has_permission(self, request, view):
-        pass
+        return request.user.is_authenticated and request.user.is_instructor
 
 
 class IsStudent(BasePermission):
     def has_permission(self, request, view):
-        pass
+        return request.user.is_authenticated and not request.user.is_instructor
+        
 
 
 class IsOwner(BasePermission):

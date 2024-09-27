@@ -12,6 +12,7 @@ from rest_framework.response import Response
 from rest_framework import status
 
 from authentication.permissions import AUTH_SWAGGER_PARAM
+from authentication.permissions import IsInstructor, isOwner
 
 
 class QuestionBankViewSet(ModelViewSet):
@@ -20,7 +21,7 @@ class QuestionBankViewSet(ModelViewSet):
     """
     model = QuestionBank
     serializer_class = QuestionBankSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated , IsInstructor, isOwner]
     filter_backends = [SearchFilter]
     search_fields = ['desc', 'type']
     filterset_fields = ['type', 'difficulty']
