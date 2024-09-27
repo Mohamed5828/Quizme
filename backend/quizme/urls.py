@@ -39,6 +39,7 @@ api_v1 = [
     path('', include('questionbank.urls')),
     path('', include('answers.urls')),
     path('', include('attempts.urls')),
+    path('', include('code_executor.urls')),
 ]
 
 api_v2 = [
