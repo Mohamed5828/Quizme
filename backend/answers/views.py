@@ -16,7 +16,7 @@ class AnswerViewSet(ModelViewSet):
     @swagger_auto_schema(
         operation_description="Create an answer",
         request_body=AnswerSerializer,
-        responses={201: AnswerSerializer},
+        responses={201: AnswerSerializer()},
         manual_parameters=[AUTH_SWAGGER_PARAM]
     )
     def create(self, request, *args, **kwargs):
@@ -32,7 +32,7 @@ class AnswerViewSet(ModelViewSet):
 
     @swagger_auto_schema(
         operation_description="Retrieve an answer",
-        responses={200: AnswerSerializer},
+        responses={200: AnswerSerializer()},
         manual_parameters=[AUTH_SWAGGER_PARAM]
     )
     def retrieve(self, request, *args, **kwargs):
@@ -41,7 +41,7 @@ class AnswerViewSet(ModelViewSet):
     @swagger_auto_schema(
         operation_description="Update an answer",
         request_body=AnswerSerializer,
-        responses={200: AnswerSerializer},
+        responses={200: AnswerSerializer()},
         manual_parameters=[AUTH_SWAGGER_PARAM]
     )
     def update(self, request, *args, **kwargs):
@@ -50,7 +50,7 @@ class AnswerViewSet(ModelViewSet):
     @swagger_auto_schema(
         operation_description="Partially update an answer",
         request_body=AnswerSerializer,
-        responses={200: AnswerSerializer},
+        responses={200: AnswerSerializer()},
         manual_parameters=[AUTH_SWAGGER_PARAM]
     )
     def partial_update(self, request, *args, **kwargs):

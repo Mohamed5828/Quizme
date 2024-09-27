@@ -35,7 +35,8 @@ class ExamViewSet(ModelViewSet):
                               type=openapi.TYPE_STRING),
             AUTH_SWAGGER_PARAM
         ],
-        responses={200: ExamSerializer2, 404: "Exam not found", 403: "Forbidden"}
+        responses={200: ExamSerializer2, 404: "Exam not found", 403: "Forbidden"},
+        tags=['exams']
     )
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
@@ -60,7 +61,8 @@ class ExamViewSet(ModelViewSet):
                               type=openapi.TYPE_STRING),
             AUTH_SWAGGER_PARAM
         ],
-        responses={200: ExamSerializer2, 404: "Exam not found"}
+        responses={200: ExamSerializer2, 404: "Exam not found"},
+        tags=['exams']
     )
     def list(self, request, *args, **kwargs):
         return super().list(request, *args, **kwargs)
@@ -70,7 +72,8 @@ class ExamViewSet(ModelViewSet):
         operation_description="Allows authenticated users to create an exam. Requires authentication.",
         request_body=ExamSerializer2,
         responses={201: ExamSerializer2, 400: "Bad Request"},
-        manual_parameters=[AUTH_SWAGGER_PARAM]
+        manual_parameters=[AUTH_SWAGGER_PARAM],
+        tags=['exams']
     )
     def create(self, request, *args, **kwargs):
         request.data['duration'] = timedelta(minutes=int(request.data['duration']))
@@ -81,7 +84,8 @@ class ExamViewSet(ModelViewSet):
         operation_description="Allows authenticated users to update an exam. Requires authentication.",
         request_body=ExamSerializer2,
         responses={200: ExamSerializer2, 400: "Bad Request"},
-        manual_parameters=[AUTH_SWAGGER_PARAM]
+        manual_parameters=[AUTH_SWAGGER_PARAM],
+        tags=['exams']
     )
     def update(self, request, *args, **kwargs):
         request.data['duration'] = timedelta(minutes=int(request.data['duration']))

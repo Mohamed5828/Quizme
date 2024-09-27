@@ -6,7 +6,7 @@ from .models import Exam, Question
 class ExamSerializer(serializers.ModelSerializer):
     class Meta:
         model = Exam
-        fields = ['exam_id', 'user_id', 'duration', 'exam_code', 'created_at', 'expiration_date', 'whitelist']
+        fields = ['id', 'user_id', 'duration', 'exam_code', 'created_at', 'expiration_date', 'whitelist']
 
     # here is to add the user_id before saving
     def create(self, validated_data):

@@ -51,8 +51,16 @@ INSTALLED_APPS = [
     'exam',
     'answers',
     'questionbank',
+    'attempts',
+    'activitylog',
     'drf_yasg',
+    # 'django_extensions' if DEBUG else '',
 ]
+# grap_models settings
+# GRAPH_MODELS = {
+#     'all_applications': True,
+#     'group_models': True,
+# }
 
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",

@@ -1,15 +1,21 @@
 from django.db import models
-from authentication.models import CustomUser
-from exam.models import Exam, Question
 
 
 # Create your models here.
 class Answer(models.Model):
-    # TODO migrate answer_body from JSON field to nullables
-    # choices = models.JSONField(default=list)
-    # code = models.TextField(null=True, blank=True)
-    student_id = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
-    exam_id = models.ForeignKey(Exam, on_delete=models.CASCADE)
-    question_id = models.ForeignKey(Question, on_delete=models.CASCADE)
-    answer_body = models.JSONField(default=dict)
+    attempt_id = models.ForeignKey('attempts.Attempt', on_delete=models.CASCADE, related_name='answers')
+    created_at = models.DateTimeField(auto_now_add=True)
+    question_id = models.ForeignKey('exam.Question', on_delete=models.CASCADE)
     score = models.FloatField(null=True, blank=True)
+    # optional fields dependent on question type
+    choices = models.JSONField(default=list)
+    code = models.TextField(null=True, blank=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['attempt_id', 'question_id'], name='unique_answer')
+        ]
+        # indexes = [
+        #     models.Index(fields=['attempt_id', 'question_id']),
+        #     models.Index(fields=['attempt_id']),
+        # ]
