@@ -1,53 +1,49 @@
 # Contributions listed by branch
-Generated on: 2024-09-27 16:05:45
+Generated on: 2024-09-27 16:31:59
 ## Contributors for branch: upstream/backend/main
+loc -> surviving lines of code\
 Total commits: 55
-Total ctimes: 500
-Total files: 88
+Total ctimes: 562
+Total files: 93
 Total loc: 2910
-| Author                                        |   loc |   coms |   fils |  distribution   |
-|:----------------------------------------------|------:|-------:|-------:|:----------------|
-| ahmedghjkhk@gmail.com                         |  1692 |     16 |     48 | 58.1/29.1/54.5  |
-| mohamed.ahmed5828@gmail.com                   |   564 |     10 |     11 | 19.4/18.2/12.5  |
-| khaled7amoda@gmail.com                        |   286 |     10 |     11 | 9.8/18.2/12.5   |
-| eslamreda.info@gmail.com                      |   103 |      7 |      1 | 3.5/12.7/ 1.1   |
-| tokyo.hossam@gmail.com                        |   213 |      6 |      9 | 7.3/10.9/10.2   |
-| ahmedelkilani01@gmail.com                     |    52 |      5 |      8 | 1.8/ 9.1/ 9.1   |
-| 64080821+Mohamed5828@users.noreply.github.com |     0 |      1 |      0 | 0.0/ 1.8/ 0.0   |
+|   # | Author                      |   loc |   coms |   fils |  distribution   |
+|----:|:----------------------------|------:|-------:|-------:|:----------------|
+|   1 | ahmedelkilani01@gmail.com   |  1669 |     21 |     38 | 57.4/38.2/40.9  |
+|   2 | mohamed.ahmed5828@gmail.com |   562 |     11 |     15 | 19.3/20.0/16.1  |
+|   3 | khaled7amoda@gmail.com      |   308 |     10 |     13 | 10.6/18.2/14.0  |
+|   4 | tokyo.hossam@gmail.com      |   276 |      6 |     25 | 9.5/10.9/26.9   |
+|   5 | eslamreda.info@gmail.com    |    95 |      7 |      2 | 3.3/12.7/ 2.2   |
 ## Contributors for branch: upstream/code-execution/main
+loc -> surviving lines of code\
 Total commits: 17
 Total ctimes: 25
 Total files: 27
 Total loc: 311
-| Author                                              |   loc |   coms |   fils |  distribution   |
-|:----------------------------------------------------|------:|-------:|-------:|:----------------|
-| khaled7amoda@gmail.com                              |   263 |      4 |     20 | 84.6/23.5/74.1  |
-| ahmedghjkhk@gmail.com                               |     0 |      4 |      0 | 0.0/23.5/ 0.0   |
-| ahmedelkilani01@gmail.com                           |    48 |      3 |      7 | 15.4/17.6/25.9  |
-| 104031370+EslamRedaMohamed@users.noreply.github.com |     0 |      3 |      0 | 0.0/17.6/ 0.0   |
-| eslamreda.info@gmail.com                            |     0 |      2 |      0 | 0.0/11.8/ 0.0   |
-| mohamed.ahmed5828@gmail.com                         |     0 |      1 |      0 | 0.0/ 5.9/ 0.0   |
+|   # | Author                      |   loc |   coms |   fils |  distribution   |
+|----:|:----------------------------|------:|-------:|-------:|:----------------|
+|   1 | khaled7amoda@gmail.com      |   263 |      4 |     20 | 84.6/23.5/74.1  |
+|   2 | ahmedelkilani01@gmail.com   |    48 |      7 |      7 | 15.4/41.2/25.9  |
+|   3 | eslamreda.info@gmail.com    |     0 |      5 |      0 | 0.0/29.4/ 0.0   |
+|   4 | mohamed.ahmed5828@gmail.com |     0 |      1 |      0 | 0.0/ 5.9/ 0.0   |
 ## Contributors for branch: upstream/frontend/main
+loc -> surviving lines of code\
 Total commits: 35
-Total ctimes: 1191
-Total files: 90
+Total ctimes: 1629
+Total files: 91
 Total loc: 11554
-| Author                                              |   loc |   coms |   fils |  distribution   |
-|:----------------------------------------------------|------:|-------:|-------:|:----------------|
-| ahmedghjkhk@gmail.com                               |  6585 |     12 |     40 | 57.0/34.3/44.4  |
-| mohamed.ahmed5828@gmail.com                         |  2322 |     11 |     30 | 20.1/31.4/33.3  |
-| eslamreda.info@gmail.com                            |  1183 |      6 |      5 | 10.2/17.1/ 5.6  |
-| tokyo.hossam@gmail.com                              |  1464 |      3 |     15 | 12.7/ 8.6/16.7  |
-| 64080821+Mohamed5828@users.noreply.github.com       |     0 |      2 |      0 | 0.0/ 5.7/ 0.0   |
-| 104031370+EslamRedaMohamed@users.noreply.github.com |     0 |      1 |      0 | 0.0/ 2.9/ 0.0   |
+|   # | Author                      |   loc |   coms |   fils |  distribution   |
+|----:|:----------------------------|------:|-------:|-------:|:----------------|
+|   1 | ahmedelkilani01@gmail.com   |  6770 |     12 |     40 | 58.6/34.3/44.0  |
+|   2 | mohamed.ahmed5828@gmail.com |  2136 |     13 |     30 | 18.5/37.1/33.0  |
+|   3 | tokyo.hossam@gmail.com      |  1572 |      3 |     16 | 13.6/ 8.6/17.6  |
+|   4 | eslamreda.info@gmail.com    |  1076 |      7 |      5 | 9.3/20.0/ 5.5   |
 ## Contributors for branch: upstream/main
+loc -> surviving lines of code\
 Total commits: 11
-Total ctimes: 18
-Total files: 5
+Total ctimes: 17
+Total files: 4
 Total loc: 96
-| Author                                              |   loc |   coms |   fils |  distribution   |
-|:----------------------------------------------------|------:|-------:|-------:|:----------------|
-| ahmedghjkhk@gmail.com                               |    65 |      4 |      3 | 67.7/36.4/60.0  |
-| 104031370+EslamRedaMohamed@users.noreply.github.com |     0 |      3 |      0 | 0.0/27.3/ 0.0   |
-| eslamreda.info@gmail.com                            |    23 |      2 |      1 | 24.0/18.2/20.0  |
-| ahmedelkilani01@gmail.com                           |     8 |      2 |      1 | 8.3/18.2/20.0   |
+|   # | Author                    |   loc |   coms |   fils |  distribution   |
+|----:|:--------------------------|------:|-------:|-------:|:----------------|
+|   1 | ahmedelkilani01@gmail.com |    73 |      6 |      3 | 76.0/54.5/75.0  |
+|   2 | eslamreda.info@gmail.com  |    23 |      5 |      1 | 24.0/45.5/25.0  |

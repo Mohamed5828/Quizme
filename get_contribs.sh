@@ -23,6 +23,9 @@ TIMESTAMP=$(date +"%Y-%m-%d %H:%M:%S")
 } > "$FILE_NAME"
 
 for branch in $(git branch -r --list "${PREFIX}*main"); do
-    echo "## Contributors for branch: $branch" >> "$FILE_NAME"
-    git fame --branch="$branch" -s --show-email --sort=commits --format=md >> "$FILE_NAME"
+    {
+	echo "## Contributors for branch: $branch" 
+	echo "loc -> surviving lines of code\\"
+    } >> "$FILE_NAME"
+    git fame --branch="$branch" --enum -e -C -w -M --format=md >> "$FILE_NAME"
 done
