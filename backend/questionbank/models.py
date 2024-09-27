@@ -1,7 +1,5 @@
 from django.db import models
 
-from authentication.models import CustomUser
-
 QUESTION_TYPES = (
     ('code', 'code'),
     ('mcq', 'mcq')
@@ -24,7 +22,7 @@ class QuestionBank(models.Model):
     choices = models.JSONField(default=list)
     test_cases = models.JSONField(default=list)
     code = models.TextField(null=True, blank=True)
-    user_id = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='question_banks')
+    user_id = models.ForeignKey("authentication.CustomUser", on_delete=models.CASCADE, related_name='question_banks')
 
     class Meta:
         constraints = [

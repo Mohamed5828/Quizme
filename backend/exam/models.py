@@ -1,12 +1,10 @@
 from django.db import models
 from django.utils.text import slugify
 
-from authentication import models as authModels
-
 
 class Exam(models.Model):
     # id = models.AutoField(primary_key=True) # this is auto created
-    user_id = models.ForeignKey(authModels.CustomUser, on_delete=models.CASCADE)
+    user_id = models.ForeignKey("authentication.CustomUser", on_delete=models.CASCADE)
     duration = models.DurationField()
     title = models.CharField(max_length=100)
     exam_code = models.SlugField(max_length=120, unique=True)
