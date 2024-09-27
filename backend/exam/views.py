@@ -16,7 +16,7 @@ from drf_yasg import openapi
 
 from django.http import JsonResponse
 
-from authentication.permissions import AUTH_SWAGGER_PARAM
+from authentication.permissions import AUTH_SWAGGER_PARAM, isOwner, IsInstructor
 
 
 class ExamQuestionsView(generics.GenericAPIView):
@@ -79,7 +79,7 @@ class ExamQuestionsView(generics.GenericAPIView):
 
 
 class CreateExamView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated , IsInstructor]
 
     @swagger_auto_schema(
         tags=["exams"],
@@ -102,7 +102,7 @@ class CreateExamView(APIView):
 
 class ListExamsView(generics.ListAPIView):
     serializer_class = ExamSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated , isOwner]
 
     def get_queryset(self):
         return Exam.objects.filter(user_id=self.request.user.id)
@@ -121,7 +121,7 @@ class ListExamsView(generics.ListAPIView):
 
 
 class DeleteExamView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, isOwner]
 
     @swagger_auto_schema(
         tags=["exams"],
@@ -153,7 +153,7 @@ class DeleteExamView(APIView):
 
 
 class UpdateExamQuestionView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, isOwner]
 
     @swagger_auto_schema(
         tags=["exams"],
