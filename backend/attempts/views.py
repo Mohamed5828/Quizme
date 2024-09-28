@@ -24,11 +24,11 @@ class AttemptViewSet(viewsets.ModelViewSet):
                 try:
                     exam = Exam.objects.get(id=exam_id)
                     if exam.user_id != self.request.user.id:
-                        raise NotFound
+                        raise NotFound()
                     return Attempt.objects.filter(exam_id=exam_id)
                 except Exam.DoesNotExist:
                     raise NotFound("Exam does not exist")
-            instructor_exams = Exam.objects.filter(user_id=self.request.user.id)
+            instructor_exams = Exam.objects.values_list('id', flat=True)
             return Attempt.objects.filter(exam_id__in=instructor_exams)
 
     @swagger_auto_schema(

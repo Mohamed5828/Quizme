@@ -5,9 +5,9 @@ AUTH_SWAGGER_PARAM = openapi.Parameter('Authorization', openapi.IN_HEADER, descr
                                        type=openapi.TYPE_STRING, required=True)
 
 
-class isWhitelisted(BasePermission):
-    def has_permission(self, request, view):
-        return request.user.is_whitelisted
+# class isWhitelisted(BasePermission):
+#     def has_permission(self, request, view):
+#         return request.user.is_whitelisted
 
 class isOwner(BasePermission):
     def has_object_permission(self, request, view, obj):
@@ -22,7 +22,6 @@ class IsInstructor(BasePermission):
 class IsStudent(BasePermission):
     def has_permission(self, request, view):
         return request.user.is_authenticated and not request.user.is_instructor
-        
 
 
 class IsOwner(BasePermission):

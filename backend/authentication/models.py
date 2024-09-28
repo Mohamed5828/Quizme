@@ -17,3 +17,6 @@ class CustomUser(AbstractUser):
 
     def __str__(self) -> str:
         return self.email
+
+    def is_instructor(self) -> bool:
+        return self.role == "instructor"
