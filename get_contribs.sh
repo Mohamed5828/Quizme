@@ -27,5 +27,5 @@ for branch in $(git branch -r --list "${PREFIX}*main"); do
 	echo "## Contributors for branch: $branch" 
 	echo "loc -> surviving lines of code\\"
     } >> "$FILE_NAME"
-    git fame --branch="$branch" --enum -e -C -w -M --format=md >> "$FILE_NAME"
+    git-fame --branch="$branch" --enum -e -C -w -M --format=md >> "$FILE_NAME"
 done
