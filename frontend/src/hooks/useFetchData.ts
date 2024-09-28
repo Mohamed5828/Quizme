@@ -1,5 +1,5 @@
 import { AxiosError, isAxiosError } from "axios";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useUserContext } from "../../context/UserContext";
 import { getAxiosInstance } from "../utils/axiosInstance";
 
@@ -19,12 +19,12 @@ export function useFetchData<T>(
   const [error, setError] = useState<AxiosError | null>(null);
 
   const { refreshAccessToken } = useUserContext();
-  const axiosInstance = getAxiosInstance(apiVersion);
+  const axiosInstanceRef = useRef(getAxiosInstance(apiVersion));
 
   const fetchData = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await axiosInstance.get<T>(url);
+      const response = await axiosInstanceRef.current.get<T>(url);
       setData(response.data);
       setError(null);
     } catch (error) {
@@ -34,7 +34,16 @@ export function useFetchData<T>(
 
         if (error.response?.status === 401 && refreshAccessToken) {
           await refreshAccessToken();
-          fetchData(); // Retry fetching after refreshing token
+          // Retry fetching after refreshing token
+          try {
+            const retryResponse = await axiosInstanceRef.current.get<T>(url);
+            setData(retryResponse.data);
+            setError(null);
+          } catch (retryError) {
+            if (isAxiosError(retryError)) {
+              setError(retryError);
+            }
+          }
         }
       } else {
         setError(new AxiosError("An unexpected error occurred"));
@@ -42,7 +51,7 @@ export function useFetchData<T>(
     } finally {
       setLoading(false);
     }
-  }, [url, refreshAccessToken, axiosInstance]);
+  }, [url, refreshAccessToken]);
 
   useEffect(() => {
     fetchData();
