@@ -79,7 +79,7 @@ class ExamQuestionsView(generics.GenericAPIView):
 
 
 class CreateExamView(APIView):
-    permission_classes = [IsAuthenticated , IsInstructor]
+    permission_classes = [IsAuthenticated, IsInstructor]
 
     @swagger_auto_schema(
         tags=["exams"],
@@ -102,7 +102,7 @@ class CreateExamView(APIView):
 
 class ListExamsView(generics.ListAPIView):
     serializer_class = ExamSerializer
-    permission_classes = [permissions.IsAuthenticated , isOwner]
+    permission_classes = [permissions.IsAuthenticated, isOwner]
 
     def get_queryset(self):
         return Exam.objects.filter(user_id=self.request.user.id)

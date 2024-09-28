@@ -2,6 +2,7 @@ from drf_yasg.openapi import Response
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import viewsets
 from rest_framework.exceptions import NotFound
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 
 from attempts.models import Attempt
@@ -14,9 +15,11 @@ from exam.models import Exam
 class AttemptViewSet(viewsets.ModelViewSet):
     serializer_class = AttemptSerializer
     queryset = Attempt.objects.all()
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        if self.request.user.role == 'student':
+
+        if hasattr(self.request.user, "role") and self.request.user.role == 'student':
             return Attempt.objects.filter(student_id=self.request.user.id)
         else:
             exam_id = self.request.query_params.get('exam_id')

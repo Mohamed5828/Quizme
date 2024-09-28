@@ -1,16 +1,18 @@
+import fnmatch
+from datetime import timedelta
+
 from django.utils import timezone
+from drf_yasg import openapi
+from drf_yasg.utils import swagger_auto_schema
 from rest_framework.exceptions import NotFound, ParseError, PermissionDenied
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
+from rest_framework.viewsets import ModelViewSet
+
+from authentication.permissions import AUTH_SWAGGER_PARAM
+from authentication.permissions import IsInstructor, isOwner
 from exam.models import Exam
 from exam_v2.serializers import ExamSerializer2
-import fnmatch
-from drf_yasg.utils import swagger_auto_schema
-from drf_yasg import openapi
-from authentication.permissions import AUTH_SWAGGER_PARAM
-from datetime import timedelta
-from authentication.permissions import IsInstructor, isOwner 
 
 
 class ExamViewSet(ModelViewSet):
@@ -28,12 +30,14 @@ class ExamViewSet(ModelViewSet):
             return Exam.objects.get(exam_code=exam_code)
         except Exam.DoesNotExist:
             raise NotFound("Exam not found.")
+
     def get_permissions(self):
         if self.action == 'create':
             return [IsAuthenticated(), IsInstructor()]
-        elif self.action in ['update', 'partial_update', 'destroy','list']:
+        elif self.action in ['update', 'partial_update', 'destroy', 'list']:
             return [IsAuthenticated(), isOwner()]
         return super().get_permissions()
+
     @swagger_auto_schema(
         tags=['exams', 'v2'],
         operation_summary="Retrieve an exam",
