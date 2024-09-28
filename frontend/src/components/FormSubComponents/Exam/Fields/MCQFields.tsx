@@ -65,35 +65,37 @@ const MCQFields = ({ index }: QuestionFieldsProps) => {
           </button>
         </div>
         {fields.map((item, cIndex) => (
-          <div
-            className="flex gap-2 border p-2 rounded items-center"
-            key={item.id}
-          >
-            <input
-              type="text"
-              {...register(`questions.${index}.choices.${cIndex}.desc`, {
-                required: true,
-                minLength: 1,
-              })}
-            />
-            <input
-              type="checkbox"
-              title="Correct Answer"
-              {...register(`questions.${index}.choices.${cIndex}.isCorrect`, {
-                validate: (value) =>
-                  getValues(`questions.${index}.choices`).some(
-                    (c: { isCorrect: boolean }) => c.isCorrect
-                  ) &&
-                  (value === true || value === false),
-              })}
-            />
-            <button
-              className="bg-gray-950 hover:bg-gray-500 text-white font-bold py-1 px-2 rounded-md transition text-sm"
-              onClick={() => remove(cIndex)}
-              type="button"
+          <div className="flex flex-col">
+            <div
+              className="flex gap-2 border p-2 rounded items-center"
+              key={item.id}
             >
-              Remove Choice
-            </button>
+              <input
+                type="text"
+                {...register(`questions.${index}.choices.${cIndex}.desc`, {
+                  required: true,
+                  minLength: 1,
+                })}
+              />
+              <input
+                type="checkbox"
+                title="Correct Answer"
+                {...register(`questions.${index}.choices.${cIndex}.isCorrect`, {
+                  validate: (value) =>
+                    getValues(`questions.${index}.choices`).some(
+                      (c: { isCorrect: boolean }) => c.isCorrect
+                    ) &&
+                    (value === true || value === false),
+                })}
+              />
+              <button
+                className="bg-gray-950 hover:bg-gray-500 text-white font-bold py-1 px-2 rounded-md transition text-sm"
+                onClick={() => remove(cIndex)}
+                type="button"
+              >
+                Remove Choice
+              </button>
+            </div>
             {Array.isArray(errors?.questions) &&
               errors.questions[index]?.choices[cIndex]?.desc && (
                 <p className="text-red-600">This field is required</p>
@@ -101,7 +103,9 @@ const MCQFields = ({ index }: QuestionFieldsProps) => {
           </div>
         ))}
         {Array.isArray(errors?.questions) &&
-          errors.questions[index]?.choices[0].isCorrect && (
+          errors.questions[index]?.choices.some(
+            (c: { desc: string; isCorrect: boolean }) => c.isCorrect
+          ) && (
             <p className="text-red-600">At least one choice must be correct</p>
           )}
       </div>

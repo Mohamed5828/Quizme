@@ -12,6 +12,10 @@ import QuestionsStep from "../FormSubComponents/Exam/QuestionsStep.tsx";
 import ReviewStep from "../FormSubComponents/Exam/ReviewStep.tsx";
 import ParticipantsStep from "../FormSubComponents/Exam/ParticipantsStep.tsx";
 import FormNav from "../FormSubComponents/Exam/FormNav.tsx";
+import { useEffect } from "react";
+import { useUserContext } from "../../../context/UserContext";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 const STEPS = [
   { index: 1, name: "Exam Details", body: <ExamDetailsStep /> },
@@ -30,6 +34,9 @@ const initialProps = {
 const ExamCreationForm = ({
   defaultValues,
 }: ExamCreationFormProps = initialProps) => {
+  const { user } = useUserContext();
+  const navigate = useNavigate();
+
   const step = useSelector((state: RootState) => state.ExamCreationState.step);
   const dispatch = useDispatch();
 
@@ -49,7 +56,12 @@ const ExamCreationForm = ({
   };
   // TODO: Connect to submit endpoint
   const handleSubmit = (data: FieldValues) => console.log(data);
-
+  useEffect(() => {
+    if (!user) {
+      toast.error("You must be logged in to view this page");
+      navigate("/login");
+    }
+  });
   return (
     <FormProvider {...methods}>
       <form

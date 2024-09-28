@@ -15,6 +15,7 @@ import "react-toastify/dist/ReactToastify.css";
 import Landing from "./components/Landing/LandingPage.tsx";
 
 const App: React.FC = () => {
+
   return (
     <UserProvider>
       <Router>
@@ -23,7 +24,7 @@ const App: React.FC = () => {
             <Route path="/login" element={<Login />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/register" element={<RegisterForm />} />
-            <Route path="/" element={<Landing/>} />
+            <Route path="/" element={<Landing />} />
             <Route path="/create-exam" Component={ExamCreationForm} />
             <Route
               path="/all-questions"
