@@ -21,23 +21,18 @@ interface Exam {
 
 const Dashboard: React.FC = () => {
   const [exams, setExams] = useState<Exam[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
   const axiosInstance = getAxiosInstance("/v2");
+  const { data, error, loading } = useFetchData<Exam[]>("/exams/");
 
   useEffect(() => {
-    const fetchExams = async () => {
-      const { data, error } = await useFetchData<Exam[]>("/exams/");
-      if (data) {
-        setExams(data);
-      }
-      if (error) {
-        message.error("Failed to fetch exams");
-        console.error(error);
-      }
-    };
-
-    fetchExams();
-  }, []);
+    if (data) {
+      setExams(data);
+    }
+    if (error) {
+      message.error("Failed to fetch exams");
+      console.error(error);
+    }
+  }, [data, error]);
 
   const handleDeleteExam = async (exam_code: string) => {
     try {
@@ -49,7 +44,7 @@ const Dashboard: React.FC = () => {
       console.error(error);
     }
   };
-  // Define columns for Ant Design table
+
   const columns = [
     {
       title: "Duration",

@@ -13,6 +13,8 @@ import HomeLayout from "./layouts/HomeLayout.tsx";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Landing from "./components/Landing/LandingPage.tsx";
+import ExamAllStudent from "./components/ExamResults/ExamAllStudent.tsx";
+import AllExams from "./components/ExamResults/AllExams.tsx";
 
 const App: React.FC = () => {
 
@@ -35,6 +37,8 @@ const App: React.FC = () => {
               }
             />
             <Route path="/question-bank" Component={QuestionBank} />
+            <Route path="/exam-result/:examCode" Component={ExamAllStudent} />
+            <Route path="/exams" Component={AllExams} />
             <Route path="/dashboard" element={<Dashboard />} />
           </Routes>
           <ToastContainer position="bottom-right" />

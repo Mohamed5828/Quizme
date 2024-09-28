@@ -1,7 +1,7 @@
 const BasicSpinner = ({ className }: { className?: string }) => {
   return (
     <div
-      className={`flex flex-row animate-pulse justify-center items-center h-full ${className}`}
+      className={`flex flex-row animate-pulse justify-center items-center h-full pt-20 ${className}`}
     >
       <div
         className="bg-gray-800 w-3 h-3 rounded-full animate-bounce"

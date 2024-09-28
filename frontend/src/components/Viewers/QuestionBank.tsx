@@ -6,6 +6,7 @@ import { useFetchData } from "../../hooks/useFetchData";
 import postData from "../../utils/postData";
 import AddToExamDropdown from "../QuestionComponents/AddToExamDropdown";
 import { getAxiosInstance } from "../../utils/axiosInstance";
+import BasicSpinner from "../Basic/BasicSpinner";
 
 interface Question {
   id: string;
@@ -33,10 +34,8 @@ const QuestionBank: React.FC = () => {
   const [editingQuestion, setEditingQuestion] = useState<Question | null>(null);
 
   // Use the new endpoints correctly
-  const { data, loading, error, refetch } = useFetchData<Question[]>(
-    "/questionbanks/",
-    "v1"
-  ); // Correct usage for v1
+  const { data, loading, error, refetch } =
+    useFetchData<Question[]>("/questionbanks/");
   const { data: examsData } = useFetchData<{ exams: Exam[] }>("/exams/", "v2");
 
   useEffect(() => {
@@ -47,7 +46,7 @@ const QuestionBank: React.FC = () => {
 
   const onSubmit = useCallback(
     async (formData: FormData) => {
-      const response = await postData("/questionbanks/", formData, "v1"); // Correct usage for v1
+      const response = await postData("/questionbanks/", formData); // Correct usage for v1
       if (!response.error) {
         console.log("Submission successful:", response.resData);
         refetch();
@@ -96,7 +95,7 @@ const QuestionBank: React.FC = () => {
 
   if (loading)
     return (
-      <div className="text-center py-8 text-gray-600">Loading questions...</div>
+      <div className="text-center py-8 text-gray-600">{<BasicSpinner />}</div>
     );
   if (error)
     return (
