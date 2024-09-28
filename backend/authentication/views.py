@@ -52,18 +52,18 @@ class UserLoginAPIView(GenericAPIView):
 
         response = Response(status=status.HTTP_200_OK)
         response.set_cookie(
-            key='access_token',
+            key='accessToken',
             value=access_token,
             httponly=True,
             secure=True,
-
+            samesite='none'
         )
         response.set_cookie(
-            key='refresh_token',
+            key='refreshToken',
             value=refresh_token,
             httponly=True,
             secure=True,
-            samesite='Lax'
+            samesite='none'
         )
 
         response.data = {
@@ -95,6 +95,7 @@ class UserLogoutAPIView(GenericAPIView):
         response = Response(status=status.HTTP_205_RESET_CONTENT)
         response.delete_cookie('access_token')
         response.delete_cookie('refresh_token')
+
         return response
 
 

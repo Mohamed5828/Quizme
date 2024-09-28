@@ -10,7 +10,7 @@ from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
 from authentication.permissions import AUTH_SWAGGER_PARAM
-from authentication.permissions import IsInstructor, isOwner
+from authentication.permissions import IsInstructor, IsOwner
 from exam.models import Exam
 from exam_v2.serializers import ExamSerializer2
 
@@ -35,7 +35,7 @@ class ExamViewSet(ModelViewSet):
         if self.action == 'create':
             return [IsAuthenticated(), IsInstructor()]
         elif self.action in ['update', 'partial_update', 'destroy', 'list']:
-            return [IsAuthenticated(), isOwner()]
+            return [IsAuthenticated(), IsOwner()]
         return super().get_permissions()
 
     @swagger_auto_schema(
@@ -52,7 +52,7 @@ class ExamViewSet(ModelViewSet):
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
         # Check if the user is the owner of the exam
-        if instance.user_id == request.user.id:
+        if instance.user_id == request.user:
             serializer = self.get_serializer(instance)
             return Response(serializer.data)
         # Check if the user is in the whitelist

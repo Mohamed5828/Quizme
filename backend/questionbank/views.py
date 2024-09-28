@@ -12,7 +12,7 @@ from rest_framework.response import Response
 from rest_framework import status
 
 from authentication.permissions import AUTH_SWAGGER_PARAM
-from authentication.permissions import IsInstructor, isOwner
+from authentication.permissions import IsInstructor, IsOwner
 
 
 class QuestionBankViewSet(ModelViewSet):
@@ -21,7 +21,7 @@ class QuestionBankViewSet(ModelViewSet):
     """
     model = QuestionBank
     serializer_class = QuestionBankSerializer
-    permission_classes = [IsAuthenticated , IsInstructor, isOwner]
+    permission_classes = [IsAuthenticated, IsInstructor, IsOwner]
     filter_backends = [SearchFilter]
     search_fields = ['desc', 'type']
     filterset_fields = ['type', 'difficulty']
@@ -87,6 +87,8 @@ class QuestionBankViewSet(ModelViewSet):
     def partial_update(self, request, *args, **kwargs):
         return super().partial_update(request, *args, **kwargs)
 
+    def perform_create(self, serializer):
+        serializer.save(user_id=self.request.user)
     # @action(detail=True, methods=['post'])
     # def delete(self, request, pk=None):
     #     question = self.get_object()

@@ -9,12 +9,13 @@ AUTH_SWAGGER_PARAM = openapi.Parameter('Authorization', openapi.IN_HEADER, descr
 #     def has_permission(self, request, view):
 #         return request.user.is_whitelisted
 
-class isOwner(BasePermission):
+class IsOwner(BasePermission):
     def has_object_permission(self, request, view, obj):
-        return obj.user_id == request.user.id
+        return obj.user_id == request.user
 
 
 class IsInstructor(BasePermission):
+
     def has_permission(self, request, view):
         return request.user.is_authenticated and request.user.is_instructor
 
@@ -22,8 +23,3 @@ class IsInstructor(BasePermission):
 class IsStudent(BasePermission):
     def has_permission(self, request, view):
         return request.user.is_authenticated and not request.user.is_instructor
-
-
-class IsOwner(BasePermission):
-    def has_object_permission(self, request, view, obj):
-        return obj.user == request.user

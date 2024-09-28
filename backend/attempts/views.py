@@ -20,13 +20,13 @@ class AttemptViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
 
         if hasattr(self.request.user, "role") and self.request.user.role == 'student':
-            return Attempt.objects.filter(student_id=self.request.user.id)
+            return Attempt.objects.filter(student_id=self.request.user)
         else:
             exam_id = self.request.query_params.get('exam_id')
             if exam_id:
                 try:
                     exam = Exam.objects.get(id=exam_id)
-                    if exam.user_id != self.request.user.id:
+                    if exam.user_id != self.request.user:
                         raise NotFound()
                     return Attempt.objects.filter(exam_id=exam_id)
                 except Exam.DoesNotExist:
