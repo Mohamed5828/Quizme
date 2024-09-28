@@ -12,7 +12,7 @@ interface UseFetchDataResponse<T> {
 
 export function useFetchData<T>(
   url: string,
-  apiVersion: string = "/v1"
+  apiVersion: string = "v1"
 ): UseFetchDataResponse<T> {
   const [data, setData] = useState<T | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
