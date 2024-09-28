@@ -9,7 +9,7 @@ import axios, {
 // Function to create an Axios instance with dynamic baseURL
 const createAxiosInstance = (apiVersion: string): AxiosInstance => {
   return axios.create({
-    baseURL: `http://127.0.0.1:8000/api${apiVersion}`,
+    baseURL: `http://127.0.0.1:8000/api/${apiVersion}`,
     withCredentials: true,
   });
 };

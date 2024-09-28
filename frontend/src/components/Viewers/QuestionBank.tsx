@@ -4,9 +4,11 @@ import { Trash2, Edit, Plus } from "lucide-react";
 import QuestionsStep from "../FormSubComponents/Exam/QuestionsStep";
 import { useFetchData } from "../../hooks/useFetchData";
 import postData from "../../utils/postData";
+import putData from "../../utils/putData";
 import AddToExamDropdown from "../QuestionComponents/AddToExamDropdown";
 import { getAxiosInstance } from "../../utils/axiosInstance";
 import BasicSpinner from "../Basic/BasicSpinner";
+import deleteData from "../../utils/deleteData";
 
 interface Question {
   id: string;
@@ -46,13 +48,24 @@ const QuestionBank: React.FC = () => {
 
   const onSubmit = useCallback(
     async (formData: FormData) => {
-      const response = await postData("/questionbanks/", formData); // Correct usage for v1
-      if (!response.error) {
-        console.log("Submission successful:", response.resData);
+      // TODO remove this and implement a bulk update/create in the backend
+      const responses = [];
+      for (const question of formData.questions) {
+        const response = question?.id
+          ? await putData(`/questionbanks/${question.id}/`, question)
+          : await postData("/questionbanks/", question, "v1");
+        responses.push(response);
+      }
+      if (!responses.some((response) => response.error)) {
+        console.log("Submission successful:", responses);
+        refetch();
+        setEditingQuestion(null);
+      } else if (responses.some((response) => !response.error)) {
+        console.log("Submission partially successful:", responses);
         refetch();
         setEditingQuestion(null);
       } else {
-        console.error("Error submitting:", response.error);
+        console.error("Error submitting:", responses);
       }
     },
     [refetch]
@@ -64,13 +77,12 @@ const QuestionBank: React.FC = () => {
   };
 
   const handleDelete = async (questionId: string) => {
-    const axiosInstance = getAxiosInstance("v1");
-    try {
-      await axiosInstance.delete(`/questionbanks/${questionId}/delete/`);
-      console.log("Question deleted successfully");
+    const response = await deleteData(`/questionbanks/${questionId}/`);
+    if (!response.error) {
+      console.log("Question deleted");
       refetch();
-    } catch (error) {
-      console.error("Error deleting question:", error);
+    } else {
+      console.error("Error deleting question:", response.error);
     }
   };
 
@@ -157,7 +169,7 @@ const QuestionBank: React.FC = () => {
                     <AddToExamDropdown
                       questionId={question.id}
                       exams={
-                        examsData?.exams.map((exam) => ({
+                        examsData?.exams?.map((exam) => ({
                           ...exam,
                           hasQuestion: false, // default to false, compute this based on actual data
                         })) || []
@@ -182,7 +194,9 @@ const QuestionBank: React.FC = () => {
                   <p className="text-sm text-gray-600">
                     Tags:{" "}
                     <span className="font-medium text-gray-800">
-                      {question.tags.join(", ")}
+                      {Array.isArray(question.tags)
+                        ? question.tags.join(", ")
+                        : question.tags}
                     </span>
                   </p>
                 </div>

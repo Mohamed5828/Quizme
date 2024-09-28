@@ -41,8 +41,8 @@ const LoginForm: React.FC = () => {
       toast.success("Login successful");
       setUserData(
         response.data.user,
-        response.data.access_token,
-        response.data.refresh_token
+        response.data.accessToken,
+        response.data.refreshToken
       );
       navigate("/profile");
     } catch (error) {
