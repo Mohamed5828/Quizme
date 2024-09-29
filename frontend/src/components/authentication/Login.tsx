@@ -39,7 +39,7 @@ const LoginForm: React.FC = () => {
       if (
         signIn({
           auth: {
-            token: response.data.access_token,
+            token: response.data.accesstoken,
             type: "Bearer",
           },
           // refresh: response.data.refresh_token,
@@ -53,7 +53,6 @@ const LoginForm: React.FC = () => {
       toast.error("Login failed. Please check your credentials.");
     }
   };
-  
 
   return (
     <section className="min-h-screen bg-white-100">
@@ -106,9 +105,12 @@ const LoginForm: React.FC = () => {
                         Log in
                       </button>
                       <div>
-                      <button  onClick={() => navigate("/Forgot-password")} className="text-emerald-500 hover:underline mt-3 block">
-                        Forgot password?
-                      </button>
+                        <button
+                          onClick={() => navigate("/Forgot-password")}
+                          className="text-emerald-500 hover:underline mt-3 block"
+                        >
+                          Forgot password?
+                        </button>
                       </div>
                     </div>
 
