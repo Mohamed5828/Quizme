@@ -30,7 +30,7 @@ const Profile: React.FC = () => {
   const navigate = useNavigate();
   // TODO add profile editing functionalities
   useEffect(() => {
-    if (!auth) {
+    if (!isAuthenticated) {
       toast.error("You must be logged in to view this page");
       navigate("/login");
     }
