@@ -53,6 +53,7 @@ const LoginForm: React.FC = () => {
       toast.error("Login failed. Please check your credentials.");
     }
   };
+  
 
   return (
     <section className="min-h-screen bg-white-100">
@@ -104,12 +105,11 @@ const LoginForm: React.FC = () => {
                       >
                         Log in
                       </button>
-                      <a
-                        className="text-emerald-500 hover:underline mt-3 block"
-                        href="#!"
-                      >
+                      <div>
+                      <button  onClick={() => navigate("/Forgot-password")} className="text-emerald-500 hover:underline mt-3 block">
                         Forgot password?
-                      </a>
+                      </button>
+                      </div>
                     </div>
 
                     <div className="flex justify-center">

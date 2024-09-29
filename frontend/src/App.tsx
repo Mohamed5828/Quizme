@@ -18,6 +18,7 @@ import AllExams from "./components/ExamResults/AllExams.tsx";
 import createStore from "react-auth-kit/createStore";
 import AuthProvider from "react-auth-kit";
 import Navbar from "./components/navbar.tsx";
+import ForgotPassword from "./components/authentication/ForgotPassword.tsx";
 // import refresh from "./components/authentication/refresh.ts";
 
 const App: React.FC = () => {
@@ -36,6 +37,7 @@ const App: React.FC = () => {
           <Route path="/register" element={<RegisterForm />} />
           <Route path="/" element={<Landing />} />
           <Route path="/create-exam" Component={ExamCreationForm} />
+          <Route path="/Forgot-password" element={<ForgotPassword />}/>
           <Route
             path="/all-questions"
             element={
