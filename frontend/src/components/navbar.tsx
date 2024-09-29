@@ -1,8 +1,10 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import "../index.css";
+import useAuthUser from "react-auth-kit/hooks/useAuthUser";
+import { User } from "./authentication/Profile";
+import useIsAuthenticated from "react-auth-kit/hooks/useIsAuthenticated";
 
-import { useUserContext } from "../../context/UserContext";
 const HOME_NAV = {
   name: "Home",
   path: "/",
@@ -49,8 +51,8 @@ const NAV_LOGGED_IN_INSTRUCTOR = [
 const NAV_LOGGED_OUT = [HOME_NAV, LOGIN_NAV, REGISTER_NAV];
 const Navbar = () => {
   const [isOpen, setIsOpen] = React.useState(false);
-  const { user } = useUserContext();
-  const isAuthenticated = user ? true : false;
+  const auth: User | null = useAuthUser();
+  const isAuthenticated = useIsAuthenticated();
 
   return (
     <nav
@@ -69,7 +71,7 @@ const Navbar = () => {
         </Link>
         <ul className="hidden sm:flex items-center">
           {isAuthenticated
-            ? user?.role === "student"
+            ? auth?.role === "student"
               ? NAV_LOGGED_IN_STUDENT.map((item) => (
                   <li key={item.path} className="mx-2">
                     <Link key={item.path} to={item.path}>
@@ -113,7 +115,7 @@ const Navbar = () => {
       >
         <ul>
           {isAuthenticated
-            ? user?.role === "student"
+            ? auth?.role === "student"
               ? NAV_LOGGED_IN_STUDENT.map((item) => (
                   <Link to={item.path} key={item.path}>
                     <li

@@ -37,7 +37,7 @@ const RegisterForm: React.FC = () => {
       return;
     }
 
-    const axiosInstance = getAxiosInstance("v1");
+    const axiosInstance = getAxiosInstance();
     try {
       const response = await axiosInstance.post(
         "/auth/register/",
@@ -80,7 +80,6 @@ const RegisterForm: React.FC = () => {
     >
       <div className="bg-white bg-opacity-50 min-h-screen flex items-center">
         <div className="container mx-auto">
-          
           <div className="flex justify-center items-center min-h-screen">
             <div className="w-full max-w-lg">
               <div className="bg-Cultured shadow-lg rounded-lg p-6">

@@ -13,9 +13,10 @@ import ReviewStep from "../FormSubComponents/Exam/ReviewStep.tsx";
 import ParticipantsStep from "../FormSubComponents/Exam/ParticipantsStep.tsx";
 import FormNav from "../FormSubComponents/Exam/FormNav.tsx";
 import { useEffect } from "react";
-import { useUserContext } from "../../../context/UserContext";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import useAuthUser from "react-auth-kit/hooks/useAuthUser";
+import { User } from "../authentication/Profile.tsx";
 
 const STEPS = [
   { index: 1, name: "Exam Details", body: <ExamDetailsStep /> },
@@ -34,7 +35,8 @@ const initialProps = {
 const ExamCreationForm = ({
   defaultValues,
 }: ExamCreationFormProps = initialProps) => {
-  const { user } = useUserContext();
+  const auth: User | null = useAuthUser();
+
   const navigate = useNavigate();
 
   const step = useSelector((state: RootState) => state.ExamCreationState.step);
@@ -57,8 +59,8 @@ const ExamCreationForm = ({
   // TODO: Connect to submit endpoint
   const handleSubmit = (data: FieldValues) => console.log(data);
   useEffect(() => {
-    if (!user) {
-      toast.error("You must be logged in to view this page");
+    if (!auth || auth.role != "instructor") {
+      toast.error("You must be logged in and instructor to view this page");
       navigate("/login");
     }
   });

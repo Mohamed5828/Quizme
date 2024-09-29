@@ -1,19 +1,15 @@
-
 import React, { useState } from "react";
 import "../../styles/login.css"; // Ensure you add the custom styles here
 import Logo from "../../images/quizme-high-resolution-logo (1).png";
-import loginpic from '../../images/loginpic.jpg'
+import loginpic from "../../images/loginpic.jpg";
 import "../../styles/login.css";
 import { Link, useNavigate } from "react-router-dom";
-import { useUserContext } from "../../../context/UserContext";
-import axios from "axios";
 import { toast } from "react-toastify";
 import { getAxiosInstance } from "../../utils/axiosInstance";
-
-
+import useSignIn from "react-auth-kit/hooks/useSignIn";
 
 const LoginForm: React.FC = () => {
-  const { setUserData } = useUserContext();
+  const signIn = useSignIn();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     email: "",
@@ -39,18 +35,24 @@ const LoginForm: React.FC = () => {
       });
       console.log("Login successful", response.data);
       toast.success("Login successful");
-      setUserData(
-        response.data.user,
-        response.data.accessToken,
-        response.data.refreshToken
-      );
-      navigate("/profile");
+
+      if (
+        signIn({
+          auth: {
+            token: response.data.access_token,
+            type: "Bearer",
+          },
+          // refresh: response.data.refresh_token,
+          userState: response.data.user,
+        })
+      ) {
+        navigate("/profile");
+      }
     } catch (error) {
       console.error("Login error:", error);
       toast.error("Login failed. Please check your credentials.");
     }
   };
-
 
   return (
     <section className="min-h-screen bg-white-100">
@@ -124,7 +126,7 @@ const LoginForm: React.FC = () => {
 
                 {/* Right Section - Wavy Line */}
                 <div className="md:w-1/2 bg-white-500 text-white p-8 flex items-center relative">
-                <img src={loginpic} alt="" />
+                  <img src={loginpic} alt="" />
                 </div>
               </div>
             </div>

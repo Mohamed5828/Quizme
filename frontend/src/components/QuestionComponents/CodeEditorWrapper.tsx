@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import CodeEditor from "./CodeEditor";
 import { Language } from "./constants";
-import { useUserContext } from "../../../context/UserContext";
 import postData from "../../utils/postData";
+import useAuthUser from "react-auth-kit/hooks/useAuthUser";
+import { User } from "../authentication/Profile";
 
 interface CodeEditorWrapperProps {
   questionId: number;
@@ -21,12 +22,12 @@ const CodeEditorWrapper: React.FC<CodeEditorWrapperProps> = ({
   const [answerCode, setAnswerCode] = useState<string>(
     starterCode[0]?.code || ""
   );
-  const { user } = useUserContext();
+  const auth: User | null = useAuthUser();
 
   const handleSubmit = async () => {
-    if (!answerCode || !user) return;
+    if (!answerCode || !auth) return;
     const url = `/api/submit-answer/${questionId}`;
-    const data = { answerCode, userId: user };
+    const data = { answerCode, userId: auth.id };
     const { resData, error } = await postData(url, data);
     if (error) {
       console.error("Submission error:", error);

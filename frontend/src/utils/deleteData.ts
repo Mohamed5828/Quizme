@@ -10,13 +10,14 @@ interface DeleteDataResponse<T> {
 async function deleteData<T>(
   url: string,
   apiVersion: string = "v1",
+  needAuth: boolean = true,
   headers: Record<string, string> = {}
 ): Promise<DeleteDataResponse<T>> {
   let loading = true;
   let error: AxiosError | null = null;
   let resData: T | null = null;
 
-  const axiosInstance = getAxiosInstance(apiVersion);
+  const axiosInstance = getAxiosInstance(apiVersion, needAuth);
 
   const config: AxiosRequestConfig = {
     headers: { ...headers },

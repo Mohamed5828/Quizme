@@ -1,19 +1,36 @@
 import React, { useEffect } from "react";
 import "font-awesome/css/font-awesome.min.css";
 import "../../styles/profile.css";
-import { useUserContext } from "../../../context/UserContext";
 import ProfileForm from "../Forms/ProfileForm";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { getAxiosInstance } from "../../utils/axiosInstance";
+import useAuthUser from "react-auth-kit/hooks/useAuthUser";
+import useAuthHeader from "react-auth-kit/hooks/useAuthHeader";
+import useIsAuthenticated from "react-auth-kit/hooks/useIsAuthenticated";
+import useSignOut from "react-auth-kit/hooks/useSignOut";
 
+export interface User {
+  email: string;
+  username: string;
+  id: number;
+  role: "student" | "instructor";
+}
 const Profile: React.FC = () => {
-  const { user, refreshToken, setUserData } = useUserContext();
+  const auth: User | null = useAuthUser();
+  const authHeader = useAuthHeader();
+  const isAuthenticated = useIsAuthenticated();
+  const signOut = useSignOut();
+
+  console.log(auth); //user info
+  console.log(authHeader); //bearer
+  console.log(isAuthenticated); //boolean
+  const axiosInstance = getAxiosInstance();
 
   const navigate = useNavigate();
   // TODO add profile editing functionalities
   useEffect(() => {
-    if (!user) {
+    if (!auth) {
       toast.error("You must be logged in to view this page");
       navigate("/login");
     }
@@ -25,17 +42,11 @@ const Profile: React.FC = () => {
         <button
           className="bg-red-400 text-white px-6 py-2 rounded-lg hover:bg-red-500 transition-colors duration-200"
           onClick={() => {
-            const axiosInstance = getAxiosInstance("v1");
             axiosInstance
-              .post("/auth/logout/", {
-                refresh: refreshToken,
-              })
+              .post("/auth/logout/")
               .then(() => {
+                signOut();
                 toast.success("Logged out successfully");
-                localStorage.removeItem("accessToken");
-                localStorage.removeItem("refreshToken");
-                localStorage.removeItem("user");
-                setUserData(null, null, null);
                 navigate("/");
               })
               .catch((error) => {
@@ -49,7 +60,7 @@ const Profile: React.FC = () => {
           Logout
         </button>
       </div>
-      <ProfileForm {...user} />
+      <ProfileForm {...auth} />
     </main>
   );
 };
