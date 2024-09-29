@@ -12,7 +12,8 @@ from .views import (
     UserLoginAPIView,
     UserLogoutAPIView,
     UserInfoAPIView,
-    CustomTokenRefreshView
+    CustomTokenRefreshView,
+    UserViewSet,
 )
 
 urlpatterns = [
@@ -21,4 +22,5 @@ urlpatterns = [
     path('logout/', UserLogoutAPIView.as_view(), name='logout'),
     path('me/', UserInfoAPIView.as_view(), name='user-info'),
     path('token/refresh/', CustomTokenRefreshView.as_view(), name='token_refresh'),
+    path('users/<str:category>/', UserViewSet.as_view(), name='users-by-category'),
 ]
