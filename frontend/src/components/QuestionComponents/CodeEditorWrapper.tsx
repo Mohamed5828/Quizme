@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import CodeEditor from "./CodeEditor";
 import { Language } from "./constants";
 import postData from "../../utils/postData";
-import useAuthUser from "react-auth-kit/hooks/useAuthUser";
 import { User } from "../authentication/Profile";
+import { useUserContext } from "../../../context/UserContext";
 
 interface CodeEditorWrapperProps {
   questionId: number;
@@ -19,10 +19,11 @@ const CodeEditorWrapper: React.FC<CodeEditorWrapperProps> = ({
   questionId,
   starterCode,
 }) => {
+  const { user } = useUserContext();
   const [answerCode, setAnswerCode] = useState<string>(
     starterCode[0]?.code || ""
   );
-  const auth: User | null = useAuthUser();
+  const auth: User | null = user;
 
   const handleSubmit = async () => {
     if (!answerCode || !auth) return;

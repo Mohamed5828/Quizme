@@ -6,16 +6,15 @@ import "../../styles/login.css";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { getAxiosInstance } from "../../utils/axiosInstance";
-import useSignIn from "react-auth-kit/hooks/useSignIn";
+import { useUserContext } from "../../../context/UserContext";
 
 const LoginForm: React.FC = () => {
-  const signIn = useSignIn();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
-
+  const { isLoggedIn, user, accessToken, setUserData } = useUserContext();
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
     setFormData((prevFormData) => ({
@@ -35,19 +34,10 @@ const LoginForm: React.FC = () => {
       });
       console.log("Login successful", response.data);
       toast.success("Login successful");
-
-      if (
-        signIn({
-          auth: {
-            token: response.data.accessToken,
-            type: "Bearer",
-          },
-          // refresh: response.data.refresh_token,
-          userState: response.data.user,
-        })
-      ) {
-        navigate("/profile");
-      }
+      setUserData(response.data.user, response.data.accessToken);
+      console.log(user);
+      console.log(accessToken);
+      navigate("/profile");
     } catch (error) {
       console.error("Login error:", error);
       toast.error("Login failed. Please check your credentials.");

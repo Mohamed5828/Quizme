@@ -1,9 +1,8 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import "../index.css";
-import useAuthUser from "react-auth-kit/hooks/useAuthUser";
 import { User } from "./authentication/Profile";
-import useIsAuthenticated from "react-auth-kit/hooks/useIsAuthenticated";
+import { useUserContext } from "../../context/UserContext";
 
 const HOME_NAV = {
   name: "Home",
@@ -51,9 +50,7 @@ const NAV_LOGGED_IN_INSTRUCTOR = [
 const NAV_LOGGED_OUT = [HOME_NAV, LOGIN_NAV, REGISTER_NAV];
 const Navbar = () => {
   const [isOpen, setIsOpen] = React.useState(false);
-  const auth: User | null = useAuthUser();
-  const isAuthenticated = useIsAuthenticated();
-
+  const { isLoggedIn, user } = useUserContext();
   return (
     <nav
       className="bg-gray-200 flex flex-col px-4 py-2 sm:px-6 lg:px-8"
@@ -70,8 +67,8 @@ const Navbar = () => {
           Quizme
         </Link>
         <ul className="hidden sm:flex items-center">
-          {isAuthenticated
-            ? auth?.role === "student"
+          {isLoggedIn
+            ? user?.role === "student"
               ? NAV_LOGGED_IN_STUDENT.map((item) => (
                   <li key={item.path} className="mx-2">
                     <Link key={item.path} to={item.path}>
@@ -114,8 +111,8 @@ const Navbar = () => {
         }`}
       >
         <ul>
-          {isAuthenticated
-            ? auth?.role === "student"
+          {isLoggedIn
+            ? user?.role === "student"
               ? NAV_LOGGED_IN_STUDENT.map((item) => (
                   <Link to={item.path} key={item.path}>
                     <li

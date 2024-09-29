@@ -15,8 +15,9 @@ import FormNav from "../FormSubComponents/Exam/FormNav.tsx";
 import { useEffect } from "react";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
-import useAuthUser from "react-auth-kit/hooks/useAuthUser";
+
 import { User } from "../authentication/Profile.tsx";
+import { useUserContext } from "../../../context/UserContext.tsx";
 
 const STEPS = [
   { index: 1, name: "Exam Details", body: <ExamDetailsStep /> },
@@ -35,7 +36,8 @@ const initialProps = {
 const ExamCreationForm = ({
   defaultValues,
 }: ExamCreationFormProps = initialProps) => {
-  const auth: User | null = useAuthUser();
+  const { user } = useUserContext();
+  const auth: User | null = user;
 
   const navigate = useNavigate();
 
