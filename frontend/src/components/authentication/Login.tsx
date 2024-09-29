@@ -39,7 +39,7 @@ const LoginForm: React.FC = () => {
       if (
         signIn({
           auth: {
-            token: response.data.accesstoken,
+            token: response.data.accessToken,
             type: "Bearer",
           },
           // refresh: response.data.refresh_token,
