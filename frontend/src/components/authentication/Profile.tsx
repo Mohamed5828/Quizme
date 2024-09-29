@@ -48,6 +48,7 @@ const Profile: React.FC = () => {
                 signOut();
                 toast.success("Logged out successfully");
                 navigate("/");
+                window.location.reload();
               })
               .catch((error) => {
                 toast.error(
