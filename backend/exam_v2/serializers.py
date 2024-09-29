@@ -14,7 +14,7 @@ class ExamSerializer2(serializers.ModelSerializer):
 
     class Meta:
         model = Exam
-        fields = ['id', 'duration', 'exam_code', 'created_at', 'expiration_date', 'whitelist', 'questions']
+        fields = ['id', 'duration', 'exam_code', 'created_at', 'expiration_date', 'whitelist', 'questions','title','group_name']
         # exclude = ['user_id']
 
     def create(self, validated_data):
