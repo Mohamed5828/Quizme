@@ -5,9 +5,10 @@ interface ProfileFormProps {
   username?: string | undefined;
   id?: number | undefined;
   role?: string | undefined;
+  category?: string | undefined;
 }
 
-const ProfileForm = ({ email, username, id, role }: ProfileFormProps = {}) => {
+const ProfileForm = ({ email, username, id, role ,category}: ProfileFormProps = {}) => {
   return (
     <form className="flex flex-col space-y-4  [&_input]:p-2 [&_label]:text-sm [&_label]:text-gray-500 [&_div]:border-2 [&_div]:border-gray-300 [&_div]:rounded [&_div]:p-4 [&_div]:mx-1 [&_div]:flex [&_div]:items-center [&_input]:flex-grow">
       {/* <div>
@@ -40,6 +41,16 @@ const ProfileForm = ({ email, username, id, role }: ProfileFormProps = {}) => {
           type="text"
           id="role"
           value={role}
+          readOnly
+          onFocus={(e) => e.target.blur()}
+        />
+      </div>
+      <div>
+        <label htmlFor="category">Category:</label>
+        <input
+          type="text"
+          id="category"
+          value={category}
           readOnly
           onFocus={(e) => e.target.blur()}
         />
