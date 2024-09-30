@@ -55,6 +55,12 @@ class ExamViewSet(ModelViewSet):
         if instance.user_id == request.user:
             serializer = self.get_serializer(instance)
             return Response(serializer.data)
+        
+        if instance.group_name:
+            if request.user.category == instance.group_name:
+                serializer = self.get_serializer(instance)
+                return Response(serializer.data)
+    
         # Check if the user is in the whitelist
         whitelist = instance.whitelist
         for pattern in whitelist:
@@ -87,7 +93,9 @@ class ExamViewSet(ModelViewSet):
         manual_parameters=[AUTH_SWAGGER_PARAM],
     )
     def create(self, request, *args, **kwargs):
-        request.data['duration'] = timedelta(minutes=int(request.data['duration']))
+        duration_minutes = int(request.data['duration'])
+        request.data['duration'] = timedelta(minutes=duration_minutes)
+
         return super().create(request, *args, **kwargs)
 
     @swagger_auto_schema(

@@ -13,6 +13,7 @@ class Exam(models.Model):
     expiration_date = models.DateTimeField()
     max_grade = models.IntegerField()
     whitelist = models.JSONField(default=list)
+    group_name = models.CharField(max_length=100 ,blank=True, null=True)
 
     def save(self, *args, **kwargs):
         if not self.exam_code:
