@@ -18,7 +18,7 @@ class UserViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         category = self.request.query_params.get('category', None)
-        return CustomUser.objects.filter(category_name=category)
+        return CustomUser.objects.filter(category=category)
     
 class UserRegistrationAPIView(GenericAPIView):
     permission_classes = (AllowAny,)
@@ -29,16 +29,40 @@ class UserRegistrationAPIView(GenericAPIView):
         operation_description="Register a new user",
         responses={201: UserRegistrationSerializer(many=False)}
     )
-    def post(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        user = serializer.save()
-        token = RefreshToken.for_user(user)
-        data = serializer.data
+    # def post(self, request, *args, **kwargs):
+    #     serializer = self.get_serializer(data=request.data)
+    #     print(request.data)
+    #     serializer.is_valid(raise_exception=True)
+    #     user = serializer.save()
+    #     token = RefreshToken.for_user(user)
+    #     data = serializer.data
 
-        data["tokens"] = {"refresh": str(token),
-                          "access": str(token.access_token)}
-        return Response(data, status=status.HTTP_201_CREATED)
+    #     data["tokens"] = {"refresh": str(token),
+    #                       "access": str(token.access_token)}
+    #     return Response(data, status=status.HTTP_201_CREATED)
+    
+    def post(self, request, *args, **kwargs):
+        # Print the incoming request data for debugging
+        print("Request Data:", request.data)
+
+        serializer = self.get_serializer(data=request.data)
+        try:
+            serializer.is_valid(raise_exception=True)  # This will raise an exception if validation fails
+            user = serializer.save()  # Save the new user
+
+            # Generate JWT tokens
+            token = RefreshToken.for_user(user)
+            data = serializer.data
+            data["tokens"] = {
+                "refresh": str(token),
+                "access": str(token.access_token)
+            }
+
+            return Response(data, status=status.HTTP_201_CREATED)
+        
+        except Exception as e:
+            print("Validation Error:", str(e))  # Print the error for debugging
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class UserLoginAPIView(GenericAPIView):
