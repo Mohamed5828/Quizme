@@ -87,7 +87,9 @@ class ExamViewSet(ModelViewSet):
         manual_parameters=[AUTH_SWAGGER_PARAM],
     )
     def create(self, request, *args, **kwargs):
-        request.data['duration'] = timedelta(minutes=int(request.data['duration']))
+        duration_minutes = int(request.data['duration'])
+        request.data['duration'] = timedelta(minutes=duration_minutes)
+
         return super().create(request, *args, **kwargs)
 
     @swagger_auto_schema(
