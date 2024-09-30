@@ -13,8 +13,8 @@ from .views import (
     UserLogoutAPIView,
     UserInfoAPIView,
     CustomTokenRefreshView,
-    UserViewSet,
 )
+from authentication.views import UserViewSet
 
 urlpatterns = [
     path('register/', UserRegistrationAPIView.as_view(), name='register'),
@@ -22,5 +22,5 @@ urlpatterns = [
     path('logout/', UserLogoutAPIView.as_view(), name='logout'),
     path('me/', UserInfoAPIView.as_view(), name='user-info'),
     path('token/refresh/', CustomTokenRefreshView.as_view(), name='token_refresh'),
-    path('users/<str:category>/', UserViewSet.as_view(), name='users-by-category'),
+    path('users/<str:category>/', UserViewSet.as_view({'get': 'list'}), name='users-by-category'),
 ]
