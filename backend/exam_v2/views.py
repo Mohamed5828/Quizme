@@ -55,6 +55,12 @@ class ExamViewSet(ModelViewSet):
         if instance.user_id == request.user:
             serializer = self.get_serializer(instance)
             return Response(serializer.data)
+        
+        if instance.group_name:
+            if request.user.category == instance.group_name:
+                serializer = self.get_serializer(instance)
+                return Response(serializer.data)
+    
         # Check if the user is in the whitelist
         whitelist = instance.whitelist
         for pattern in whitelist:

@@ -15,8 +15,7 @@ class ExamSerializer2(serializers.ModelSerializer):
 
     class Meta:
         model = Exam
-        fields = ['exam_code', 'duration', 'max_grade', 'start_date', 'expiration_date', 'questions', 'participants']
-
+        fields = ['exam_code', 'duration', 'max_grade', 'start_date', 'expiration_date', 'questions', 'participants',"title","group_name"]
     def create(self, validated_data):
         # Extract questions and participants (whitelist)
         questions_list = validated_data.pop('questions')
