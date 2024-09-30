@@ -6,6 +6,11 @@ from rest_framework.permissions import IsAuthenticated
 from answers.models import Answer
 from answers.serializers import AnswerSerializer
 from authentication.permissions import AUTH_SWAGGER_PARAM
+from rest_framework import status
+from django.db import transaction
+from exam.models import Question, Exam
+from authentication.models import CustomUser
+from code_executor.views import TaskViewSet
 
 
 class AnswerViewSet(ModelViewSet):
@@ -77,3 +82,71 @@ class EvaluateAnswerView(APIView):
         answer_id = kwargs.get('answer_id')
         # TODO: Implement evaluation logic within celery tasks
         return Response()
+
+class EvaluateCode(APIView):
+    def post(self, request, *args, **kwargs):
+        run_code = request.data.get("code")
+        language = request.data.get("language")
+        question_id = request.data.get("question_id")
+        exam_id = request.data.get("exam_id")
+        student_id = request.data.get("student_id")
+
+        try:
+            current_question = Question.objects.get(id=question_id)
+            exam = Exam.objects.get(id=exam_id)
+            student = CustomUser.objects.get(id=student_id)
+        except (Question.DoesNotExist, Exam.DoesNotExist, CustomUser.DoesNotExist):
+            return Response({"error": "Question, Exam, or Student not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        test_cases = current_question.test_cases
+
+        all_passed = True
+        results = []
+
+        for test in test_cases:
+            celery_task = TaskViewSet.execute_code(None, language=language, code=run_code, stdin=test.get('input', ''))
+            output = celery_task.get("output", {})
+
+            if output.get("stderr"):
+                return Response({
+                    "error": "Code execution error",
+                    "details": output["stderr"]
+                }, status=status.HTTP_400_BAD_REQUEST)
+
+            passed = output.get("stdout", "").strip() == test.get('output', '').strip()
+            all_passed = all_passed and passed
+
+            results.append({
+                "passed": passed,
+                "input": test.get('input', ''),
+                "expected_output": test.get('output', ''),
+                "actual_output": output.get("stdout", "").strip()
+            })
+
+            if not passed:
+                break  # Stop on first failed test case
+
+        question_score = current_question.grade if all_passed else 0
+
+        with transaction.atomic():
+            answer, created = Answer.objects.update_or_create(
+                attempt_id__student_id=student,
+                attempt_id__exam_id=exam,
+                question_id=current_question,
+                defaults={
+                    'code': run_code,
+                    'score': question_score
+                }
+            )
+
+        if all_passed:
+            return Response({
+                "message": "All test cases passed",
+                "score": question_score,
+                "max_score": current_question.grade,
+            })
+        else:
+            return Response({
+                "message": "Some test cases failed",
+                "results": results
+            }, status=status.HTTP_400_BAD_REQUEST)
