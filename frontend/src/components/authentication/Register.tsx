@@ -11,6 +11,7 @@ const RegisterForm: React.FC = () => {
     email: "",
     password1: "",
     password2: "",
+    category:"",
     termsAccepted: false,
     role: "",
   });
@@ -47,6 +48,7 @@ const RegisterForm: React.FC = () => {
           password1: formData.password1,
           password2: formData.password2,
           role: formData.role,
+          category: formData.category,
         },
         {
           headers: {
@@ -128,6 +130,16 @@ const RegisterForm: React.FC = () => {
                       className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
                       placeholder="Repeat your password"
                       value={formData.password2}
+                      onChange={handleChange}
+                    />
+                  </div>
+                  <div className="mb-4">
+                    <input
+                      type="category"
+                      id="category"
+                      className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+                      placeholder="category"
+                      value={formData.category}
                       onChange={handleChange}
                     />
                   </div>

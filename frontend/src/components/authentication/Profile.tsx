@@ -12,6 +12,7 @@ export interface User {
   username: string;
   id: number;
   role: "student" | "instructor";
+  category: string;
 }
 const Profile: React.FC = () => {
   const { logout, user } = useUserContext();
