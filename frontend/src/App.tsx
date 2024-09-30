@@ -19,6 +19,7 @@ import createStore from "react-auth-kit/createStore";
 import AuthProvider from "react-auth-kit";
 import Navbar from "./components/navbar.tsx";
 import ForgotPassword from "./components/authentication/ForgotPassword.tsx";
+import ChangePassword from "./components/authentication/ResetPassword.tsx";
 // import refresh from "./components/authentication/refresh.ts";
 
 const App: React.FC = () => {
@@ -38,6 +39,8 @@ const App: React.FC = () => {
           <Route path="/" element={<Landing />} />
           <Route path="/create-exam" Component={ExamCreationForm} />
           <Route path="/Forgot-password" element={<ForgotPassword />}/>
+          <Route path="/api/v1/auth/reset-password/:uidb64/:token" element={<ChangePassword />}/>
+          
           <Route
             path="/all-questions"
             element={
