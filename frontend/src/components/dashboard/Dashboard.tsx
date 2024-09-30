@@ -3,6 +3,7 @@ import axios from "axios";
 import { Table, Spin, message, Button } from "antd";
 import { useFetchData } from "../../hooks/useFetchData";
 import { getAxiosInstance } from "../../utils/axiosInstance";
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 
 // Define the structure of the Exam data
 interface Question {
@@ -13,16 +14,17 @@ interface Question {
 interface Exam {
   exam_id: number;
   duration: string;
-  exam_code: string;
-  created_at: string;
-  expiration_date: string;
+  examCode: string;
+  startDate: string;
+  expirationDate: string;
   questions: Question[];
 }
 
 const Dashboard: React.FC = () => {
   const [exams, setExams] = useState<Exam[]>([]);
   const axiosInstance = getAxiosInstance("/v2");
-  const { data, error, loading } = useFetchData<Exam[]>("/exams/");
+  const { data, error, loading } = useFetchData<Exam[]>("/exams/", "v2");
+  const navigate = useNavigate(); // Initialize navigate
 
   useEffect(() => {
     if (data) {
@@ -37,12 +39,16 @@ const Dashboard: React.FC = () => {
   const handleDeleteExam = async (exam_code: string) => {
     try {
       await axiosInstance.delete(`/exams/${exam_code}/`);
-      setExams(exams.filter((exam) => exam.exam_code !== exam_code));
+      setExams(exams.filter((exam) => exam.examCode !== exam_code));
       message.success("Exam deleted successfully");
     } catch (error) {
       message.error("Failed to delete exam");
       console.error(error);
     }
+  };
+
+  const handleRowClick = (examCode: string) => {
+    navigate(`/exam/${examCode}`); // Redirect to the exam page
   };
 
   const columns = [
@@ -53,18 +59,18 @@ const Dashboard: React.FC = () => {
     },
     {
       title: "Exam Code",
-      dataIndex: "exam_code",
-      key: "exam_code",
+      dataIndex: "examCode",
+      key: "examCode",
     },
     {
       title: "Created At",
-      dataIndex: "created_at",
-      key: "created_at",
+      dataIndex: "startDate",
+      key: "startDate",
     },
     {
       title: "Expiration Date",
-      dataIndex: "expiration_date",
-      key: "expiration_date",
+      dataIndex: "expirationDate",
+      key: "expirationDate",
     },
     {
       title: "Questions Count",
@@ -78,7 +84,10 @@ const Dashboard: React.FC = () => {
         <Button
           type="primary"
           danger
-          onClick={() => handleDeleteExam(record.exam_code)}
+          onClick={(e) => {
+            e.stopPropagation(); // Prevent row click event
+            handleDeleteExam(record.examCode);
+          }}
         >
           Delete
         </Button>
@@ -92,7 +101,15 @@ const Dashboard: React.FC = () => {
       {loading ? (
         <Spin size="large" />
       ) : (
-        <Table dataSource={exams} columns={columns} rowKey="exam_id" />
+        <Table
+          dataSource={exams}
+          columns={columns}
+          rowKey="exam_id"
+          onRow={(record) => ({
+            onClick: () => handleRowClick(record.examCode),
+            className: "cursor-pointer",
+          })}
+        />
       )}
     </div>
   );

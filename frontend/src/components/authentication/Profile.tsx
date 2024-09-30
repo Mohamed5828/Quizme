@@ -14,17 +14,10 @@ export interface User {
   role: "student" | "instructor";
 }
 const Profile: React.FC = () => {
-  const { logout, isLoggedIn, user } = useUserContext();
+  const { logout, user } = useUserContext();
   const axiosInstance = getAxiosInstance();
 
   const navigate = useNavigate();
-  // TODO add profile editing functionalities
-  useEffect(() => {
-    if (!isLoggedIn) {
-      toast.error("You must be logged in to view this page");
-      navigate("/login");
-    }
-  });
   return (
     <main className="container mt-4">
       <div className="flex justify-between items-center mb-4">
@@ -32,13 +25,12 @@ const Profile: React.FC = () => {
         <button
           className="bg-red-400 text-white px-6 py-2 rounded-lg hover:bg-red-500 transition-colors duration-200"
           onClick={() => {
+            logout();
             axiosInstance
               .post("/auth/logout/")
               .then(() => {
-                logout();
                 toast.success("Logged out successfully");
                 navigate("/");
-                window.location.reload();
               })
               .catch((error) => {
                 toast.error(

@@ -25,7 +25,11 @@ const QuestionsStep = () => {
   }, [append, fields.length]);
 
   const watchedQuestions = getValues("questions");
-
+  const handleTagInputBlur = (index: number) => {
+    const tagsInput = getValues(`questions.${index}.tags`);
+    const tagsArray = tagsInput.split(",").map((tag: string) => tag.trim());
+    setValue(`questions.${index}.tags`, tagsArray);
+  };
   return (
     <div className="space-y-6">
       {fields.map((item, index) => (
@@ -62,6 +66,7 @@ const QuestionsStep = () => {
                   className="w-full border-2 border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
                   {...register(`questions.${index}.tags`)}
                   placeholder="Comma separated tags"
+                  onBlur={() => handleTagInputBlur(index)}
                 />
               </div>
               <div>
@@ -106,7 +111,7 @@ const QuestionsStep = () => {
         </div>
       ))}
       <button
-        className="w-full px-6 py-3 border border-transparent rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-300"
+        className="w-full px-6 py-3 border border-transparent rounded-md text-white bg-emerald-600 hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition-all duration-300"
         type="button"
         onClick={() =>
           append({ desc: "", type: "", grade: "", tags: [], difficulty: "" })

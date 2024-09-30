@@ -18,6 +18,7 @@ import { useNavigate } from "react-router-dom";
 
 import { User } from "../authentication/Profile.tsx";
 import { useUserContext } from "../../../context/UserContext.tsx";
+import postData from "../../utils/postData.ts";
 
 const STEPS = [
   { index: 1, name: "Exam Details", body: <ExamDetailsStep /> },
@@ -30,12 +31,7 @@ interface ExamCreationFormProps {
   defaultValues?: FieldValues;
 }
 
-const initialProps = {
-  defaultValues: {},
-};
-const ExamCreationForm = ({
-  defaultValues,
-}: ExamCreationFormProps = initialProps) => {
+const ExamCreationForm = ({ defaultValues = {} }: ExamCreationFormProps) => {
   const { user } = useUserContext();
   const auth: User | null = user;
 
@@ -58,14 +54,19 @@ const ExamCreationForm = ({
   const handlePrev = () => {
     dispatch(decrementStep());
   };
+
   // TODO: Connect to submit endpoint
-  const handleSubmit = (data: FieldValues) => console.log(data);
-  useEffect(() => {
-    if (!auth || auth.role != "instructor") {
-      toast.error("You must be logged in and instructor to view this page");
-      navigate("/login");
+  const handleSubmit = async (data: FieldValues) => {
+    try {
+      const { participantsInput, ...restData } = data;
+      await postData("/exams/", restData, "v2");
+      toast.success("Exam created successfully!");
+      navigate("/dashboard");
+    } catch (error) {
+      toast.error("An error occurred while creating the exam.");
     }
-  });
+  };
+
   return (
     <FormProvider {...methods}>
       <form
@@ -87,4 +88,5 @@ const ExamCreationForm = ({
     </FormProvider>
   );
 };
+
 export default ExamCreationForm;
