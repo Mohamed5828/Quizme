@@ -3,7 +3,7 @@ import axios from "axios";
 import { Table, Spin, message, Button } from "antd";
 import { useFetchData } from "../../hooks/useFetchData";
 import { getAxiosInstance } from "../../utils/axiosInstance";
-import { useNavigate } from "react-router-dom"; // Import useNavigate
+import { useNavigate } from "react-router-dom";
 
 // Define the structure of the Exam data
 interface Question {
@@ -20,11 +20,24 @@ interface Exam {
   questions: Question[];
 }
 
+// Utility function to format date
+const formatDate = (dateString: string) => {
+  const options: Intl.DateTimeFormatOptions = {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    timeZone: "UTC", // adjust according to your timezone
+  };
+  return new Intl.DateTimeFormat("en-US", options).format(new Date(dateString));
+};
+
 const Dashboard: React.FC = () => {
   const [exams, setExams] = useState<Exam[]>([]);
-  const axiosInstance = getAxiosInstance("/v2");
+  const axiosInstance = getAxiosInstance("v2");
   const { data, error, loading } = useFetchData<Exam[]>("/exams/", "v2");
-  const navigate = useNavigate(); // Initialize navigate
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (data) {
@@ -48,7 +61,7 @@ const Dashboard: React.FC = () => {
   };
 
   const handleRowClick = (examCode: string) => {
-    navigate(`/exam/${examCode}`); // Redirect to the exam page
+    navigate(`/exam-result/${examCode}`);
   };
 
   const columns = [
@@ -66,11 +79,13 @@ const Dashboard: React.FC = () => {
       title: "Created At",
       dataIndex: "startDate",
       key: "startDate",
+      render: (text: string) => formatDate(text), // Format startDate
     },
     {
       title: "Expiration Date",
       dataIndex: "expirationDate",
       key: "expirationDate",
+      render: (text: string) => formatDate(text), // Format expirationDate
     },
     {
       title: "Questions Count",
@@ -85,7 +100,7 @@ const Dashboard: React.FC = () => {
           type="primary"
           danger
           onClick={(e) => {
-            e.stopPropagation(); // Prevent row click event
+            e.stopPropagation();
             handleDeleteExam(record.examCode);
           }}
         >
@@ -96,10 +111,9 @@ const Dashboard: React.FC = () => {
   ];
 
   return (
-    <div style={{ padding: "20px" }}>
-      <h1>Instructor Dashboard</h1>
+    <div style={{ padding: "20px", textAlign: "center" }}>
       {loading ? (
-        <Spin size="large" />
+        <Spin size="large" className="m-auto w-100" />
       ) : (
         <Table
           dataSource={exams}

@@ -1,23 +1,39 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import SingleQuestionComponent from "./SingleQuestionComponent";
-import CodeEditor from "./CodeEditor";
-import questData from "../../data/quest.json";
-import { Language } from "./constants";
 import CodeEditorWrapper from "./CodeEditorWrapper";
+import { useFetchData } from "../../hooks/useFetchData";
+import BasicSpinner from "../Basic/BasicSpinner";
+import { useParams } from "react-router-dom";
 
-interface StarterCode {
-  language: Language;
-  code: string;
+interface Choice {
+  desc: string;
+  isCorrect: boolean;
+}
+
+interface TestCase {
+  input: string;
+  output: string;
 }
 
 interface Question {
   id: number;
-  question: string;
-  type: "code" | "multiple-choice";
-  correct_answer: number;
-  answers?: string[];
-  description?: string;
-  starter_code?: StarterCode[];
+  desc: string;
+  type: "code" | "mcq";
+  difficulty: string;
+  tags: string[];
+  grade: number;
+  choices: Choice[];
+  testCases: TestCase[];
+  code: string;
+}
+
+interface ExamData {
+  examCode: string;
+  duration: string;
+  maxGrade: number;
+  startDate: string;
+  expirationDate: string;
+  questions: Question[];
 }
 
 interface UserAnswer {
@@ -26,6 +42,7 @@ interface UserAnswer {
 }
 
 interface QuestionContainerProps {
+  examCode: string | undefined;
   userAnswers: UserAnswer[];
   setUserAnswers: React.Dispatch<React.SetStateAction<UserAnswer[]>>;
 }
@@ -34,16 +51,29 @@ function QuestionContainer({
   userAnswers,
   setUserAnswers,
 }: QuestionContainerProps) {
-  const [questions, setQuestions] = useState<Question[]>([]);
+  const { examCode } = useParams();
+
+  const {
+    data: examData,
+    loading,
+    error,
+  } = useFetchData<ExamData>(`/exams/${examCode}`, "v2");
   const [currentQuestionId, setCurrentQuestionId] = useState<number | null>(
     null
   );
 
-  useEffect(() => {
-    setQuestions(questData as Question[]);
-  }, []);
+  if (loading)
+    return (
+      <div>
+        <BasicSpinner />
+      </div>
+    );
+  if (error) return <div>Error: {error.message}</div>;
+  if (!examData) return null;
 
-  const activeQuestion = questions.find((q) => q.id === currentQuestionId);
+  const activeQuestion = examData.questions.find(
+    (q) => q.id === currentQuestionId
+  );
 
   const handleAnswerSelection = (answer: string | number) => {
     setUserAnswers((prevAnswers) => {
@@ -64,7 +94,7 @@ function QuestionContainer({
     <div className="flex h-full overflow-hidden bg-gray-100">
       <div className="w-1/3 overflow-y-auto border-r border-gray-300 bg-white shadow-md">
         <ul className="divide-y divide-gray-200">
-          {questions.map((question) => (
+          {examData.questions.map((question) => (
             <SingleQuestionComponent
               key={question.id}
               question={question}
@@ -79,22 +109,28 @@ function QuestionContainer({
         {activeQuestion ? (
           <div>
             <h1 className="text-2xl font-bold mb-4 text-gray-800">
-              {activeQuestion.question}
+              {activeQuestion.desc}
             </h1>
-            {activeQuestion.description && (
-              <p className="mb-6 text-gray-600">{activeQuestion.description}</p>
-            )}
+            <p className="mb-6 text-gray-600">
+              Difficulty: {activeQuestion.difficulty}, Grade:{" "}
+              {activeQuestion.grade}
+            </p>
+            <div className="mb-4">
+              <strong>Tags:</strong> {activeQuestion.tags.join(", ")}
+            </div>
 
             {activeQuestion.type === "code" ? (
               <div className="mb-6">
                 <CodeEditorWrapper
                   questionId={activeQuestion.id}
-                  starterCode={activeQuestion.starter_code || []}
+                  starterCode={[
+                    { language: "javascript", code: activeQuestion.code },
+                  ]}
                 />
               </div>
             ) : (
               <div className="space-y-3">
-                {activeQuestion.answers?.map((answer, index) => (
+                {activeQuestion.choices.map((choice, index) => (
                   <button
                     key={index}
                     className={`block w-full text-left p-3 rounded-lg transition-colors duration-200 ${
@@ -106,7 +142,7 @@ function QuestionContainer({
                     }`}
                     onClick={() => handleAnswerSelection(index)}
                   >
-                    {answer}
+                    {choice.desc}
                   </button>
                 ))}
               </div>

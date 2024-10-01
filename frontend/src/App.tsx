@@ -17,6 +17,11 @@ import ExamAllStudent from "./components/ExamResults/ExamAllStudent.tsx";
 import AllExams from "./components/ExamResults/AllExams.tsx";
 import ForgotPassword from "./components/authentication/ForgotPassword.tsx";
 import { UserProvider } from "../context/UserContext.tsx";
+import ModelAnswersPage from "./components/Viewers/ModelAnswerPage.tsx";
+import ExamEntry from "./components/Viewers/EnterExam.tsx";
+import ForbiddenPage from "./components/Viewers/PermissionDenied.tsx";
+import NotFoundPage from "./components/Viewers/NotFound.tsx";
+import ProtectedRoute from "./components/authentication/ProtectedRoute.tsx";
 // import refresh from "./components/authentication/refresh.ts";
 
 const App: React.FC = () => {
@@ -26,24 +31,45 @@ const App: React.FC = () => {
         <HomeLayout>
           <Routes>
             <Route path="/login" element={<Login />} />
-            <Route path="/profile" element={<Profile />} />
             <Route path="/register" element={<RegisterForm />} />
             <Route path="/" element={<Landing />} />
-            <Route path="/create-exam" Component={ExamCreationForm} />
-            <Route path="/Forgot-password" element={<ForgotPassword />} />
             <Route
-              path="/all-questions"
-              element={
-                <WebcamMonitorWrapper>
-                  <AllQuestionsPage />
-                </WebcamMonitorWrapper>
-              }
+              path="/create-exam"
+              element={<ProtectedRoute element={<ExamCreationForm />} />}
             />
-            <Route path="/question-bank" Component={QuestionBank} />
-            <Route path="/exam-result/:examCode" Component={ExamAllStudent} />
-            <Route path="/exams" Component={AllExams} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/attempt/:attempt_id" element={<AttemptView />} />
+            <Route
+              path="/profile"
+              element={<ProtectedRoute element={<Profile />} />}
+            />
+            <Route
+              path="/dashboard"
+              element={<ProtectedRoute element={<Dashboard />} />}
+            />
+            <Route path="/enter-exam/:examCode" element={<ExamEntry />} />
+            <Route path="/exam/:examCode" element={<AllQuestionsPage />} />
+            <Route
+              path="/question-bank"
+              element={<ProtectedRoute element={<QuestionBank />} />}
+            />
+            <Route
+              path="/exam-result/:examCode"
+              element={<ProtectedRoute element={<ExamAllStudent />} />}
+            />
+            <Route
+              path="/answer/:examCode"
+              element={<ProtectedRoute element={<ModelAnswersPage />} />}
+            />
+            <Route
+              path="/exams"
+              element={<ProtectedRoute element={<AllExams />} />}
+            />
+            <Route
+              path="/attempt/:attempt_id"
+              element={<ProtectedRoute element={<AttemptView />} />}
+            />
+            <Route path="/not-found" element={<NotFoundPage />} />
+            {/* Catch-all route for 404 */}
+            <Route path="*" element={<NotFoundPage />} />
           </Routes>
           <ToastContainer position="bottom-right" />
         </HomeLayout>
