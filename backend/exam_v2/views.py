@@ -9,7 +9,7 @@ from rest_framework.exceptions import NotFound, ParseError, PermissionDenied
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
-from rest_framework import status
+from rest_framework import status, mixins, viewsets
 
 from authentication.permissions import AUTH_SWAGGER_PARAM
 from authentication.permissions import IsInstructor, IsOwner
@@ -151,6 +151,7 @@ class ExamViewSet(ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(user_id=self.request.user)
 
+
 # class QuestionViewSet2(ReadOnlyModelViewSet):
 #     queryset = Question.objects.all()
 #     serializer_class = QuestionSerializer2
@@ -160,7 +161,7 @@ class ExamViewSet(ModelViewSet):
 #
 #
 
-class ExamDurationView(ModelViewSet):
+class ExamDurationView(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
     permission_classes = [IsAuthenticated, IsOwner | IsInstructor]
     serializer_class = ExamDurationSerializer
     lookup_field = 'exam_code'
@@ -171,8 +172,10 @@ class ExamDurationView(ModelViewSet):
         operation_summary="Retrieve the duration of an exam",
         operation_description="Fetches the duration of an exam by its unique code. Requires authentication. Allowed for exam owner or whitelisted users.",
         manual_parameters=[
-            openapi.Parameter('exam_code', openapi.IN_PATH, description="The unique code of the exam", type=openapi.TYPE_STRING),
-            openapi.Parameter('Authorization', openapi.IN_HEADER, description="Bearer token for authentication", type=openapi.TYPE_STRING)
+            openapi.Parameter('exam_code', openapi.IN_PATH, description="The unique code of the exam",
+                              type=openapi.TYPE_STRING),
+            openapi.Parameter('Authorization', openapi.IN_HEADER, description="Bearer token for authentication",
+                              type=openapi.TYPE_STRING)
         ],
         responses={200: ExamDurationSerializer(many=False), 404: "Exam not found", 403: "Forbidden"},
     )
