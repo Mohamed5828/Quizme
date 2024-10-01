@@ -31,7 +31,7 @@ const Profile: React.FC = () => {
               .post("/auth/logout/")
               .then(() => {
                 toast.success("Logged out successfully");
-                navigate("/");
+                
               })
               .catch((error) => {
                 toast.error(

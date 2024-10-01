@@ -38,27 +38,23 @@ const RegisterForm: React.FC = () => {
     }
   }
 
-  // Email validation
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!emailRegex.test(formData.email)) {
     toast.error("Please enter a valid email address");
     return;
   }
 
-  // Password strength validation (min 8 characters, 1 uppercase, 1 lowercase, 1 number, 1 special character)
-  const passwordStrengthRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+  const passwordStrengthRegex = /^(?=.*[A-Za-z])(?=.*\d).{6,}$/;
   if (!passwordStrengthRegex.test(formData.password1)) {
-    toast.error("Password must be at least 8 characters long and include uppercase, lowercase, a number, and a special character");
+    toast.error("Password must be at least 6 characters long and include both letters and numbers");
     return;
   }
 
-  // Check if passwords match
   if (formData.password1 !== formData.password2) {
     toast.error("Passwords do not match");
     return;
   }
 
-  // Check if terms are accepted
   if (!formData.termsAccepted) {
     toast.error("You must accept the terms of service");
     return;
