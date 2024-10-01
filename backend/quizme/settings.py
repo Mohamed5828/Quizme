@@ -102,7 +102,7 @@ TEMPLATES = [
 ]
 AUTH_USER_MODEL = 'authentication.CustomUser'
 # AUTHENTICATION_BACKENDS = ['authentication.authenticateUser.authBackend']
-
+PASSWORD_RESET_TIMEOUT = 900
 
 REST_FRAMEWORK = {
 
@@ -167,7 +167,7 @@ SIMPLE_JWT = {
 
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
-
+FRONTEND_URL = "http://localhost:5173"
 CORS_ALLOW_HEADERS = [
     'authorization',
     'content-type',
@@ -182,6 +182,15 @@ WSGI_APPLICATION = 'quizme.wsgi.application'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
 DATABASES = {"default": dj_database_url.config(default=os.getenv("QUIZME_DATABASE_URL"))}
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = os.getenv('EMAIL_ADDRESS')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+EMAIL_PORT= 587
+EMAIL_USE_TLS = True
+DEFAULT_FROM_EMAIL = os.getenv('EMAIL_ADDRESS')
+ACCOUNT_EMAIL_SUBJECT_PREFIX = ''
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
