@@ -3,7 +3,6 @@ from datetime import timedelta
 from django.db import models
 from django.utils.text import slugify
 from quizme.celery import app
-from exam_v2.tasks import evaluate_exam_after_expiry
 
 
 class Exam(models.Model):
@@ -21,6 +20,9 @@ class Exam(models.Model):
     scheduled_task_id = models.CharField(max_length=255, null=True, blank=True)
 
     def save(self, *args, **kwargs):
+        # leave this here to prevent circular imports error
+        from exam_v2.tasks import evaluate_exam_after_expiry
+
         if self.pk is None:
             # placeholder for the exam code as it is not nullable
             # this will be overwritten after the exam id is created
