@@ -56,7 +56,7 @@ const ExamDetailsStep: React.FC = () => {
     <>
       <div className="flex flex-wrap gap-4 [&>*]:flex-grow">
         <label>
-          Exam Code
+          Exam Code *
           <br />
           <input
             type="text"
@@ -69,7 +69,20 @@ const ExamDetailsStep: React.FC = () => {
           )}
         </label>
         <label>
-          Duration in minutes
+          Group Name
+          <br />
+          <input
+            type="text"
+            placeholder="Group Name"
+            className="mt-1 p-2 border border-gray-300 rounded focus:outline-none focus:border-emerald-500"
+            {...register("examCode", { required: false })}
+          />
+          {errors.examCode && (
+            <p className="text-red-600">This field is not required</p>
+          )}
+        </label>
+        <label>
+          Duration in minutes *
           <br />
           <input
             type="number"
@@ -88,7 +101,7 @@ const ExamDetailsStep: React.FC = () => {
           )}
         </label>
         <label>
-          Max Grade
+          Max Grade *
           <br />
           <input
             type="number"
@@ -107,7 +120,7 @@ const ExamDetailsStep: React.FC = () => {
       </div>
       <div className="flex flex-wrap gap-4 [&>*]:flex-grow mt-4">
         <label>
-          Start Date
+          Start Date *
           <br />
           <input
             type="datetime-local"
@@ -123,7 +136,7 @@ const ExamDetailsStep: React.FC = () => {
           )}
         </label>
         <label>
-          Expiration Date
+          Expiration Date *
           <br />
           <input
             type="datetime-local"
