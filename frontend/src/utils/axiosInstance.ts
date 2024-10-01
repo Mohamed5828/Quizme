@@ -49,7 +49,7 @@ export const getAxiosInstance = (
 
   const axiosInstance = axios.create({
     baseURL: `${BASE_URL}/${apiVersion}`,
-    timeout: 5000,
+    // timeout: 5000,
     headers: {
       // "Content-Type": "application/json",
       ...(needAuth && token ? { Authorization: token } : {}),

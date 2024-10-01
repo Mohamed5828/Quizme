@@ -27,7 +27,7 @@ const CodeEditorWrapper: React.FC<CodeEditorWrapperProps> = ({
 
   const handleSubmit = async () => {
     if (!answerCode || !auth) return;
-    const url = `/api/submit-answer/${questionId}`;
+    const url = `/tasks/execute_code/${questionId}`;
     const data = { answerCode, userId: auth.id };
     const { resData, error } = await postData(url, data);
     if (error) {
