@@ -6,7 +6,7 @@ import { useFetchData } from "../../hooks/useFetchData";
 function AllExams() {
   const { data, loading, error } = useFetchData<ExamInstance[]>(
     `/exams/`,
-    "/v2"
+    "v2"
   );
 
   if (loading) {

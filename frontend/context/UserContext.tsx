@@ -1,162 +1,91 @@
-// import {
-//   createContext,
-//   ReactNode,
-//   useContext,
-//   useState,
-//   useEffect,
-//   useCallback,
-// } from "react";
-// import { jwtDecode } from "jwt-decode";
-// import postData from "../src/utils/postData";
+import {
+  createContext,
+  ReactNode,
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+} from "react";
+import { User } from "../src/components/authentication/Profile";
 
-// interface User {
-//   email: string;
-//   username: string;
-//   id: number;
-//   role: string;
-//   // Add other user properties if needed
-// }
+interface UserContextType {
+  accessToken: string | null;
+  user: User | null;
+  isLoggedIn: boolean;
+  userRole: string | null;
+  setUserData: (user: User | null, accessToken: string | null) => void;
+  logout: () => void;
+}
 
-// interface DecodedToken {
-//   exp: number;
-//   // Add other properties you expect in your JWT payload
-// }
+const UserContext = createContext<UserContextType | undefined>(undefined);
 
-// interface UserContextType {
-//   accessToken: string | null;
-//   refreshToken: string | null;
-//   user: User | null;
-//   isLoggedIn: boolean;
-//   userRole: string | null;
-//   setUserData: (
-//     user: User | null,
-//     accessToken: string | null,
-//     refreshToken: string | null
-//   ) => void;
-//   refreshAccessToken: () => Promise<void>;
-// }
+export const UserProvider: React.FC<{ children: ReactNode }> = ({
+  children,
+}) => {
+  const [user, setUser] = useState<User | null>(null);
+  const [accessToken, setAccessToken] = useState<string | null>(null);
+  const [userRole, setUserRole] = useState<string | null>(null);
 
-// const UserContext = createContext<UserContextType | undefined>(undefined);
+  useEffect(() => {
+    const storedAccessToken = localStorage.getItem("accessToken");
+    const storedUser = localStorage.getItem("user");
+    if (storedAccessToken && storedUser) {
+      setAccessToken(storedAccessToken);
+      const parsedUser = JSON.parse(storedUser) as User;
+      setUser(parsedUser);
+      setUserRole(parsedUser.role);
+    }
+  }, []);
 
-// export const UserProvider: React.FC<{ children: ReactNode }> = ({
-//   children,
-// }) => {
-//   const [user, setUser] = useState<User | null>(null);
-//   const [accessToken, setAccessToken] = useState<string | null>(null);
-//   const [refreshToken, setRefreshToken] = useState<string | null>(null);
-//   const [userRole, setUserRole] = useState<string | null>(null);
+  const setUserData = useCallback(
+    (userData: User | null, newAccessToken: string | null) => {
+      setUser(userData);
+      setAccessToken(newAccessToken ? `Bearer ${newAccessToken}` : null);
+      setUserRole(userData?.role || null);
 
-//   useEffect(() => {
-//     const storedAccessToken = localStorage.getItem("accessToken");
-//     const storedRefreshToken = localStorage.getItem("refreshToken");
-//     const storedUser = localStorage.getItem("user");
-//     if (storedAccessToken && storedRefreshToken && storedUser) {
-//       setAccessToken(storedAccessToken);
-//       setRefreshToken(storedRefreshToken);
-//       const parsedUser = JSON.parse(storedUser) as User;
-//       setUser(parsedUser);
-//       setUserRole(parsedUser.role);
-//     }
-//   }, []);
+      if (newAccessToken) {
+        localStorage.setItem("accessToken", `Bearer ${newAccessToken}`);
+      } else {
+        localStorage.removeItem("accessToken");
+      }
 
-//   const setUserData = useCallback(
-//     (
-//       userData: User | null,
-//       newAccessToken: string | null,
-//       newRefreshToken: string | null
-//     ) => {
-//       setUser(userData);
-//       setAccessToken(newAccessToken);
-//       setRefreshToken(newRefreshToken);
-//       setUserRole(userData?.role || null);
+      if (userData) {
+        localStorage.setItem("user", JSON.stringify(userData));
+      } else {
+        localStorage.removeItem("user");
+      }
+    },
+    []
+  );
 
-//       if (newAccessToken) localStorage.setItem("accessToken", newAccessToken);
-//       else localStorage.removeItem("accessToken");
+  const logout = useCallback(() => {
+    setUser(null);
+    setAccessToken(null);
+    setUserRole(null);
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("user");
+  }, []);
 
-//       if (newRefreshToken)
-//         localStorage.setItem("refreshToken", newRefreshToken);
-//       else localStorage.removeItem("refreshToken");
+  const isLoggedIn = !!user;
 
-//       if (userData) localStorage.setItem("user", JSON.stringify(userData));
-//       else localStorage.removeItem("user");
-//     },
-//     []
-//   );
+  const contextValue: UserContextType = {
+    accessToken,
+    user,
+    isLoggedIn,
+    userRole,
+    setUserData,
+    logout,
+  };
 
-//   const refreshAccessToken = useCallback(async () => {
-//     if (!refreshToken) {
-//       console.error("No refresh token available");
-//       setUserData(null, null, null);
-//       return;
-//     }
+  return (
+    <UserContext.Provider value={contextValue}>{children}</UserContext.Provider>
+  );
+};
 
-//     try {
-//       const { resData, error } = await postData<{ accessToken: string }>(
-//         "/auth/token/refresh",
-//         { refreshToken },
-//         "/v1"
-//       );
-
-//       if (error) {
-//         throw error;
-//       }
-
-//       if (resData?.accessToken) {
-//         setAccessToken(resData.accessToken);
-//         localStorage.setItem("accessToken", resData.accessToken);
-//       } else {
-//         throw new Error("No access token in response");
-//       }
-//     } catch (error) {
-//       console.error("Error refreshing access token:", error);
-//       setUserData(null, null, null);
-//     }
-//   }, [refreshToken, setUserData]);
-
-//   useEffect(() => {
-//     const checkAndRefreshToken = async () => {
-//       if (accessToken) {
-//         try {
-//           const decodedToken = jwtDecode<DecodedToken>(accessToken);
-//           const expirationTime = decodedToken.exp * 1000;
-//           const currentTime = new Date().getTime();
-
-//           if (expirationTime - currentTime < 60 * 1000) {
-//             await refreshAccessToken();
-//           }
-//         } catch (error) {
-//           console.error("Error decoding or refreshing token:", error);
-//           setUserData(null, null, null);
-//         }
-//       }
-//     };
-
-//     checkAndRefreshToken();
-//   }, [accessToken, refreshAccessToken, setUserData]);
-
-//   const isLoggedIn = !!user;
-
-//   return (
-//     <UserContext.Provider
-//       value={{
-//         accessToken,
-//         refreshToken,
-//         user,
-//         isLoggedIn,
-//         userRole,
-//         setUserData,
-//         refreshAccessToken,
-//       }}
-//     >
-//       {children}
-//     </UserContext.Provider>
-//   );
-// };
-
-// export const useUserContext = (): UserContextType => {
-//   const context = useContext(UserContext);
-//   if (!context) {
-//     throw new Error("useUserContext must be used within a UserProvider");
-//   }
-//   return context;
-// };
+export const useUserContext = (): UserContextType => {
+  const context = useContext(UserContext);
+  if (!context) {
+    throw new Error("useUserContext must be used within a UserProvider");
+  }
+  return context;
+};
