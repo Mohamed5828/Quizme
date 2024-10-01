@@ -36,6 +36,9 @@ const App: React.FC = () => {
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<RegisterForm />} />
             <Route path="/" element={<Landing />} />
+            <Route path="/Forgot-password" element={<ForgotPassword />}/>
+            <Route path="/api/v1/auth/reset-password/:uidb64/:token" element={<ChangePassword />}/>
+            
             <Route
               path="/create-exam"
               element={<ProtectedRoute element={<ExamCreationForm />} />}
