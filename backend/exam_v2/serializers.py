@@ -15,12 +15,14 @@ class ExamSerializer2(serializers.ModelSerializer):
 
     class Meta:
         model = Exam
-        fields = ['exam_code', 'duration', 'max_grade', 'start_date', 'expiration_date', 'questions', 'participants',"title","group_name"]
+        fields = ['exam_code', 'duration', 'max_grade', 'start_date', 'expiration_date', 'questions', 'participants']
+        # add ,'title','group_name' according to khaled but still need fix
+
     def create(self, validated_data):
         # Extract questions and participants (whitelist)
         questions_list = validated_data.pop('questions')
         participants = validated_data.pop('participants', [])
-        
+
         # Create and save the exam
         exam = Exam.objects.create(**validated_data, whitelist=participants)
 
@@ -53,3 +55,9 @@ class ExamSerializer2(serializers.ModelSerializer):
             raise serializers.ValidationError("Start date must be before expiration date.")
 
         return super().validate(attrs)
+
+
+class ExamDurationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Exam
+        fields = ['duration']
