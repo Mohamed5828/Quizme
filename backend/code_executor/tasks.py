@@ -3,8 +3,12 @@ from celery import shared_task
 
 PISTON_BASE_URL = "https://emkc.org/api/v2/piston"
 
+
 @shared_task
 def get_languages():
+    """
+    Get languages supported by piston
+    """
     try:
         response = requests.get(f"{PISTON_BASE_URL}/runtimes")
         response.raise_for_status()
@@ -13,11 +17,15 @@ def get_languages():
     except requests.RequestException as e:
         return {"error": f"Failed to fetch languages: {str(e)}"}
 
+
 @shared_task
-def execute_code_async(language, code, version , stdin=""):
+def execute_code_async(language, code, version, stdin=""):
+    """
+    Execute code using piston
+    """
     payload = {
         "language": language,
-        "files": [{"content":code}],
+        "files": [{"content": code}],
         "version": version,
         "stdin": stdin
     }
@@ -36,5 +44,4 @@ def execute_code_async(language, code, version , stdin=""):
     except requests.RequestException as e:
         return {"error": f"Failed to execute code: {str(e)}"}
 
-        
         # poetry run celery -A quizme worker --loglevel=info --pool=solo

@@ -1,3 +1,4 @@
+from django.utils import timezone
 from rest_framework import serializers
 from exam.models import Exam, Question
 from django.db import transaction
@@ -16,8 +17,9 @@ class ExamSerializer2(serializers.ModelSerializer):
 
     class Meta:
         model = Exam
-        fields = ['exam_code', 'duration', 'max_grade', 'start_date', 'expiration_date', 'questions', 'participants']
-        # add ,'title','group_name' according to khaled but still need fix
+        # fields = ['exam_code', 'duration', 'max_grade', 'start_date', 'expiration_date', 'questions', 'participants']
+        # TODO add/unexclude ,'title','group_name' according to khaled but still need fix
+        exclude = ['user_id', 'whitelist', 'group_name', 'created_at', 'scheduled_task_id']
 
     def create(self, validated_data):
         # Extract questions and participants (whitelist)
@@ -51,6 +53,9 @@ class ExamSerializer2(serializers.ModelSerializer):
     def validate(self, attrs):
         start_date = attrs.get('start_date')
         expiration_date = attrs.get('expiration_date')
+
+        if start_date and start_date < timezone.now():
+            raise serializers.ValidationError("Start date must be in the future.")
 
         if start_date and expiration_date and start_date > expiration_date:
             raise serializers.ValidationError("Start date must be before expiration date.")
