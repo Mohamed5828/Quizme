@@ -19,34 +19,36 @@ class Exam(models.Model):
     group_name = models.CharField(max_length=100, blank=True, null=True)
     scheduled_task_id = models.CharField(max_length=255, null=True, blank=True)
 
-    def save(self, *args, **kwargs):
-        # leave this here to prevent circular imports error
-        from exam_v2.tasks import evaluate_exam_after_expiry
+def save(self, *args, **kwargs):
+    # leave this here to prevent circular imports error
+    from exam_v2.tasks import evaluate_exam_after_expiry
 
-        if self.pk is None:
-            # placeholder for the exam code as it is not nullable
-            # this will be overwritten after the exam id is created
-            self.exam_code = "placeholder-exam-" + self.user_id.username
-            # call the super class's save method to create the exam id in the database
-            super().save(*args, **kwargs)
-            # generate the exam code if it is a new exam
-            self.exam_code = self.generate_exam_code()
-        else:
-            old_expiration = Exam.objects.get(pk=self.pk).expiration_date
-            # revoke old task if expiration date has changed
-            if self.scheduled_task_id and old_expiration != self.expiration_date:
-                app.control.revoke(self.scheduled_task_id, terminate=True)
-        # schedule new task and set its id
-        self.scheduled_task_id = evaluate_exam_after_expiry.apply_async(
-            eta=self.expiration_date + timedelta(minutes=10),
-            args=(self.id,)
-        ).id
+    is_new = self.pk is None
 
-        # update everything
+    if is_new:
+        # For new instances, save with minimal data to get an ID
+        self.exam_code = f"placeholder-exam-{self.user_id.username}"
         super().save(*args, **kwargs)
+        
+        # Now that we have an ID, generate the real exam code
+        self.exam_code = self.generate_exam_code()
+    else:
+        # For existing instances, check if expiration date changed
+        old_expiration = Exam.objects.get(pk=self.pk).expiration_date
+        if self.scheduled_task_id and old_expiration != self.expiration_date:
+            app.control.revoke(self.scheduled_task_id, terminate=True)
 
-    def generate_exam_code(self):
-        return f"exam{self.id}-{slugify(self.title)}"
+    # Schedule new task and set its id
+    self.scheduled_task_id = evaluate_exam_after_expiry.apply_async(
+        eta=self.expiration_date + timedelta(minutes=10),
+        args=(self.id,)
+    ).id
+
+    # Save all changes
+    super().save(*args, **kwargs)
+
+def generate_exam_code(self):
+    return f"exam{self.id}-{slugify(self.title)}"
     # class Meta:
     #     indexes = [
     #         models.Index(fields=['user_id'])
