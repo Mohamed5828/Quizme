@@ -28,15 +28,41 @@ const RegisterForm: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (formData.password1 !== formData.password2) {
-      toast.error("Passwords do not match");
+    const requiredFields: (keyof typeof formData)[] = [
+      "username", "email", "password1", "password2", "category", "role"
+    ];
+  for (const field of requiredFields) {
+    if (!formData[field]) {
+      toast.error(`${field.charAt(0).toUpperCase() + field.slice(1)} is required`);
       return;
     }
+  }
 
-    if (!formData.termsAccepted) {
-      toast.error("You must accept the terms of service");
-      return;
-    }
+  // Email validation
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(formData.email)) {
+    toast.error("Please enter a valid email address");
+    return;
+  }
+
+  // Password strength validation (min 8 characters, 1 uppercase, 1 lowercase, 1 number, 1 special character)
+  const passwordStrengthRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+  if (!passwordStrengthRegex.test(formData.password1)) {
+    toast.error("Password must be at least 8 characters long and include uppercase, lowercase, a number, and a special character");
+    return;
+  }
+
+  // Check if passwords match
+  if (formData.password1 !== formData.password2) {
+    toast.error("Passwords do not match");
+    return;
+  }
+
+  // Check if terms are accepted
+  if (!formData.termsAccepted) {
+    toast.error("You must accept the terms of service");
+    return;
+  }
 
     const axiosInstance = getAxiosInstance();
     try {
