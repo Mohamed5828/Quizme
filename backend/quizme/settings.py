@@ -12,7 +12,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 from datetime import timedelta
-
+from mediapipe.tasks import python as mp_py
 from dotenv import load_dotenv
 import dj_database_url
 import os
@@ -56,6 +56,7 @@ INSTALLED_APPS = [
     'activitylog',
     'drf_yasg',
     'code_executor',
+    'monitor',
     # 'django_extensions' if DEBUG else '',
 ]
 
@@ -225,3 +226,9 @@ CELERY_RESULT_BACKEND = "redis://localhost:6379"
 CELERY_BROKER_URL = "redis://localhost:6379"
 CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
 CELERY_WORKER_POOL = 'solo'
+
+MEDIAPIPE_MONITOR_OPTIONS = mp_py.vision.FaceLandmarkerOptions(
+    base_options=mp_py.BaseOptions(model_asset_path="./monitor_models/face_landmarker_v2_with_blendshapes.task"),
+    output_facial_transformation_matrixes=True,
+    num_faces=2
+)

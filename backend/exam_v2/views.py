@@ -58,17 +58,27 @@ class ExamViewSet(ModelViewSet):
         if instance.user_id == request.user:
             serializer = self.get_serializer(instance)
             return Response(serializer.data)
-        
+
         if instance.group_name:
             if request.user.category == instance.group_name:
                 serializer = self.get_serializer(instance)
                 return Response(serializer.data)
-    
+
         # Check if the user is in the whitelist
         whitelist = instance.whitelist
         for pattern in whitelist:
             if fnmatch.fnmatch(request.user.email, pattern):
                 serializer = self.get_serializer(instance)
+                # If the user is in the whitelist, return the exam and remove question answers
+                for i, question in enumerate(serializer.data['questions']):
+                    if choices := question.get('choices'):
+                        serializer.data['questions'][i]['choices'] = [{"desc": choice['desc'], "isCorrect": "****"} for
+                                                                      choice in choices]
+                    # if test_cases := question.get('test_cases'):
+                    #     serializer.data['questions'][i]['test_cases'] = [
+                    #         {"input": None, "output": None} for
+                    #         test_case in test_cases]
+
                 return Response(serializer.data)
         # If the user is not the owner or in the whitelist, return a 403 error
         raise PermissionDenied("You are not authorized to view this exam.")
