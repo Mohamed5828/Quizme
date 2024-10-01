@@ -12,6 +12,10 @@ const PROFILE_NAV = {
   name: "Profile",
   path: "/profile",
 };
+const EXAM_NAV = {
+  name: "Enter Exam",
+  path: "/enter",
+};
 
 const LOGIN_NAV = {
   name: "Login",
@@ -37,7 +41,7 @@ const DASHBOARD_NAV = {
   path: "/dashboard",
 };
 
-const NAV_LOGGED_IN_STUDENT = [HOME_NAV, PROFILE_NAV];
+const NAV_LOGGED_IN_STUDENT = [HOME_NAV, PROFILE_NAV, EXAM_NAV];
 
 const NAV_LOGGED_IN_INSTRUCTOR = [
   HOME_NAV,
