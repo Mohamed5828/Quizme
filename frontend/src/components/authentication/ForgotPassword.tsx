@@ -1,13 +1,28 @@
-import React from 'react';
+import React, { useState } from 'react';
+import axios from 'axios';
+import { toast } from "react-toastify";
 
 const ResetPassword: React.FC = () => {
+  const [email, setEmail] = useState('');
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    try {
+      const response = await axios.post('http://127.0.0.1:8000/api/v1/auth/password-reset/', { email });  
+      toast.success("Email Verification Link Has Been Sent To Your Email ");
+    } catch (error) {
+      toast.error("Something went wrong, please check your email credibility")
+    }
+  };
+
   return (
     <div className="antialiased bg-white-200">
       <div className="max-w-lg mx-auto my-10 bg-white p-8 rounded-xl shadow shadow-slate-300">
         <h1 className="text-4xl font-medium">Reset password</h1>
         <p className="text-slate-500">Fill up the form to reset the password</p>
 
-        <form action="" className="my-10">
+        <form onSubmit={handleSubmit} className="my-10">
           <div className="flex flex-col space-y-5">
             <label htmlFor="email">
               <p className="font-medium text-slate-700 pb-2">Email address</p>
@@ -15,8 +30,11 @@ const ResetPassword: React.FC = () => {
                 id="email"
                 name="email"
                 type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 className="w-full py-3 border border-slate-200 rounded-lg px-3 focus:outline-none focus:border-slate-500 hover:shadow"
                 placeholder="Enter email address"
+                required
               />
             </label>
 
@@ -40,7 +58,10 @@ const ResetPassword: React.FC = () => {
               </svg>
               <span>Reset password</span>
             </button>
-            <p className="text-center " >
+            
+          
+            
+            <p className="text-center">
               Not registered yet?{' '}
               <a
                 href="#"

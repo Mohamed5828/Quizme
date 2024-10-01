@@ -1,4 +1,7 @@
 import React from "react";
+import ForgotPassword from "./components/authentication/ForgotPassword.tsx";
+import ChangePassword from "./components/authentication/ResetPassword.tsx";
+// import refresh from "./components/authentication/refresh.ts";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import AllQuestionsPage from "./components/Viewers/AllQuestionsPage";
 import ExamCreationForm from "./components/Forms/ExamCreationForm";
@@ -15,7 +18,6 @@ import Landing from "./components/Landing/LandingPage.tsx";
 import AttemptView from "./components/Viewers/AttemptView.tsx";
 import ExamAllStudent from "./components/ExamResults/ExamAllStudent.tsx";
 import AllExams from "./components/ExamResults/AllExams.tsx";
-import ForgotPassword from "./components/authentication/ForgotPassword.tsx";
 import { UserProvider } from "../context/UserContext.tsx";
 import ModelAnswersPage from "./components/Viewers/ModelAnswerPage.tsx";
 import ExamEntry from "./components/Viewers/EnterExam.tsx";
@@ -24,6 +26,7 @@ import NotFoundPage from "./components/Viewers/NotFound.tsx";
 import ProtectedRoute from "./components/authentication/ProtectedRoute.tsx";
 import StudentExamEntry from "./components/Viewers/ExamEntryNavigator.tsx";
 // import refresh from "./components/authentication/refresh.ts";
+
 
 const App: React.FC = () => {
   return (
@@ -34,6 +37,9 @@ const App: React.FC = () => {
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<RegisterForm />} />
             <Route path="/" element={<Landing />} />
+            <Route path="/Forgot-password" element={<ForgotPassword />}/>
+            <Route path="/api/v1/auth/reset-password/:uidb64/:token" element={<ChangePassword />}/>
+            
             <Route
               path="/create-exam"
               element={<ProtectedRoute element={<ExamCreationForm />} />}

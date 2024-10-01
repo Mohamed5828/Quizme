@@ -28,15 +28,37 @@ const RegisterForm: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (formData.password1 !== formData.password2) {
-      toast.error("Passwords do not match");
+    const requiredFields: (keyof typeof formData)[] = [
+      "username", "email", "password1", "password2", "category", "role"
+    ];
+  for (const field of requiredFields) {
+    if (!formData[field]) {
+      toast.error(`${field.charAt(0).toUpperCase() + field.slice(1)} is required`);
       return;
     }
+  }
 
-    if (!formData.termsAccepted) {
-      toast.error("You must accept the terms of service");
-      return;
-    }
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(formData.email)) {
+    toast.error("Please enter a valid email address");
+    return;
+  }
+
+  const passwordStrengthRegex = /^(?=.*[A-Za-z])(?=.*\d).{6,}$/;
+  if (!passwordStrengthRegex.test(formData.password1)) {
+    toast.error("Password must be at least 6 characters long and include both letters and numbers");
+    return;
+  }
+
+  if (formData.password1 !== formData.password2) {
+    toast.error("Passwords do not match");
+    return;
+  }
+
+  if (!formData.termsAccepted) {
+    toast.error("You must accept the terms of service");
+    return;
+  }
 
     const axiosInstance = getAxiosInstance();
     try {

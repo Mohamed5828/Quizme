@@ -2,7 +2,8 @@ import { useFormContext } from "react-hook-form";
 import { useEffect } from "react";
 
 interface ExamDetailsFormData {
-  examCode: string;
+  title: string;
+  groupName: string;
   duration: number;
   maxGrade: number;
   startDate: string;
@@ -18,8 +19,9 @@ const ExamDetailsStep: React.FC = () => {
     watch,
   } = useFormContext<ExamDetailsFormData>();
 
-  // Watch for changes to the start date
+  // Watch for changes to the start date and duration
   const startDate = watch("startDate");
+  const duration = watch("duration");
 
   // Ensure the start date is not in the past
   const validateStartDate = (value: string): string | boolean => {
@@ -38,33 +40,45 @@ const ExamDetailsStep: React.FC = () => {
     );
   };
 
-  // Automatically adjust the expiration date if the start date changes
   useEffect(() => {
-    const expirationDate = getValues("expirationDate");
-
-    if (startDate && expirationDate) {
+    if (startDate && duration) {
       const startDateObj = new Date(startDate);
-      const expirationDateObj = new Date(expirationDate);
 
-      if (expirationDateObj <= startDateObj) {
-        setValue("expirationDate", "");
-      }
+      const startTimestamp = startDateObj.getTime();
+
+      const durationInMinutes = Number(duration);
+
+      const expirationTimestamp = startTimestamp + durationInMinutes * 60000;
+
+      // Create a new date object for expiration based on the local timestamp
+      const expirationDateObj = new Date(expirationTimestamp);
+
+      // Format the expiration date to match the input's expected format (local time)
+      const year = expirationDateObj.getFullYear();
+      const month = String(expirationDateObj.getMonth() + 1).padStart(2, "0");
+      const day = String(expirationDateObj.getDate()).padStart(2, "0");
+      const hours = String(expirationDateObj.getHours()).padStart(2, "0");
+      const minutes = String(expirationDateObj.getMinutes()).padStart(2, "0");
+
+      const localExpirationDate = `${year}-${month}-${day}T${hours}:${minutes}`;
+
+      setValue("expirationDate", localExpirationDate);
     }
-  }, [startDate, setValue, getValues]);
+  }, [startDate, duration, setValue]);
 
   return (
     <>
       <div className="flex flex-wrap gap-4 [&>*]:flex-grow">
         <label>
-          Exam Code *
+          Exam Title *
           <br />
           <input
             type="text"
-            placeholder="Exam Code"
+            placeholder="Exam Title"
             className="mt-1 p-2 border border-gray-300 rounded focus:outline-none focus:border-emerald-500"
-            {...register("examCode", { required: true })}
+            {...register("title", { required: true })}
           />
-          {errors.examCode && (
+          {errors.title && (
             <p className="text-red-600">This field is required</p>
           )}
         </label>
@@ -75,9 +89,9 @@ const ExamDetailsStep: React.FC = () => {
             type="text"
             placeholder="Group Name"
             className="mt-1 p-2 border border-gray-300 rounded focus:outline-none focus:border-emerald-500"
-            {...register("examCode", { required: false })}
+            {...register("groupName", { required: false })}
           />
-          {errors.examCode && (
+          {errors.groupName && (
             <p className="text-red-600">This field is not required</p>
           )}
         </label>
