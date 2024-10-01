@@ -17,15 +17,15 @@ const useWebcamMonitor = ( ) => {
   const [ error, setError ] = useState<Error | null>(null)
   useEffect(() => {   
     navigator.mediaDevices
-      .getUserMedia({ video: true, audio: true })
+      .getUserMedia({ video: true, audio: false })
       .then((newStream) => {
-        setStream(newStream)
-        setError(null)
+        setStream(newStream);
+        setError(null);
       })
       .catch((error) => {
-        setStream(null)
-        setError(error)
-      })
+        setStream(null);
+        setError(error);
+      });
 
     return () => {
       if (stream) {
