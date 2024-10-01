@@ -1,9 +1,10 @@
 from rest_framework import serializers
 from exam.models import Exam, Question
 from django.db import transaction
+from code_executor.serializers import CodeValidationMixin
 
 
-class QuestionSerializer2(serializers.ModelSerializer):
+class QuestionSerializer2(CodeValidationMixin, serializers.ModelSerializer):
     class Meta:
         model = Question
         exclude = ['exam_id']

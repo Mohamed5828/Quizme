@@ -9,7 +9,7 @@ class Answer(models.Model):
     score = models.FloatField(null=True, blank=True)
     # optional fields dependent on question type
     choices = models.JSONField(default=list)
-    code = models.TextField(null=True, blank=True)
+    code = models.JSONField(null=True, blank=True)
 
     class Meta:
         constraints = [
