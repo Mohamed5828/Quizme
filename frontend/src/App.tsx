@@ -22,6 +22,7 @@ import ExamEntry from "./components/Viewers/EnterExam.tsx";
 import ForbiddenPage from "./components/Viewers/PermissionDenied.tsx";
 import NotFoundPage from "./components/Viewers/NotFound.tsx";
 import ProtectedRoute from "./components/authentication/ProtectedRoute.tsx";
+import StudentExamEntry from "./components/Viewers/ExamEntryNavigator.tsx";
 // import refresh from "./components/authentication/refresh.ts";
 
 const App: React.FC = () => {
@@ -46,6 +47,7 @@ const App: React.FC = () => {
               element={<ProtectedRoute element={<Dashboard />} />}
             />
             <Route path="/enter-exam/:examCode" element={<ExamEntry />} />
+            <Route path="/enter" element={<StudentExamEntry />} />
             <Route path="/exam/:examCode" element={<AllQuestionsPage />} />
             <Route
               path="/question-bank"
