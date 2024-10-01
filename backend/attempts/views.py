@@ -11,7 +11,7 @@ from authentication.permissions import AUTH_SWAGGER_PARAM
 from exam.models import Exam
 
 
-# TODO Can make this follow the same convention as exam v2 (make the answers coupled to the attempt)
+# TODO Can make this follow the same convention as exam v2 (make the answers coupled to the attempt, remove answer crud)
 class AttemptViewSet(viewsets.ModelViewSet):
     serializer_class = AttemptSerializer
     queryset = Attempt.objects.all()
@@ -31,8 +31,8 @@ class AttemptViewSet(viewsets.ModelViewSet):
                     return Attempt.objects.filter(exam_id=exam_id)
                 except Exam.DoesNotExist:
                     raise NotFound("Exam does not exist")
-            instructor_exams = Exam.objects.values_list('id', flat=True)
-            return Attempt.objects.filter(exam_id__in=instructor_exams)
+            # instructor_exams = Exam.objects.values_list('id', flat=True)
+            return Attempt.objects.filter(exam_id__user_id=self.request.user)
 
     @swagger_auto_schema(
         operation_summary="Create an attempt",
@@ -74,6 +74,7 @@ class AttemptViewSet(viewsets.ModelViewSet):
         tags=['attempts']
     )
     def retrieve(self, request, *args, **kwargs):
+
         return super().retrieve(request, *args, **kwargs)
 
     @swagger_auto_schema(

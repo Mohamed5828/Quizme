@@ -18,3 +18,13 @@ class Attempt(models.Model):
         #     models.Index(fields=['student_id', 'exam_id']),
         #     models.Index(fields=['exam_id']),
         # ]
+
+    def evaluate(self):
+        """
+        Evaluate an attempt
+        best called inside a celery task
+        """
+        for answer in self.answers.all():
+            answer.evaluate()
+        self.score = self.answers.aggregate(models.Sum('score'))['score__sum']
+        self.save()
