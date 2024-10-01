@@ -2,7 +2,8 @@ import React from "react";
 
 interface Question {
   id: number;
-  question: string;
+  desc: string;
+  type: "code" | "mcq";
 }
 
 interface SingleQuestionComponentProps {
@@ -26,10 +27,11 @@ const SingleQuestionComponent: React.FC<SingleQuestionComponentProps> = ({
       <div className="flex min-w-0 gap-x-4">
         <div className="min-w-0 flex-auto">
           <p className="text-sm font-semibold leading-6 text-gray-900">
-            {question.question && question.question.length > 40
-              ? `${question.question.slice(0, 40)}...`
-              : question.question}
+            {question.desc && question.desc.length > 40
+              ? `${question.desc.slice(0, 40)}...`
+              : question.desc}
           </p>
+          <p className="text-xs text-gray-500">{question.type.toUpperCase()}</p>
         </div>
       </div>
       {isAnswered && (

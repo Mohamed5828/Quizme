@@ -1,5 +1,5 @@
 import axios, { AxiosError } from "axios";
-import useAxiosInstance from "./axiosInstance";
+import { getAxiosInstance } from "./axiosInstance";
 
 interface PostDataResponse<T> {
   resData: T | null;
@@ -18,7 +18,7 @@ export default async function postData<T>(
   let error: AxiosError | null = null;
   let resData: T | null = null;
 
-  const axiosInstance = useAxiosInstance(apiVersion, needAuth);
+  const axiosInstance = getAxiosInstance(apiVersion, needAuth);
 
   try {
     const response = await axiosInstance.post<T>(url, data, { headers });

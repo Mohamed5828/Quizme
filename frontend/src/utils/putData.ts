@@ -27,6 +27,7 @@ async function putData<T>(
   try {
     const response = await axiosInstance.put<T>(url, data, config);
     resData = response.data;
+    error = null; // Reset error if the request is successful
   } catch (e) {
     if (isAxiosError(e)) {
       error = e;

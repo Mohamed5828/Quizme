@@ -15,7 +15,11 @@ const ExamDetailsStep: React.FC = () => {
     formState: { errors },
     setValue,
     getValues,
+    watch,
   } = useFormContext<ExamDetailsFormData>();
+
+  // Watch for changes to the start date
+  const startDate = watch("startDate");
 
   // Ensure the start date is not in the past
   const validateStartDate = (value: string): string | boolean => {
@@ -34,13 +38,19 @@ const ExamDetailsStep: React.FC = () => {
     );
   };
 
-  // Automatically reset the expiration date if the start date changes
+  // Automatically adjust the expiration date if the start date changes
   useEffect(() => {
-    const startDate = getValues("startDate");
-    if (startDate) {
-      setValue("expirationDate", "");
+    const expirationDate = getValues("expirationDate");
+
+    if (startDate && expirationDate) {
+      const startDateObj = new Date(startDate);
+      const expirationDateObj = new Date(expirationDate);
+
+      if (expirationDateObj <= startDateObj) {
+        setValue("expirationDate", "");
+      }
     }
-  }, [getValues("startDate"), setValue]);
+  }, [startDate, setValue, getValues]);
 
   return (
     <>

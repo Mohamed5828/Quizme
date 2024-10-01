@@ -51,7 +51,7 @@ export const getAxiosInstance = (
     baseURL: `${BASE_URL}/${apiVersion}`,
     timeout: 5000,
     headers: {
-      "Content-Type": "application/json",
+      // "Content-Type": "application/json",
       ...(needAuth && token ? { Authorization: token } : {}),
     },
   });
