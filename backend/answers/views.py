@@ -80,16 +80,18 @@ class AnswerViewSet(ModelViewSet):
     def destroy(self, request, *args, **kwargs):
         return super().destroy(request, *args, **kwargs)
 
+
 class EvaluateAnswerView(APIView):
     # TODO: Implement this view or remove if not needed
     pass
+
 
 class EvaluateCode(APIView):
     @swagger_auto_schema(
         operation_description="Evaluate submitted code for a given question",
         request_body=openapi.Schema(
             type=openapi.TYPE_OBJECT,
-            required=['code', 'language', 'question_id', 'exam_code', 'student_id','version'],
+            required=['code', 'language', 'question_id', 'exam_code', 'student_id', 'version'],
             properties={
                 'code': openapi.Schema(type=openapi.TYPE_STRING, description="Code to be evaluated"),
                 'language': openapi.Schema(type=openapi.TYPE_STRING, description="Programming language of the code"),
@@ -120,7 +122,8 @@ class EvaluateCode(APIView):
                     type=openapi.TYPE_OBJECT,
                     properties={
                         'message': openapi.Schema(type=openapi.TYPE_STRING),
-                        'results': openapi.Schema(type=openapi.TYPE_ARRAY, items=openapi.Schema(type=openapi.TYPE_OBJECT)),
+                        'results': openapi.Schema(type=openapi.TYPE_ARRAY,
+                                                  items=openapi.Schema(type=openapi.TYPE_OBJECT)),
                     },
                 ),
             ),
@@ -134,6 +137,7 @@ class EvaluateCode(APIView):
                 ),
             ),
         },
+        tags=['answers', 'code execution']
     )
     def post(self, request, *args, **kwargs):
         run_code = request.data.get("code")
