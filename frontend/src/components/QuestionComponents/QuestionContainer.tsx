@@ -24,7 +24,7 @@ interface Question {
   grade: number;
   choices: Choice[];
   testCases: TestCase[];
-  code: string;
+  code: { body: string; language: string; version: string };
 }
 
 interface ExamData {
@@ -42,7 +42,6 @@ interface UserAnswer {
 }
 
 interface QuestionContainerProps {
-  examCode: string | undefined;
   userAnswers: UserAnswer[];
   setUserAnswers: React.Dispatch<React.SetStateAction<UserAnswer[]>>;
 }
@@ -124,7 +123,10 @@ function QuestionContainer({
                 <CodeEditorWrapper
                   questionId={activeQuestion.id}
                   starterCode={[
-                    { language: "javascript", code: activeQuestion.code },
+                    {
+                      language: activeQuestion.code.language,
+                      code: activeQuestion.code.body,
+                    },
                   ]}
                 />
               </div>

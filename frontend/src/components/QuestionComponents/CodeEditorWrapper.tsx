@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import CodeEditor from "./CodeEditor";
+import CodeOutput from "./CodeOutput";
 import { Language } from "./constants";
 import postData from "../../utils/postData";
 import { User } from "../authentication/Profile";
 import { useUserContext } from "../../../context/UserContext";
+import { useParams } from "react-router-dom";
 
 interface CodeEditorWrapperProps {
   questionId: number;
@@ -14,7 +16,6 @@ interface StarterCode {
   language: Language;
   code: string;
 }
-
 const CodeEditorWrapper: React.FC<CodeEditorWrapperProps> = ({
   questionId,
   starterCode,
@@ -23,17 +24,27 @@ const CodeEditorWrapper: React.FC<CodeEditorWrapperProps> = ({
   const [answerCode, setAnswerCode] = useState<string>(
     starterCode[0]?.code || ""
   );
+  const [taskId, setTaskId] = useState<string | null>(null);
   const auth: User | null = user;
+  const { examCode } = useParams();
 
   const handleSubmit = async () => {
     if (!answerCode || !auth) return;
-    const url = `/tasks/execute_code/${questionId}`;
-    const data = { answerCode, userId: auth.id };
+    const url = `/answers/evaluate-code`;
+    const data = {
+      code: answerCode,
+      studentId: auth.id,
+      questionId: questionId,
+      examCode: examCode,
+      language: "javascript",
+      version: "18.15.0",
+    };
     const { resData, error } = await postData(url, data);
     if (error) {
       console.error("Submission error:", error);
     } else {
       console.log("Submission successful:", resData);
+      setTaskId(resData.taskId);
     }
   };
 
@@ -51,8 +62,8 @@ const CodeEditorWrapper: React.FC<CodeEditorWrapperProps> = ({
       >
         Test Code
       </button>
+      <CodeOutput key={taskId} taskId={taskId} />{" "}
     </div>
   );
 };
-
 export default CodeEditorWrapper;

@@ -126,7 +126,7 @@ const ModelAnswersPage = () => {
                 <div>
                   <h3 className="font-semibold text-lg mb-2">Starter Code:</h3>
                   <pre className="bg-gray-100 p-4 rounded-lg overflow-x-auto text-sm">
-                    <code>{activeQuestion.code}</code>
+                    <code>{activeQuestion.code.body}</code>
                   </pre>
                   <h3 className="font-semibold text-lg mt-6 mb-2">
                     Test Cases:
