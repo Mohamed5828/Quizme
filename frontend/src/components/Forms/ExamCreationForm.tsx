@@ -5,6 +5,7 @@ import { RootState } from "../../state/store.ts";
 import {
   incrementStep,
   decrementStep,
+  resetStep,
 } from "../../state/ExamCreationState/ExamCreationSlice.ts";
 
 import ExamDetailsStep from "../FormSubComponents/Exam/ExamDetailsStep.tsx";
@@ -44,11 +45,12 @@ const ExamCreationForm = ({ defaultValues = {} }: ExamCreationFormProps) => {
     defaultValues,
   });
 
-  const handleNext = async () => {
+  const handleNext = async (e: React.FormEvent) => {
     const isStepValid = await methods.trigger();
     if (isStepValid) {
       dispatch(incrementStep(STEPS.length));
     }
+    e.preventDefault();
   };
 
   const handlePrev = () => {
@@ -59,8 +61,9 @@ const ExamCreationForm = ({ defaultValues = {} }: ExamCreationFormProps) => {
   const handleSubmit = async (data: FieldValues) => {
     try {
       const { participantsInput, ...restData } = data;
-      await postData("/exams/", restData, "v2");
+      console.log("Exam created:", await postData("/exams/", restData, "v2"));
       toast.success("Exam created successfully!");
+      dispatch(resetStep());
       navigate("/dashboard");
     } catch (error) {
       toast.error("An error occurred while creating the exam.");

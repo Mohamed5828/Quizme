@@ -5,7 +5,7 @@ interface ExamCreationState {
 }
 
 const initialState: ExamCreationState = {
-  step: 1,
+  step: 3,
 };
 
 const ExamCreationSlice = createSlice({
@@ -23,9 +23,13 @@ const ExamCreationSlice = createSlice({
         state.step -= 1;
       }
     },
+    resetStep: (state) => {
+      state.step = 1;
+    },
   },
 });
 
 export default ExamCreationSlice.reducer;
 
-export const { incrementStep, decrementStep } = ExamCreationSlice.actions;
+export const { incrementStep, decrementStep, resetStep } =
+  ExamCreationSlice.actions;
