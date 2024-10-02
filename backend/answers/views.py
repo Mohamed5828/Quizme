@@ -1,3 +1,6 @@
+from code_executor.tasks import evaluate_test_cases, update_answer_and_attempt
+from celery.result import AsyncResult
+
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 from rest_framework import status
@@ -5,16 +8,15 @@ from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
-from django.db import transaction
-from django.shortcuts import get_object_or_404
 
 from answers.models import Answer
 from answers.serializers import AnswerSerializer
 from authentication.permissions import AUTH_SWAGGER_PARAM
 from exam.models import Question, Exam
 from authentication.models import CustomUser
-from code_executor.views import TaskViewSet
 from attempts.models import Attempt
+from celery import chain
+
 
 class AnswerViewSet(ModelViewSet):
     queryset = Answer.objects.all()
@@ -141,69 +143,49 @@ class EvaluateCode(APIView):
         exam_code = request.data.get("exam_code")
         student_id = request.data.get("student_id")
 
-        current_question = get_object_or_404(Question, id=question_id)
-        exam = get_object_or_404(Exam, exam_code=exam_code)
-        student = get_object_or_404(CustomUser, id=student_id)
+        # Validate input data
+        if not all([run_code, language, version, question_id, exam_code, student_id]):
+            return Response({"error": "Missing required fields"}, status=status.HTTP_400_BAD_REQUEST)
 
+        # Check if objects exist
+        try:
+            question = Question.objects.get(id=question_id)
+            exam = Exam.objects.get(exam_code=exam_code)
+            student = CustomUser.objects.get(id=student_id)
+        except (Question.DoesNotExist, Exam.DoesNotExist, CustomUser.DoesNotExist) as e:
+            return Response({"error": str(e)}, status=status.HTTP_404_NOT_FOUND)
+
+        # Get or create attempt
         attempt, _ = Attempt.objects.get_or_create(student_id=student, exam_id=exam)
-        test_cases = current_question.test_cases
 
-        results = self.evaluate_test_cases(language, run_code, test_cases , version)
-        all_passed = all(result['passed'] for result in results)
-
-        question_score = current_question.grade if all_passed else 0
-
-        self.update_answer_and_attempt(attempt, current_question, run_code, question_score)
-
-        if all_passed:
-            return Response({
-                "message": "All test cases passed",
-                "score": question_score,
-                "max_score": current_question.grade,
-            })
-        else:
-            return Response({
-                "message": "Some test cases failed",
-                "results": results
-            }, status=status.HTTP_400_BAD_REQUEST)
-
-    def evaluate_test_cases(self, language, run_code, test_cases,version):
-        results = []
-        for test in test_cases:
-            celery_task = TaskViewSet.execute_code(None, language=language, code=run_code, stdin=test.get('input', ''),version=version)
-            output = celery_task.get("output", {})
-
-            if output.get("stderr"):
-                return Response({
-                    "error": "Code execution error",
-                    "details": output["stderr"]
-                }, status=status.HTTP_400_BAD_REQUEST)
-
-            passed = output.get("stdout", "").strip() == test.get('output', '').strip()
-            results.append({
-                "passed": passed,
-                "input": test.get('input', ''),
-                "expected_output": test.get('output', ''),
-                "actual_output": output.get("stdout", "").strip()
-            })
-
-            if not passed:
-                break  # Stop on first failed test case
-
-        return results
-
-    @transaction.atomic
-    def update_answer_and_attempt(self, attempt, current_question, run_code, question_score):
-        answer, created = Answer.objects.update_or_create(
-            attempt_id=attempt,
-            question_id=current_question,
-            defaults={
-                'code': run_code,
-                'score': question_score
-            }
+        # Chain Celery tasks
+        task_chain = chain(
+            evaluate_test_cases.s(language, run_code, question.test_cases, version),
+            update_answer_and_attempt.s(attempt.id, question_id, run_code)
         )
+        result = task_chain.apply_async()
 
-        # Update the attempt's total score
-        attempt_answers = Answer.objects.filter(attempt_id=attempt)
-        attempt.score = sum(a.score or 0 for a in attempt_answers)
-        attempt.save()
+        return Response({"task_id": result.id}, status=status.HTTP_202_ACCEPTED)
+    def get(self, request, *args, **kwargs):
+        task_id = request.query_params.get('task_id')
+        if not task_id:
+            return Response({"error": "Task ID is required."}, status=status.HTTP_400_BAD_REQUEST)
+        
+        result = AsyncResult(task_id)
+        
+        if result.ready():
+            if result.successful():
+                task_result = result.result
+                if "error" in task_result:
+                    return Response({
+                        "status": "Error",
+                        "error_type": task_result["error"],
+                        "details": task_result.get("details"),
+                        "test_case": task_result.get("test_case")
+                    }, status=status.HTTP_400_BAD_REQUEST)
+                else:
+                    return Response({"status": "Success", "result": task_result})
+            else:
+                return Response({"status": "Failure", "reason": str(result.result)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        else:
+            return Response({"status": result.state})

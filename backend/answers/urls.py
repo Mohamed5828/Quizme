@@ -21,7 +21,7 @@ schema_view = get_schema_view(
 
 urlpatterns = [
     path('', include(router.urls)),
-    path('answers/evaluate-code/', EvaluateCode.as_view(), name='evaluate_code'),
+    path('answers/evaluate-code', EvaluateCode.as_view(), name='evaluate_code'),
     
     # Swagger documentation
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
