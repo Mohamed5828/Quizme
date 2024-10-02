@@ -41,6 +41,7 @@ api_v1 = [
     path('', include('attempts.urls')),
     path('', include('code_executor.urls')),
     path('', include('monitor.urls')),
+    path('', include('activitylog.urls')),
 ]
 
 api_v2 = [
