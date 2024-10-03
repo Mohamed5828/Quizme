@@ -4,7 +4,7 @@ from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 from rest_framework import permissions
 
-from .views import EvaluateCode, AnswerViewSet
+from .views import EvaluateCode, AnswerViewSet, EvaluateCodeSSEView
 
 router = DefaultRouter()
 router.register('answers', AnswerViewSet)
@@ -22,8 +22,8 @@ schema_view = get_schema_view(
 urlpatterns = [
     path('', include(router.urls)),
     path('answers/evaluate-code', EvaluateCode.as_view(), name='evaluate_code'),
-    
-    # Swagger documentation
+    path('answers/evaluate-code/<str:task_id>', EvaluateCodeSSEView.as_view(), name='evaluate_code_sse'),
+
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
 ]

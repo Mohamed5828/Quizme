@@ -1,3 +1,4 @@
+from django.views import View
 from code_executor.tasks import evaluate_test_cases, update_answer_and_attempt
 from celery.result import AsyncResult
 
@@ -16,7 +17,10 @@ from exam.models import Question, Exam
 from authentication.models import CustomUser
 from attempts.models import Attempt
 from celery import chain
-
+from django.http import StreamingHttpResponse
+from django.http import HttpResponse
+import json
+import time
 
 class AnswerViewSet(ModelViewSet):
     queryset = Answer.objects.all()
@@ -170,26 +174,58 @@ class EvaluateCode(APIView):
         result = task_chain.apply_async()
 
         return Response({"task_id": result.id}, status=status.HTTP_202_ACCEPTED)
+    
+
+class EvaluateCodeSSEView(View):
     def get(self, request, *args, **kwargs):
-        task_id = request.query_params.get('task_id')
+        task_id = kwargs.get('task_id')
         if not task_id:
-            return Response({"error": "Task ID is required."}, status=status.HTTP_400_BAD_REQUEST)
-        
-        result = AsyncResult(task_id)
-        
-        if result.ready():
-            if result.successful():
-                task_result = result.result
-                if "error" in task_result:
-                    return Response({
-                        "status": "Error",
-                        "error_type": task_result["error"],
-                        "details": task_result.get("details"),
-                        "test_case": task_result.get("test_case")
-                    }, status=status.HTTP_400_BAD_REQUEST)
+            return StreamingHttpResponse(
+                "data: " + json.dumps({"error": "Task ID is required."}) + "\n\n",
+                content_type='text/event-stream'
+            )
+
+        # Set required headers for SSE
+        response = StreamingHttpResponse(
+            streaming_content=self.event_stream(task_id),
+            content_type='text/event-stream'
+        )
+        response['Cache-Control'] = 'no-cache'
+        response['X-Accel-Buffering'] = 'no'  # Required for Nginx
+        response['Access-Control-Allow-Origin'] = '*'  # Adjust based on your CORS needs
+        return response
+
+    def event_stream(self, task_id):
+        try:
+            while True:
+                result = AsyncResult(task_id)
+                
+                if result.ready():
+                    if result.successful():
+                        task_result = result.result
+                        if isinstance(task_result, dict) and "error" in task_result:
+                            data = {
+                                "status": "Error",
+                                "error_type": task_result["error"],
+                                "details": task_result.get("details"),
+                                "test_case": task_result.get("test_case")
+                            }
+                        else:
+                            data = {"status": "Success", "result": task_result}
+                        
+                        yield f"data: {json.dumps(data)}\n\n"
+                        yield "event: complete\ndata: null\n\n"
+                        break
+                    else:
+                        error_data = {"status": "Failure", "reason": str(result.result)}
+                        yield f"data: {json.dumps(error_data)}\n\n"
+                        yield "event: complete\ndata: null\n\n"
+                        break
                 else:
-                    return Response({"status": "Success", "result": task_result})
-            else:
-                return Response({"status": "Failure", "reason": str(result.result)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        else:
-            return Response({"status": result.state})
+                    # Send intermediate status
+                    yield f"data: {json.dumps({'status': result.state})}\n\n"
+                    
+                time.sleep(0.5)
+        except Exception as e:
+            yield f"data: {json.dumps({'status': 'Error', 'message': str(e)})}\n\n"
+            yield "event: complete\ndata: null\n\n"
