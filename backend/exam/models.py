@@ -18,6 +18,8 @@ class Exam(models.Model):
     whitelist = models.JSONField(default=list)
     group_name = models.CharField(max_length=100, blank=True, null=True)
     scheduled_task_id = models.CharField(max_length=255, null=True, blank=True)
+    ## to be tested 
+    # csv_sent = models.BooleanField(default=False)
 
     def save(self, *args, **kwargs):
         # leave this here to prevent circular imports error
