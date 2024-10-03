@@ -160,7 +160,6 @@ class ExamViewSet(ModelViewSet):
 #         return Question.objects.filter(exam_id=self.kwargs.get('exam_code'))
 #
 #
-
 class ExamDurationView(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
     permission_classes = [IsAuthenticated, IsOwner | IsInstructor]
     serializer_class = ExamDurationSerializer
@@ -169,15 +168,21 @@ class ExamDurationView(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
 
     @swagger_auto_schema(
         tags=['exams', 'v2'],
-        operation_summary="Retrieve the duration of an exam",
-        operation_description="Fetches the duration of an exam by its unique code. Requires authentication. Allowed for exam owner or whitelisted users.",
+        operation_summary="Retrieve the duration and ID of an exam",
+        operation_description="Fetches the duration and ID of an exam by its unique code. Requires authentication. Allowed for exam owner or whitelisted users.",
         manual_parameters=[
-            openapi.Parameter('exam_code', openapi.IN_PATH, description="The unique code of the exam",
-                              type=openapi.TYPE_STRING),
-            openapi.Parameter('Authorization', openapi.IN_HEADER, description="Bearer token for authentication",
-                              type=openapi.TYPE_STRING)
+            openapi.Parameter('exam_code', openapi.IN_PATH, 
+                description="The unique code of the exam",
+                type=openapi.TYPE_STRING),
+            openapi.Parameter('Authorization', openapi.IN_HEADER, 
+                description="Bearer token for authentication",
+                type=openapi.TYPE_STRING)
         ],
-        responses={200: ExamDurationSerializer(many=False), 404: "Exam not found", 403: "Forbidden"},
+        responses={
+            200: ExamDurationSerializer(many=False), 
+            404: "Exam not found", 
+            403: "Forbidden"
+        },
     )
     def retrieve(self, request, exam_code=None, *args, **kwargs):
         exam = get_object_or_404(Exam, exam_code=exam_code)

@@ -1,6 +1,6 @@
 from django.db import models
 
-from code_executor.tasks import execute_code_async
+
 
 
 # Create your models here.
@@ -23,6 +23,7 @@ class Answer(models.Model):
         # ]
 
     def _eval_code(self):
+        from code_executor.tasks import execute_code_async
         test_cases = self.question_id.test_cases
 
         all_passed = True

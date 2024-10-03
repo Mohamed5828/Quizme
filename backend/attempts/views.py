@@ -1,7 +1,7 @@
 from drf_yasg.openapi import Response
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import viewsets
-from rest_framework.exceptions import NotFound
+from rest_framework.exceptions import NotFound, PermissionDenied
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 
@@ -18,6 +18,8 @@ class AttemptViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
+        if not self.request.user.is_authenticated:
+            return Attempt.objects.none()
 
         if hasattr(self.request.user, "role") and self.request.user.role == 'student':
             return Attempt.objects.filter(student_id=self.request.user)
