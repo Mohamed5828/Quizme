@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 import SingleQuestionComponent from "./SingleQuestionComponent";
 import CodeEditorWrapper from "./CodeEditorWrapper";
-import { useFetchData } from "../../hooks/useFetchData";
-import BasicSpinner from "../Basic/BasicSpinner";
+import { useFetchData } from "../../../../hooks/useFetchData";
+import BasicSpinner from "../../../Basic/BasicSpinner";
 import { useParams } from "react-router-dom";
 
 interface Choice {
   desc: string;
-  isCorrect: boolean;
+  isCorrect: string;
 }
 
 interface TestCase {
@@ -28,6 +28,7 @@ interface Question {
 }
 
 interface ExamData {
+  id: string;
   examCode: string;
   duration: string;
   maxGrade: number;
@@ -107,7 +108,7 @@ function QuestionContainer({
       <div className="w-2/3 overflow-y-auto p-6 bg-white shadow-md">
         {activeQuestion ? (
           <div>
-            <h1 className="text-2xl font-bold mb-4 text-gray-800">
+            <h1 className="text-l font-bold mb-4 text-gray-800">
               {activeQuestion.desc}
             </h1>
             <p className="mb-6 text-gray-600">

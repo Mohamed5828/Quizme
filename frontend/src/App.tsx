@@ -3,7 +3,7 @@ import ForgotPassword from "./components/authentication/ForgotPassword.tsx";
 import ChangePassword from "./components/authentication/ResetPassword.tsx";
 // import refresh from "./components/authentication/refresh.ts";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import AllQuestionsPage from "./components/Viewers/AllQuestionsPage";
+import AllQuestionsPage from "./components/Viewers/AllQuestionsPage.tsx";
 import ExamCreationForm from "./components/Forms/ExamCreationForm";
 import QuestionBank from "./components/Viewers/QuestionBank";
 import Login from "./components/authentication/Login.tsx";
@@ -27,7 +27,6 @@ import ProtectedRoute from "./components/authentication/ProtectedRoute.tsx";
 import StudentExamEntry from "./components/Viewers/ExamEntryNavigator.tsx";
 // import refresh from "./components/authentication/refresh.ts";
 
-
 const App: React.FC = () => {
   return (
     <UserProvider>
@@ -37,9 +36,12 @@ const App: React.FC = () => {
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<RegisterForm />} />
             <Route path="/" element={<Landing />} />
-            <Route path="/Forgot-password" element={<ForgotPassword />}/>
-            <Route path="/api/v1/auth/reset-password/:uidb64/:token" element={<ChangePassword />}/>
-            
+            <Route path="/Forgot-password" element={<ForgotPassword />} />
+            <Route
+              path="/api/v1/auth/reset-password/:uidb64/:token"
+              element={<ChangePassword />}
+            />
+
             <Route
               path="/create-exam"
               element={<ProtectedRoute element={<ExamCreationForm />} />}

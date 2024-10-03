@@ -4,6 +4,7 @@ import useAxiosInstance from "../utils/axiosInstance";
 
 interface UseFetchDataResponse<T> {
   data: T | null;
+  statusCode: number | null;
   loading: boolean;
   error: AxiosError | null;
   refetch: () => void;
@@ -17,6 +18,7 @@ export function useFetchData<T>(
   const [data, setData] = useState<T | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<AxiosError | null>(null);
+  const [statusCode, setStatusCode] = useState<number | null>(null);
 
   const axiosInstance = useAxiosInstance(apiVersion, needAuth);
 
@@ -26,6 +28,7 @@ export function useFetchData<T>(
     try {
       const response = await axiosInstance.get<T>(url);
       setData(response.data);
+      setStatusCode(response.status);
       setError(null);
     } catch (err) {
       setError(err as AxiosError);
@@ -44,6 +47,7 @@ export function useFetchData<T>(
     data,
     loading,
     error,
+    statusCode,
     refetch: fetchData,
   };
 }

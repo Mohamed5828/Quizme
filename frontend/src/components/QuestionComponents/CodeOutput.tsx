@@ -1,18 +1,16 @@
-import React, { useEffect } from "react";
-import { useFetchData } from "../../hooks/useFetchData";
+import React, { useEffect, useState } from "react";
 import BasicSpinner from "../Basic/BasicSpinner";
 
 interface CodeOutputProps {
   taskId: string | null;
 }
-
 interface TestResult {
   testCase: number;
   passed: boolean;
   input: string;
-  expectedOutput: string;
-  actualOutput: string;
-  executionTime: string;
+  expected_output: string;
+  actual_output: string;
+  execution_time: string;
 }
 
 interface TaskResult {
@@ -22,56 +20,68 @@ interface TaskResult {
   test_case?: number;
   result?: {
     message: string;
-    results: TestResult[];
+    score?: number;
+    max_score?: number;
+    results?: TestResult[];
   };
 }
 
 const CodeOutput: React.FC<CodeOutputProps> = ({ taskId }) => {
-  const {
-    data: result,
-    loading,
-    error,
-    refetch,
-  } = useFetchData<TaskResult>(
-    taskId ? `/answers/evaluate-code?task_id=${taskId}` : ""
-  );
+  const [result, setResult] = useState<TaskResult | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    let interval: any;
-    let delay = 1000; // start with 1 second
+    if (!taskId) return;
 
-    const poll = () => {
-      refetch();
-      if (
-        error ||
-        (result && (result.status === "Success" || result.status === "Error"))
-      ) {
-        clearInterval(interval);
-      } else {
-        // Increase delay exponentially
-        delay = Math.min(delay * 2, 32000); // Cap at 32 seconds
-        interval = setTimeout(poll, delay);
+    setLoading(true);
+    setError(null);
+    setResult(null);
+
+    const eventSource = new EventSource(
+      `http://127.0.0.1:8000/api/v1/answers/evaluate-code/${taskId}`
+    );
+
+    eventSource.onmessage = (event) => {
+      const data: TaskResult = JSON.parse(event.data);
+      setResult(data);
+      console.log(data);
+
+      if (["Success", "Error", "Failure"].includes(data.status)) {
+        setLoading(false);
+        eventSource.close(); // Close SSE when done
       }
     };
 
-    if (taskId) {
-      poll();
-      return () => clearInterval(interval);
-    }
-  }, [taskId, result, error, refetch]);
+    eventSource.onerror = () => {
+      setError("An error occurred while evaluating the code.");
+      setLoading(false);
+      eventSource.close();
+    };
+
+    // Clean up on component unmount
+    return () => {
+      eventSource.close();
+    };
+  }, [taskId]);
 
   if (loading) {
-    return <BasicSpinner />;
+    return (
+      <div className="flex justify-center items-center p-4">
+        <BasicSpinner />
+        <span className="ml-2">Evaluating code...</span>
+      </div>
+    );
   }
 
   if (error) {
     return (
       <div
-        className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative"
+        className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg"
         role="alert"
       >
         <strong className="font-bold">Error: </strong>
-        <span className="block sm:inline">{error.message}</span>
+        <span className="block sm:inline">{error}</span>
       </div>
     );
   }
@@ -83,48 +93,82 @@ const CodeOutput: React.FC<CodeOutputProps> = ({ taskId }) => {
   if (result.status === "Error") {
     return (
       <div
-        className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative"
+        className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg space-y-2"
         role="alert"
       >
-        <strong className="font-bold">Error: </strong>
-        <span className="block sm:inline">{result.error_type}</span>
-        <p>{result.details}</p>
-        {result.test_case && <p>Failed at test case: {result.test_case}</p>}
+        <div className="font-bold">Error Type: {result.error_type}</div>
+        {result.details && <div>{result.details}</div>}
+        {result.test_case && <div>Failed at test case: {result.test_case}</div>}
       </div>
     );
   }
 
-  // Ensure the result has a valid 'result' property before destructuring
   if (result.status === "Success" && result.result) {
-    const { message, results } = result.result;
-
     return (
-      <div className="mt-4">
-        <h3 className="text-xl font-bold mb-2">Execution Results</h3>
-        <p
-          className={
-            message === "All tests passed" ? "text-green-600" : "text-red-600"
-          }
-        >
-          {message}
-        </p>
-        {results.map((testResult, index) => (
-          <div
-            key={index}
-            className={`mt-2 p-2 ${
-              testResult.passed ? "bg-green-100" : "bg-red-100"
-            } rounded`}
+      <div className="mt-4 space-y-4">
+        <div className="flex items-center">
+          <h3 className="text-xl font-bold">Execution Results</h3>
+          <span
+            className={`ml-4 px-3 py-1 rounded-full text-sm ${
+              result.result.message === "All tests passed"
+                ? "bg-green-100 text-green-800"
+                : "bg-red-100 text-red-800"
+            }`}
           >
-            <p>
-              Test Case {testResult.testCase}:{" "}
-              {testResult.passed ? "Passed" : "Failed"}
-            </p>
-            <p>Input: {testResult.input}</p>
-            <p>Expected Output: {testResult.expectedOutput}</p>
-            <p>Actual Output: {testResult.actualOutput}</p>
-            <p>Execution Time: {testResult.executionTime}</p>
-          </div>
-        ))}
+            {result.result.message}
+          </span>
+        </div>
+        <div>
+          {result.result.results ? (
+            result.result.results.map((test, index) => (
+              <div
+                key={index}
+                className={`mt-2 p-4 rounded-lg border ${
+                  test.passed
+                    ? "bg-green-50 border-green-200"
+                    : "bg-red-50 border-red-200"
+                }`}
+              >
+                <div className="flex justify-between items-center mb-2">
+                  <h4 className="font-semibold">
+                    Test Case {test.testCase}:{" "}
+                    <span
+                      className={
+                        test.passed ? "text-green-600" : "text-red-600"
+                      }
+                    >
+                      {test.passed ? "Passed" : "Failed"}
+                    </span>
+                  </h4>
+                  <span className="text-sm text-gray-600">
+                    Time: {test.execution_time}
+                  </span>
+                </div>
+                <p>
+                  <span className="font-medium">Input:</span> {test.input}
+                </p>
+                <p>
+                  <span className="font-medium">Expected:</span>{" "}
+                  {test.expected_output}
+                </p>
+                <p>
+                  <span className="font-medium">Actual:</span>{" "}
+                  {test.actual_output}
+                </p>
+              </div>
+            ))
+          ) : (
+            <div className="mt-2 p-4 rounded-lg border bg-green-50 border-green-200">
+              <h4 className="font-semibold text-green-600">
+                {result.result.message}
+              </h4>
+              <p>
+                <span className="font-medium">Score:</span>{" "}
+                {result.result.score}/{result.result.max_score}
+              </p>
+            </div>
+          )}
+        </div>
       </div>
     );
   }

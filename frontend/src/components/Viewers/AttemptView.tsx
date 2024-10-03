@@ -3,7 +3,7 @@ import { useFetchData } from "../../hooks/useFetchData";
 import { useParams } from "react-router-dom";
 import BasicSpinner from "../Basic/BasicSpinner";
 import { toast } from "react-toastify";
-import QuestionContainer from "../QuestionComponents/QuestionContainer";
+import QuestionContainer from "./ExamPage/components/QuestionContainer";
 const AttemptViewer = () => {
   const { attempt_id } = useParams();
   const { data, loading, error, refetch } = useFetchData(
