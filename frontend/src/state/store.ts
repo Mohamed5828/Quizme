@@ -1,8 +1,10 @@
 import { configureStore } from "@reduxjs/toolkit";
 import ExamCreationReducer from "./ExamCreationState/ExamCreationSlice.ts";
+import ActivityLogReducer from "./ActivityLogState/ActivityLogSlice.ts";
 export const store = configureStore({
   reducer: {
     ExamCreationState: ExamCreationReducer,
+    ActivityLogState: ActivityLogReducer,
   },
 });
 

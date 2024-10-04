@@ -4,6 +4,7 @@ import CodeEditorWrapper from "./CodeEditorWrapper";
 import { useFetchData } from "../../../../hooks/useFetchData";
 import BasicSpinner from "../../../Basic/BasicSpinner";
 import { useParams } from "react-router-dom";
+import useQuestionNavMonitor from "../../../../hooks/useQuestionNavMonitor";
 
 interface Choice {
   desc: string;
@@ -61,6 +62,7 @@ function QuestionContainer({
   const [currentQuestionId, setCurrentQuestionId] = useState<number | null>(
     null
   );
+  useQuestionNavMonitor(currentQuestionId);
 
   if (loading)
     return (

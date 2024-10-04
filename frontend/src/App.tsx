@@ -1,9 +1,8 @@
 import React from "react";
 import ForgotPassword from "./components/authentication/ForgotPassword.tsx";
 import ChangePassword from "./components/authentication/ResetPassword.tsx";
-// import refresh from "./components/authentication/refresh.ts";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import AllQuestionsPage from "./components/Viewers/AllQuestionsPage.tsx";
+import AllQuestionsPage from "./components/Viewers/ExamPage/AllQuestionsPage.tsx";
 import ExamCreationForm from "./components/Forms/ExamCreationForm";
 import QuestionBank from "./components/Viewers/QuestionBank";
 import Login from "./components/authentication/Login.tsx";
@@ -25,7 +24,9 @@ import ForbiddenPage from "./components/Viewers/PermissionDenied.tsx";
 import NotFoundPage from "./components/Viewers/NotFound.tsx";
 import ProtectedRoute from "./components/authentication/ProtectedRoute.tsx";
 import StudentExamEntry from "./components/Viewers/ExamEntryNavigator.tsx";
-// import refresh from "./components/authentication/refresh.ts";
+import ActivityMonitorWrapper from "./components/Wrappers/ActivityMonitorWrapper.tsx";
+import ExamResult from "./components/Viewers/Results.tsx";
+// import StudentAnswer from "./components/ExamResults/StudentAnswers.tsx";
 
 const App: React.FC = () => {
   return (
@@ -35,7 +36,9 @@ const App: React.FC = () => {
           <Routes>
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<RegisterForm />} />
+            <Route path="/result/:examCode" element={<ExamResult />} />
             <Route path="/" element={<Landing />} />
+            <Route path="/permission-denied" element={<ForbiddenPage />} />
             <Route path="/Forgot-password" element={<ForgotPassword />} />
             <Route
               path="/api/v1/auth/reset-password/:uidb64/:token"
@@ -55,8 +58,22 @@ const App: React.FC = () => {
               element={<ProtectedRoute element={<Dashboard />} />}
             />
             <Route path="/enter-exam/:examCode" element={<ExamEntry />} />
+            {/* <Route
+              path="/attempt/:examCode/:attemptId"
+              element={<StudentAnswer />}
+            /> */}
             <Route path="/enter" element={<StudentExamEntry />} />
-            <Route path="/exam/:examCode" element={<AllQuestionsPage />} />
+            <Route
+              path="/exam/:examCode"
+              element={
+                <AllQuestionsPage />
+                // <WebcamMonitorWrapper>
+                //   <ActivityMonitorWrapper>
+                //     <AllQuestionsPage />
+                //   </ActivityMonitorWrapper>
+                // </WebcamMonitorWrapper>
+              }
+            />
             <Route
               path="/question-bank"
               element={<ProtectedRoute element={<QuestionBank />} />}

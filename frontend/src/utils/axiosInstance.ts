@@ -1,3 +1,4 @@
+// import { JwtPayload, jwtDecode } from "jwt-decode";
 // import axios, { AxiosInstance } from "axios";
 
 // const BASE_URL = "http://127.0.0.1:8000/api"; // Replace with your API base URL
@@ -7,22 +8,54 @@
 //   return localStorage.getItem("accessToken") || null; // Use the key defined in your store
 // };
 
+// // Helper function to check if token is expired
+// const isTokenExpired = (token: string): boolean => {
+//   try {
+//     const decoded = jwtDecode<JwtPayload>(token);
+//     if (!decoded.exp) {
+//       return true; // If the token doesn't have an expiration, assume it's expired
+//     }
+//     const currentTime = Math.floor(Date.now() / 1000);
+//     return decoded.exp < currentTime;
+//   } catch (error) {
+//     return true; // If decoding fails, assume it's expired
+//   }
+// };
+
+// // Create an Axios instance with optional token validation
 // export const getAxiosInstance = (
 //   apiVersion: string = "v1",
 //   needAuth: boolean = true
 // ): AxiosInstance => {
 //   const token = needAuth ? getToken() : null;
 
-//   return axios.create({
+//   const instance = axios.create({
 //     baseURL: `${BASE_URL}/${apiVersion}`,
-//     timeout: 5000,
 //     headers: {
-//       "Content-Type": "application/json",
-//       ...(needAuth && token ? { Authorization: token } : {}),
+//       ...(needAuth && token ? { Authorization: `${token}` } : {}),
 //     },
 //   });
+
+//   // Add a request interceptor to check if the token is expired
+//   instance.interceptors.request.use(
+//     (config) => {
+//       if (needAuth && token) {
+//         if (isTokenExpired(token)) {
+//           localStorage.removeItem("accessToken"); // Remove expired token
+//           throw new Error("Token expired");
+//         }
+//       }
+//       return config;
+//     },
+//     (error) => {
+//       return Promise.reject(error);
+//     }
+//   );
+
+//   return instance;
 // };
 
+// // Use the Axios instance
 // export const useAxiosInstance = (
 //   apiVersion: string = "v1",
 //   needAuth: boolean = true
