@@ -11,7 +11,8 @@ from authentication.permissions import AUTH_SWAGGER_PARAM
 from exam.models import Exam
 
 
-# TODO Can make this follow the same convention as exam v2 (make the answers coupled to the attempt, remove answer crud)
+# TODO (Suggestion) Can make this follow the same convention as exam v2
+#  (make the answers coupled to the attempt, remove answer crud)
 class AttemptViewSet(viewsets.ModelViewSet):
     serializer_class = AttemptSerializer
     queryset = Attempt.objects.all()
