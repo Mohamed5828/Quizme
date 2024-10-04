@@ -9,6 +9,8 @@ import { useParams, useNavigate } from "react-router-dom";
 import putData from "../../../utils/putData";
 import { toast } from "react-toastify";
 import { getRemainingTime } from "./hooks/getRemainingTime";
+import { useDispatch, UseDispatch } from "react-redux";
+import { pushLogsToServer } from "../../../state/ActivityLogState/ActivityLogSlice";
 
 interface UserAnswer {
   questionId: number;
@@ -33,7 +35,7 @@ function AllQuestionsPage() {
   const { examCode } = useParams();
   const navigate = useNavigate();
   const timerRef = useRef<{ timeRemaining: number }>({ timeRemaining: 0 });
-
+  const dispatch = useDispatch();
   const {
     data: examMetaData,
     loading: examLoading,
@@ -101,7 +103,7 @@ function AllQuestionsPage() {
         studentId: user.id,
         examId: examMetaData.id,
       });
-
+      dispatch(pushLogsToServer());
       if (error) {
         console.error("Failed to sync answers:", error);
       } else {
@@ -122,7 +124,7 @@ function AllQuestionsPage() {
       examId: examMetaData.id,
       endTime: Date.now(),
     });
-
+    dispatch(pushLogsToServer());
     if (error) {
       console.error("Failed to submit exam:", error);
       toast.error("Failed to submit exam");

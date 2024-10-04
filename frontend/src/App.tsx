@@ -25,6 +25,7 @@ import NotFoundPage from "./components/Viewers/NotFound.tsx";
 import ProtectedRoute from "./components/authentication/ProtectedRoute.tsx";
 import StudentExamEntry from "./components/Viewers/ExamEntryNavigator.tsx";
 import ActivityMonitorWrapper from "./components/Wrappers/ActivityMonitorWrapper.tsx";
+import ExamResult from "./components/Viewers/Results.tsx";
 // import refresh from "./components/authentication/refresh.ts";
 
 const App: React.FC = () => {
@@ -35,6 +36,7 @@ const App: React.FC = () => {
           <Routes>
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<RegisterForm />} />
+            <Route path="/result/:examCode" element={<ExamResult />} />
             <Route path="/" element={<Landing />} />
             <Route path="/permission-denied" element={<ForbiddenPage />} />
             <Route path="/Forgot-password" element={<ForgotPassword />} />
