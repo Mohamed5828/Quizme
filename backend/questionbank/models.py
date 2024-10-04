@@ -21,7 +21,7 @@ class QuestionBank(models.Model):
     grade = models.IntegerField()
     choices = models.JSONField(default=list)
     test_cases = models.JSONField(default=list)
-    code = models.TextField(null=True, blank=True)
+    code = models.JSONField(null=True, blank=True)
     user_id = models.ForeignKey("authentication.CustomUser", on_delete=models.CASCADE, related_name='question_banks')
 
     class Meta:

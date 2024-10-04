@@ -1,9 +1,10 @@
-from rest_framework import serializers
+from rest_framework.serializers import ModelSerializer
 
+from code_executor.serializers import CodeValidationMixin
 from questionbank.models import QuestionBank
 
 
-class QuestionBankSerializer(serializers.ModelSerializer):
+class QuestionBankSerializer(CodeValidationMixin, ModelSerializer):
     class Meta:
         model = QuestionBank
         # fields = '__all__'
