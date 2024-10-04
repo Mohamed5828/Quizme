@@ -13,7 +13,7 @@ const WebcamMonitorWrapper = ({ children }: WebcamMonitorWrapperProps) => {
     return (
       <div className="flex h-full items-center justify-center">
         <h1 className="text-red-600 text-center text-3xl font-bold tracking-widest">
-          An error occurred trying to capture your webcam and microphone:
+          An error occurred trying to capture your webcam:
           {` ${error.message}`}
         </h1>
       </div>
