@@ -26,7 +26,7 @@ import ProtectedRoute from "./components/authentication/ProtectedRoute.tsx";
 import StudentExamEntry from "./components/Viewers/ExamEntryNavigator.tsx";
 import ActivityMonitorWrapper from "./components/Wrappers/ActivityMonitorWrapper.tsx";
 import ExamResult from "./components/Viewers/Results.tsx";
-// import refresh from "./components/authentication/refresh.ts";
+// import StudentAnswer from "./components/ExamResults/StudentAnswers.tsx";
 
 const App: React.FC = () => {
   return (
@@ -58,6 +58,10 @@ const App: React.FC = () => {
               element={<ProtectedRoute element={<Dashboard />} />}
             />
             <Route path="/enter-exam/:examCode" element={<ExamEntry />} />
+            {/* <Route
+              path="/attempt/:examCode/:attemptId"
+              element={<StudentAnswer />}
+            /> */}
             <Route path="/enter" element={<StudentExamEntry />} />
             <Route
               path="/exam/:examCode"

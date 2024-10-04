@@ -9,7 +9,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import putData from "../../../utils/putData";
 import { toast } from "react-toastify";
 import { getRemainingTime } from "./hooks/getRemainingTime";
-import { useDispatch, UseDispatch } from "react-redux";
+import { useDispatch } from "react-redux";
 import { pushLogsToServer } from "../../../state/ActivityLogState/ActivityLogSlice";
 
 interface UserAnswer {
@@ -40,7 +40,7 @@ function AllQuestionsPage() {
     data: examMetaData,
     loading: examLoading,
     error: examError,
-  } = useFetchData<ExamMetaData>(`exams/exam-durations/${examCode}`, "v2");
+  } = useFetchData<ExamMetaData>(`exams/exam-durations/${examCode}/`, "v2");
 
   const {
     data: attemptData,

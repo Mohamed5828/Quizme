@@ -89,7 +89,11 @@ const ModelAnswersPage = () => {
                   ${question.id === currentQuestionId ? "bg-blue-100 border-l-4 border-blue-500" : "hover:bg-gray-50"}`}
                 onClick={() => setCurrentQuestionId(question.id)}
               >
-                <h3 className="font-semibold text-gray-800">{question.desc}</h3>
+                <h3 className="font-semibold text-gray-800">
+                  {question.desc && question.desc.length > 40
+                    ? `${question.desc.slice(0, 40)}...`
+                    : question.desc}
+                </h3>
                 <p className="text-sm text-gray-500 mt-1">
                   Type: {question.type} | Difficulty: {question.difficulty}
                 </p>
@@ -100,7 +104,7 @@ const ModelAnswersPage = () => {
         <section className="w-2/3 overflow-y-auto p-8 bg-white shadow-lg ml-4 mr-4 my-4 rounded-lg">
           {activeQuestion ? (
             <div>
-              <h2 className="text-2xl font-bold text-gray-800 mb-4">
+              <h2 className="text-l font-bold text-gray-800 mb-4">
                 {activeQuestion.desc}
               </h2>
               <div className="grid grid-cols-2 gap-4 mb-6">

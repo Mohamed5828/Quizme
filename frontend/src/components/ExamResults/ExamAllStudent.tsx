@@ -2,17 +2,22 @@ import React, { useMemo } from "react";
 import StudentList from "./StudentList";
 import { useParams, useNavigate } from "react-router-dom";
 import { useFetchData } from "../../hooks/useFetchData";
-import { Person } from "./StudentList";
+import { ExamResult } from "./StudentList";
 import BasicSpinner from "../Basic/BasicSpinner";
 import noDataImage from "../../images/no-data-bro.png";
-
 const ExamAllStudent = () => {
   const { examCode } = useParams();
   const navigate = useNavigate();
 
-  const { data, loading, error } = useFetchData<Person[]>(
+  const { data, loading, error } = useFetchData<ExamResult[]>(
     `/attempts?examCode=${examCode}/`
   );
+
+  // Always declare hooks before returning conditions
+  const sortedStudents = useMemo(() => {
+    if (!data) return [];
+    return [...data].sort((a, b) => Number(b.score) - Number(a.score));
+  }, [data]);
 
   if (loading) {
     return (
@@ -21,9 +26,6 @@ const ExamAllStudent = () => {
       </div>
     );
   }
-  const handleViewAnswers = () => {
-    navigate(`/answer/${examCode}`);
-  };
 
   if (error) {
     return (
@@ -39,7 +41,7 @@ const ExamAllStudent = () => {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 overflow-hidden">
         <button
-          onClick={handleViewAnswers}
+          onClick={() => navigate(`/answer/${examCode}`)}
           className="px-6 py-3 text-white bg-emerald-600 rounded-lg hover:bg-emerald-700 focus:outline-none focus:ring-4 focus:ring-emerald-400 transition duration-300 mb-6"
         >
           View Answers
@@ -52,10 +54,6 @@ const ExamAllStudent = () => {
     );
   }
 
-  const sortedStudents = useMemo(() => {
-    return [...data].sort((a, b) => Number(b.score) - Number(a.score));
-  }, [data]);
-
   return (
     <div className="flex flex-col items-center mt-8">
       <h2 className="text-3xl font-bold text-emerald-700 mb-4">
@@ -63,11 +61,11 @@ const ExamAllStudent = () => {
       </h2>
 
       <div className="w-4/5 lg:w-3/5 bg-white rounded-lg shadow-lg p-6 mb-6">
-        <StudentList students={sortedStudents} />
+        <StudentList students={sortedStudents} examCode={examCode} />
       </div>
 
       <button
-        onClick={handleViewAnswers}
+        onClick={() => navigate(`/answer/${examCode}`)}
         className="px-6 py-3 text-white bg-emerald-600 rounded-lg hover:bg-emerald-700 focus:outline-none focus:ring-4 focus:ring-emerald-400 transition duration-300"
       >
         View Answers
@@ -75,5 +73,4 @@ const ExamAllStudent = () => {
     </div>
   );
 };
-
 export default ExamAllStudent;
