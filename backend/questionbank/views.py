@@ -28,7 +28,17 @@ class QuestionBankViewSet(ModelViewSet):
 
     def get_queryset(self):
         user = self.request.user
-        return QuestionBank.objects.filter(user_id=user.id)
+        queryset = QuestionBank.objects.filter(user_id=user.id)
+        tag = self.request.query_params.get('tag', None)
+        if tag:
+            queryset = queryset.filter(tags__icontains=tag)
+        difficulty = self.request.query_params.get('difficulty', None)
+        if difficulty:
+            queryset = queryset.filter(difficulty=difficulty)
+        question_type = self.request.query_params.get('type', None)
+        if question_type:
+           queryset = queryset.filter(type=question_type)   
+        return queryset
 
     @swagger_auto_schema(
         tags=['question banks'],
