@@ -1,17 +1,18 @@
-from drf_yasg.openapi import Response
+from rest_framework.response import Response
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import viewsets
 from rest_framework.exceptions import NotFound, PermissionDenied
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
-
+from rest_framework.decorators import action
 from attempts.models import Attempt
 from attempts.serializers import AttemptSerializer
 from authentication.permissions import AUTH_SWAGGER_PARAM
 from exam.models import Exam
 
 
-# TODO Can make this follow the same convention as exam v2 (make the answers coupled to the attempt, remove answer crud)
+# TODO (Suggestion) Can make this follow the same convention as exam v2
+#  (make the answers coupled to the attempt, remove answer crud)
 class AttemptViewSet(viewsets.ModelViewSet):
     serializer_class = AttemptSerializer
     queryset = Attempt.objects.all()
@@ -100,7 +101,42 @@ class AttemptViewSet(viewsets.ModelViewSet):
     def list(self, request, *args, **kwargs):
         return super().list(request, *args, **kwargs)
 
+    @swagger_auto_schema(
+        operation_summary="Get student's attempt by exam code",
+        operation_description="Retrieves the authenticated student's attempt for a specific exam using exam code",
+        responses={
+            200: AttemptSerializer,
+            404: "Not Found - Exam doesn't exist or no attempt found",
+            403: "Forbidden - User is not authorized to view this attempt"
+        },
+        manual_parameters=[AUTH_SWAGGER_PARAM],
+        tags=['attempts']
+    )
+    @action(detail=False, methods=['get'], url_path='exam/(?P<exam_code>[^/.]+)')
+    def get_attempt_by_exam(self, request, exam_code=None):
+        # Check if user is authenticated and is a student
+        if not hasattr(request.user, "role") :
+            raise PermissionDenied("Only instructor can access this endpoint")
 
+        try:
+            # First verify the exam exists and get its ID
+            exam = Exam.objects.get(exam_code=exam_code)
+            
+            # Get the attempt for this student and exam
+            attempt = Attempt.objects.filter(
+                student_id=request.user,  # Assuming student_id is the correct field
+                exam_id=exam.id  # Use the exam.id directly
+            ).first()
+            
+            if not attempt:
+                raise NotFound("No attempt found for this exam")
+                
+            serializer = self.get_serializer(attempt)
+            return Response(serializer.data)
+            
+        except Exam.DoesNotExist:
+            raise NotFound("Exam does not exist")
+        
 class EvaluateAttemptView(APIView):
     # ! Unused for now
     def post(self, request, *args, **kwargs):

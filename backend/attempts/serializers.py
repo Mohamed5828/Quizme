@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from django.db import transaction
+from authentication.serializers import CustomUserSerializer
 from answers.models import Answer
 from answers.serializers import AnswerSerializer
 from attempts.models import Attempt
@@ -7,6 +8,7 @@ from attempts.models import Attempt
 
 class AttemptSerializer(serializers.ModelSerializer):
     answers = AnswerSerializer(many=True)
+    student = CustomUserSerializer(source='student_id', read_only=True)
 
     class Meta:
         model = Attempt
