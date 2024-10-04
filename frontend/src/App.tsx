@@ -1,9 +1,8 @@
 import React from "react";
 import ForgotPassword from "./components/authentication/ForgotPassword.tsx";
 import ChangePassword from "./components/authentication/ResetPassword.tsx";
-// import refresh from "./components/authentication/refresh.ts";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import AllQuestionsPage from "./components/Viewers/AllQuestionsPage.tsx";
+import AllQuestionsPage from "./components/Viewers/ExamPage/AllQuestionsPage.tsx";
 import ExamCreationForm from "./components/Forms/ExamCreationForm";
 import QuestionBank from "./components/Viewers/QuestionBank";
 import Login from "./components/authentication/Login.tsx";
@@ -36,6 +35,7 @@ const App: React.FC = () => {
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<RegisterForm />} />
             <Route path="/" element={<Landing />} />
+            <Route path="/permission-denied" element={<ForbiddenPage />} />
             <Route path="/Forgot-password" element={<ForgotPassword />} />
             <Route
               path="/api/v1/auth/reset-password/:uidb64/:token"
