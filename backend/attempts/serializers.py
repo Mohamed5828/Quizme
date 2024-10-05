@@ -20,7 +20,7 @@ class AttemptSerializer(serializers.ModelSerializer):
         # create and save the attempt
         attempt = Attempt.objects.create(**validated_data)
         # save the answers
-        Answer.objects.bulk_create([Answer(**answer, attempt_id=attempt.id) for answer in answers])
+        Answer.objects.bulk_create([Answer(**answer, attempt_id=attempt) for answer in answers])
         # return the attempt
         return attempt
 
@@ -28,6 +28,6 @@ class AttemptSerializer(serializers.ModelSerializer):
         answers_list = validated_data.pop('answers')
         # delete all related
         with transaction.atomic():
-            Answer.objects.filter(attempt_id=instance.id).delete()
-            Answer.objects.bulk_create([Answer(**answer, attempt_id=instance.id) for answer in answers_list])
+            Answer.objects.filter(attempt_id=instance).delete()
+            Answer.objects.bulk_create([Answer(**answer, attempt_id=instance) for answer in answers_list])
         return super().update(instance, validated_data)
