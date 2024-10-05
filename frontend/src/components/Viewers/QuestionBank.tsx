@@ -1,8 +1,7 @@
-
 import React, { useEffect, useCallback, useState } from "react";
 import { useForm, FormProvider, UseFormReturn } from "react-hook-form";
 import { Trash2, Edit, Plus } from "lucide-react";
-import QuestionsStep from "../FormSubComponents/Exam/QuestionsStep";
+import QuestionsBankStep from "../FormSubComponents/Exam/QuestionBankStep";
 import { useFetchData } from "../../hooks/useFetchData";
 import postData from "../../utils/postData";
 import putData from "../../utils/putData";
@@ -13,7 +12,7 @@ import deleteData from "../../utils/deleteData";
 interface Question {
   id: string;
   desc: string;
-  type: string; 
+  type: string;
   difficulty: string;
   tags: string[];
 }
@@ -39,7 +38,8 @@ const QuestionBank: React.FC = () => {
   const [typeFilter, setTypeFilter] = useState("");
   const [tagFilter, setTagFilter] = useState("");
 
-  const { data, loading, error, refetch } = useFetchData<Question[]>("/questionbanks/");
+  const { data, loading, error, refetch } =
+    useFetchData<Question[]>("/questionbanks/");
   const { data: examsData } = useFetchData<{ exams: Exam[] }>("/exams/", "v2");
 
   useEffect(() => {
@@ -49,9 +49,14 @@ const QuestionBank: React.FC = () => {
   }, [data, methods]);
 
   const filteredQuestions = data?.filter((question) => {
-    const matchesDifficulty = !difficultyFilter || question.difficulty === difficultyFilter;
+    const matchesDifficulty =
+      !difficultyFilter || question.difficulty === difficultyFilter;
     const matchesType = !typeFilter || question.type === typeFilter;
-    const matchesTag = !tagFilter || question.tags.some(tag => tag.toLowerCase().includes(tagFilter.toLowerCase()));
+    const matchesTag =
+      !tagFilter ||
+      question.tags.some((tag) =>
+        tag.toLowerCase().includes(tagFilter.toLowerCase())
+      );
 
     return matchesDifficulty && matchesType && matchesTag;
   });
@@ -111,16 +116,19 @@ const QuestionBank: React.FC = () => {
     }
   };
 
-  const handleFilterChange = (e: React.ChangeEvent<HTMLSelectElement>, filterType: string) => {
+  const handleFilterChange = (
+    e: React.ChangeEvent<HTMLSelectElement>,
+    filterType: string
+  ) => {
     const value = e.target.value;
     switch (filterType) {
-      case 'difficulty':
+      case "difficulty":
         setDifficultyFilter(value);
         break;
-      case 'type':
+      case "type":
         setTypeFilter(value);
         break;
-      case 'tag':
+      case "tag":
         setTagFilter(value);
         break;
       default:
@@ -145,9 +153,9 @@ const QuestionBank: React.FC = () => {
 
       {/* Filter Dropdowns */}
       <div className="flex space-x-4 mb-6">
-        <select 
-          value={difficultyFilter} 
-          onChange={(e) => handleFilterChange(e, 'difficulty')} 
+        <select
+          value={difficultyFilter}
+          onChange={(e) => handleFilterChange(e, "difficulty")}
           className="border border-gray-300 rounded-md p-2"
         >
           <option value="">All Difficulties</option>
@@ -155,20 +163,20 @@ const QuestionBank: React.FC = () => {
           <option value="medium">Medium</option>
           <option value="hard">Hard</option>
         </select>
-        <select 
-          value={typeFilter} 
-          onChange={(e) => handleFilterChange(e, 'type')} 
+        <select
+          value={typeFilter}
+          onChange={(e) => handleFilterChange(e, "type")}
           className="border border-gray-300 rounded-md p-2"
         >
           <option value="">All Types</option>
           <option value="mcq">Multiple Choice</option>
           <option value="code">Code</option>
         </select>
-        <input 
-          type="text" 
-          value={tagFilter} 
-          onChange={(e) => handleFilterChange(e, 'tag')} 
-          placeholder="Filter by tag..." 
+        <input
+          type="text"
+          value={tagFilter}
+          onChange={(e) => handleFilterChange(e, "tag")}
+          placeholder="Filter by tag..."
           className="border border-gray-300 rounded-md p-2"
         />
       </div>
@@ -176,7 +184,7 @@ const QuestionBank: React.FC = () => {
       {editingQuestion ? (
         <FormProvider {...methods}>
           <form onSubmit={methods.handleSubmit(onSubmit)} className="space-y-6">
-            <QuestionsStep />
+            <QuestionsBankStep />
             <div className="flex justify-end space-x-4">
               <button
                 type="button"
@@ -198,15 +206,31 @@ const QuestionBank: React.FC = () => {
         <div>
           <button
             onClick={() => {
-              setEditingQuestion({ id: "", desc: "", type: "mcq", difficulty: "easy", tags: [] });
-              methods.reset({ questions: [{ id: "", desc: "", type: "mcq", difficulty: "easy", tags: [] }] });
+              setEditingQuestion({
+                id: "",
+                desc: "",
+                type: "mcq",
+                difficulty: "easy",
+                tags: [],
+              });
+              methods.reset({
+                questions: [
+                  {
+                    id: "",
+                    desc: "",
+                    type: "mcq",
+                    difficulty: "easy",
+                    tags: [],
+                  },
+                ],
+              });
             }}
             className="mb-4 bg-green-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-green-700 transition duration-300 ease-in-out"
           >
             <Plus className="inline mr-2" /> Add Question
           </button>
           <div className="space-y-6">
-            {filteredQuestions && 
+            {filteredQuestions &&
               filteredQuestions.map((question) => (
                 <div
                   key={question.id}
@@ -234,7 +258,7 @@ const QuestionBank: React.FC = () => {
                         exams={
                           examsData?.exams?.map((exam) => ({
                             ...exam,
-                            hasQuestion: false, 
+                            hasQuestion: false,
                           })) || []
                         }
                         onAddRemove={handleAddRemoveFromExam}

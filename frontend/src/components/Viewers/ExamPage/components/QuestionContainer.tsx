@@ -134,6 +134,7 @@ function QuestionContainer({
                     {
                       language: activeQuestion.code.language,
                       code: activeQuestion.code.body,
+                      version: activeQuestion.code.version,
                     },
                   ]}
                 />

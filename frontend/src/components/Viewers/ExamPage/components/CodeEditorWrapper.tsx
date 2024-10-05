@@ -1,20 +1,20 @@
 import React, { useState, useEffect } from "react";
 import CodeEditor from "./CodeEditor";
 import CodeOutput from "../../../QuestionComponents/CodeOutput";
-import { CODE_SNIPPETS, Language } from "../../../QuestionComponents/constants";
 import postData from "../../../../utils/postData";
-import { User } from "../../../authentication/Profile";
 import { useUserContext } from "../../../../../context/UserContext";
 import { useParams } from "react-router-dom";
-
-interface CodeEditorWrapperProps {
-  questionId: number;
-  starterCode: StarterCode[];
-}
+import { Language } from "../../../QuestionComponents/constants";
 
 interface StarterCode {
   language: Language;
   code: string;
+  version: string;
+}
+
+interface CodeEditorWrapperProps {
+  questionId: number;
+  starterCode: StarterCode[] | null; // starterCode is fetched and may initially be null
 }
 
 const CodeEditorWrapper: React.FC<CodeEditorWrapperProps> = ({
@@ -22,18 +22,29 @@ const CodeEditorWrapper: React.FC<CodeEditorWrapperProps> = ({
   starterCode,
 }) => {
   const { user } = useUserContext();
-  const [answerCode, setAnswerCode] = useState<string>(
-    starterCode[0]?.code || ""
-  );
+  const { examCode } = useParams();
+
+  // Initialize state that depends on starterCode only when it becomes available
+  const [answerCode, setAnswerCode] = useState<string>("");
+  const [language, setLanguage] = useState<string>("");
+  const [version, setVersion] = useState<string>("");
   const [taskId, setTaskId] = useState<string | null>(null);
   const [isButtonDisabled, setIsButtonDisabled] = useState<boolean>(false);
-  const auth: User | null = user;
-  const { examCode } = useParams();
+  const auth = user;
+
+  // useEffect to initialize the code, language, and version once starterCode is available
+  useEffect(() => {
+    if (starterCode && starterCode.length > 0) {
+      setAnswerCode(starterCode[0].code);
+      setLanguage(starterCode[0].language);
+      setVersion(starterCode[0].version);
+    }
+  }, [starterCode]);
 
   const handleSubmit = async () => {
     if (!answerCode || !auth) return;
 
-    // Disable the button for 4 seconds
+    // Disable the button for 8 seconds
     setIsButtonDisabled(true);
     setTimeout(() => setIsButtonDisabled(false), 8000);
 
@@ -41,11 +52,12 @@ const CodeEditorWrapper: React.FC<CodeEditorWrapperProps> = ({
     const data = {
       code: answerCode,
       studentId: auth.id,
-      questionId: questionId,
-      examCode: examCode,
-      language: "javascript",
-      version: "18.15.0",
+      questionId,
+      examCode,
+      language,
+      version,
     };
+
     const { resData, error } = await postData(url, data);
     if (error) {
       console.error("Submission error:", error);
@@ -54,14 +66,21 @@ const CodeEditorWrapper: React.FC<CodeEditorWrapperProps> = ({
       setTaskId(resData.taskId);
     }
   };
-  const testC = [{ language: "java", code: CODE_SNIPPETS.python }];
+
+  // Only render the CodeEditor once the starterCode is available
+  if (!starterCode || starterCode.length === 0) {
+    return <div>Loading...</div>; // Or a loading spinner to indicate data fetching
+  }
+
   return (
     <div>
       <CodeEditor
         questionId={questionId}
-        starterCode={testC}
+        starterCode={starterCode}
         answerCode={answerCode}
         setAnswerCode={setAnswerCode}
+        language={language}
+        setLanguage={setLanguage}
       />
       <button
         onClick={handleSubmit}

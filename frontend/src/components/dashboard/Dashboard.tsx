@@ -38,6 +38,7 @@ const Dashboard: React.FC = () => {
   const axiosInstance = getAxiosInstance("v2");
   const { data, error, loading } = useFetchData<Exam[]>("/exams/", "v2");
   const navigate = useNavigate();
+  console.log(data);
 
   useEffect(() => {
     if (data) {

@@ -1,7 +1,6 @@
 import { useFormContext, useFieldArray } from "react-hook-form";
 import QuestionFields from "./Fields/QuestionFields";
 import { useEffect } from "react";
-import QuestionBankModal from "./QuestionBankModal";
 
 interface QuestionField {
   id?: string;
@@ -98,21 +97,9 @@ const QuestionsStep = () => {
       remove(index);
     }
   };
-  const handleQuestionBankSelection = (selectedQuestion: any) => {
-    append({
-      ...selectedQuestion,
-      // Ensure all required fields are included
-      choices: selectedQuestion.choices || [],
-      testCases: selectedQuestion.testCases || [],
-      code: selectedQuestion.code || [],
-    });
-  };
+
   return (
     <div className="space-y-6">
-      <div className="flex justify-end mb-4">
-        <QuestionBankModal onSelectQuestion={handleQuestionBankSelection} />
-      </div>
-      ;
       {fields.map((field, index) => (
         <div
           key={field.id}
@@ -185,6 +172,7 @@ const QuestionsStep = () => {
           </div>
         </div>
       ))}
+
       <button
         className="w-full px-6 py-3 border border-transparent rounded-md text-white bg-emerald-600 hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition-all duration-300"
         type="button"

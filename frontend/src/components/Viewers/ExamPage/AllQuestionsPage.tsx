@@ -11,6 +11,7 @@ import { toast } from "react-toastify";
 import { getRemainingTime } from "./hooks/getRemainingTime";
 import { useDispatch } from "react-redux";
 import { pushLogsToServer } from "../../../state/ActivityLogState/ActivityLogSlice";
+const dayjs = require("dayjs");
 
 interface UserAnswer {
   questionId: number;
@@ -36,11 +37,14 @@ function AllQuestionsPage() {
   const navigate = useNavigate();
   const timerRef = useRef<{ timeRemaining: number }>({ timeRemaining: 0 });
   const dispatch = useDispatch();
+  const now = dayjs();
+  const formattedDate = now.format("YYYY-MM-DDTHH:mm:ss");
   const {
     data: examMetaData,
     loading: examLoading,
     error: examError,
   } = useFetchData<ExamMetaData>(`exams/exam-durations/${examCode}/`, "v2");
+  console.log(examMetaData);
 
   const {
     data: attemptData,
@@ -48,6 +52,7 @@ function AllQuestionsPage() {
     error: attemptError,
     statusCode,
   } = useFetchData<AttemptResponse>(`attempts/exam/${examCode}/`);
+  console.log(statusCode);
 
   // Initialize attempt if none exists
   useEffect(() => {
@@ -58,7 +63,7 @@ function AllQuestionsPage() {
         answers: [],
         studentId: user.id,
         examId: examMetaData.id,
-        startTime: Date.now(),
+        startTime: formattedDate,
       };
 
       const { resData, error } = await postData<AttemptResponse>(
@@ -93,6 +98,14 @@ function AllQuestionsPage() {
     timerRef.current.timeRemaining = remainingTime;
   }, [examMetaData, attemptData, statusCode]);
 
+  // //handling DB formate
+  // function refactorAnswer(answers, attemptId) {
+  //   return answers.map((ans) => ({
+  //     attemptId: attemptId,
+  //     ...ans,
+  //   }));
+  // }
+
   // Sync answers with server
   useEffect(() => {
     if (!attemptId || !user?.id || !examMetaData?.id) return;
@@ -118,11 +131,11 @@ function AllQuestionsPage() {
   const handleSubmit = useCallback(async () => {
     if (!attemptId || !user?.id || !examMetaData?.id) return;
 
-    const { error } = await putData(`/attempts/${attemptId}`, {
+    const { error } = await putData(`/attempts/${attemptId}/`, {
       answers: userAnswers,
       studentId: user.id,
       examId: examMetaData.id,
-      endTime: Date.now(),
+      endTime: formattedDate,
     });
     dispatch(pushLogsToServer());
     if (error) {

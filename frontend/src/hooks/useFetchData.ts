@@ -31,7 +31,15 @@ export function useFetchData<T>(
       setStatusCode(response.status);
       setError(null);
     } catch (err) {
-      setError(err as AxiosError);
+      const axiosError = err as AxiosError;
+      setError(axiosError);
+      if (axiosError.response) {
+        // If there is an error response from the server, update the status code
+        setStatusCode(axiosError.response.status);
+      } else {
+        // Otherwise, reset the status code (for non-server errors, e.g., network errors)
+        setStatusCode(null);
+      }
     } finally {
       setLoading(false);
     }

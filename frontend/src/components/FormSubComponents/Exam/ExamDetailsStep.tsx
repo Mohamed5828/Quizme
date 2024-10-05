@@ -3,7 +3,7 @@ import { useEffect } from "react";
 
 interface ExamDetailsFormData {
   title: string;
-  groupName: string;
+  examCode: string;
   duration: number;
   maxGrade: number;
   startDate: string;
@@ -83,16 +83,16 @@ const ExamDetailsStep: React.FC = () => {
           )}
         </label>
         <label>
-          Group Name
+          Exam Code *
           <br />
           <input
             type="text"
-            placeholder="Group Name"
+            placeholder="Exam Code"
             className="mt-1 p-2 border border-gray-300 rounded focus:outline-none focus:border-emerald-500"
-            {...register("groupName", { required: false })}
+            {...register("examCode", { required: true })}
           />
-          {errors.groupName && (
-            <p className="text-red-600">This field is not required</p>
+          {errors.examCode && (
+            <p className="text-red-600">This field required</p>
           )}
         </label>
         <label>

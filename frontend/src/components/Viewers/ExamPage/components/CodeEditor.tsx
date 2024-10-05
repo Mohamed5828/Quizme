@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { Editor } from "@monaco-editor/react";
 import { Language } from "../../../QuestionComponents/constants";
 
@@ -12,26 +12,21 @@ interface CodeEditorProps {
   starterCode: StarterCode[];
   answerCode: string;
   setAnswerCode: (code: string) => void;
+  language: string; // Changed to string for consistency, considering it might be a string initially
+  setLanguage: (lang: Language) => void;
 }
 
 const CodeEditor: React.FC<CodeEditorProps> = ({
-  questionId,
   starterCode,
   answerCode,
   setAnswerCode,
+  language,
+  setLanguage,
 }) => {
-  const [language, setLanguage] = useState<Language>(
-    starterCode[0]?.language || ""
-  );
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    const defaultCode =
-      starterCode.find((sc) => sc.language === language)?.code || "";
-    setAnswerCode(defaultCode);
-  }, [language, starterCode]);
-
+  // Effect to handle click outside of the dropdown for closing it
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
