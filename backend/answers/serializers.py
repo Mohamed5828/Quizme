@@ -7,4 +7,5 @@ from answers.models import Answer
 class AnswerSerializer(CodeValidationMixin, ModelSerializer):
     class Meta:
         model = Answer
-        fields = '__all__'
+        # fields = '__all__'
+        exclude = ['attempt_id']

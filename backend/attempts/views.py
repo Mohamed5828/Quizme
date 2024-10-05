@@ -115,28 +115,29 @@ class AttemptViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=['get'], url_path='exam/(?P<exam_code>[^/.]+)')
     def get_attempt_by_exam(self, request, exam_code=None):
         # Check if user is authenticated and is a student
-        if not hasattr(request.user, "role") :
+        if not hasattr(request.user, "role"):
             raise PermissionDenied("Only instructor can access this endpoint")
 
         try:
             # First verify the exam exists and get its ID
             exam = Exam.objects.get(exam_code=exam_code)
-            
+
             # Get the attempt for this student and exam
             attempt = Attempt.objects.filter(
                 student_id=request.user,  # Assuming student_id is the correct field
                 exam_id=exam.id  # Use the exam.id directly
             ).first()
-            
+
             if not attempt:
                 raise NotFound("No attempt found for this exam")
-                
+
             serializer = self.get_serializer(attempt)
             return Response(serializer.data)
-            
+
         except Exam.DoesNotExist:
             raise NotFound("Exam does not exist")
         
+
 class EvaluateAttemptView(APIView):
     # ! Unused for now
     def post(self, request, *args, **kwargs):

@@ -1,9 +1,6 @@
 from django.db import models
 
 
-
-
-# Create your models here.
 class Answer(models.Model):
     attempt_id = models.ForeignKey('attempts.Attempt', on_delete=models.CASCADE, related_name='answers')
     created_at = models.DateTimeField(auto_now_add=True)
