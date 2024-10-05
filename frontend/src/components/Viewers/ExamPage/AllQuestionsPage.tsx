@@ -11,7 +11,7 @@ import { toast } from "react-toastify";
 import { getRemainingTime } from "./hooks/getRemainingTime";
 import { useDispatch } from "react-redux";
 import { pushLogsToServer } from "../../../state/ActivityLogState/ActivityLogSlice";
-const dayjs = require("dayjs");
+// const dayjs = require("dayjs");
 
 interface UserAnswer {
   questionId: number;
@@ -37,8 +37,9 @@ function AllQuestionsPage() {
   const navigate = useNavigate();
   const timerRef = useRef<{ timeRemaining: number }>({ timeRemaining: 0 });
   const dispatch = useDispatch();
-  const now = dayjs();
-  const formattedDate = now.format("YYYY-MM-DDTHH:mm:ss");
+  // const now = dayjs();
+  // const formattedDate = now.format("YYYY-MM-DDTHH:mm:ss");
+  const formattedDate = new Date().toISOString();
   const {
     data: examMetaData,
     loading: examLoading,
