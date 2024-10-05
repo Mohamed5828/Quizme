@@ -122,7 +122,7 @@ function AllQuestionsPage() {
       answers: userAnswers,
       studentId: user.id,
       examId: examMetaData.id,
-      endTime: Date.now(),
+      endTime: new Date().toISOString(),
     });
     dispatch(pushLogsToServer());
     if (error) {
