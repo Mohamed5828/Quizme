@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import CodeEditor from "./CodeEditor";
 import CodeOutput from "../../../QuestionComponents/CodeOutput";
-import { Language } from "../../../QuestionComponents/constants";
+import { CODE_SNIPPETS, Language } from "../../../QuestionComponents/constants";
 import postData from "../../../../utils/postData";
 import { User } from "../../../authentication/Profile";
 import { useUserContext } from "../../../../../context/UserContext";
@@ -54,12 +54,12 @@ const CodeEditorWrapper: React.FC<CodeEditorWrapperProps> = ({
       setTaskId(resData.taskId);
     }
   };
-
+  const testC = [{ language: "java", code: CODE_SNIPPETS.python }];
   return (
     <div>
       <CodeEditor
         questionId={questionId}
-        starterCode={starterCode}
+        starterCode={testC}
         answerCode={answerCode}
         setAnswerCode={setAnswerCode}
       />

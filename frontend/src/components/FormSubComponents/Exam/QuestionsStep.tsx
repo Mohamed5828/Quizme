@@ -17,12 +17,13 @@ const QuestionsStep = () => {
         grade: "",
         choices: [],
         testCases: [],
-        code: "",
+        code: [],
         tags: [],
         difficulty: "",
       });
     }
   }, [append, fields.length]);
+  console.log(fields);
 
   const watchedQuestions = getValues("questions");
   const handleTagInputBlur = (index: number) => {

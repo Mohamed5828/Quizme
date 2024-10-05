@@ -15,6 +15,11 @@ interface TestCase {
   input: string;
   output: string;
 }
+export interface CodeData {
+  body: string;
+  language: string;
+  version: string;
+}
 
 interface Question {
   id: number;
@@ -25,7 +30,7 @@ interface Question {
   grade: number;
   choices: Choice[];
   testCases: TestCase[];
-  code: { body: string; language: string; version: string };
+  code: CodeData;
 }
 
 interface ExamData {
