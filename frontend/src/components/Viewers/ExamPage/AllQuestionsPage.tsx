@@ -135,7 +135,7 @@ function AllQuestionsPage() {
       answers: userAnswers,
       studentId: user.id,
       examId: examMetaData.id,
-      endTime: formattedDate,
+      endTime: new Date().toISOString(),
     });
     dispatch(pushLogsToServer());
     if (error) {
