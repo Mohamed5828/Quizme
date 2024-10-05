@@ -22,24 +22,26 @@ class Exam(models.Model):
     # csv_sent = models.BooleanField(default=False)
 
     def save(self, *args, **kwargs):
-        # leave this here to prevent circular imports error
+    # leave this here to prevent circular imports error
         from exam_v2.tasks import evaluate_exam_after_expiry
 
         is_new = self.pk is None
 
         if is_new:
-            # For new instances, save with minimal data to get an ID
-            self.exam_code = f"placeholder-exam-{self.user_id.username}"
-            super().save(*args, **kwargs)
-
-            # Now that we have an ID, generate the real exam code
+            # For new instances, generate the exam code first
             self.exam_code = self.generate_exam_code()
+            # Save once with the final exam code
+            super().save(*args, **kwargs)
         else:
             # For existing instances, check if expiration date changed
-            old_expiration = Exam.objects.get(pk=self.pk).expiration_date
-            if self.scheduled_task_id and old_expiration != self.expiration_date:
-                app.control.revoke(self.scheduled_task_id, terminate=True)
-                self.scheduled_task_id = None
+            try:
+                old_expiration = Exam.objects.get(pk=self.pk).expiration_date
+                if self.scheduled_task_id and old_expiration != self.expiration_date:
+                    app.control.revoke(self.scheduled_task_id, terminate=True)
+                    self.scheduled_task_id = None
+            except Exam.DoesNotExist:
+                # Handle the case where the exam doesn't exist
+                pass
 
         # Schedule new task and set its id
         if not self.scheduled_task_id:
@@ -48,9 +50,9 @@ class Exam(models.Model):
                 args=(self.id,)
             ).id
 
-        # Save all changes
-        super().save()
-
+        # Save changes only if it's an existing instance
+        if not is_new:
+            super().save(*args, **kwargs)
     def generate_exam_code(self):
         return f"exam{self.id}-{slugify(self.title)}"
     # class Meta:
