@@ -156,6 +156,7 @@ const ExamDetailsStep: React.FC = () => {
             type="datetime-local"
             placeholder="Expiration Date"
             className="mt-1 p-2 border border-gray-300 rounded focus:outline-none focus:border-emerald-500"
+            disabled
             {...register("expirationDate", {
               required: true,
               validate: validateExpirationDate,

@@ -112,7 +112,7 @@ const QuestionsStep = () => {
       <div className="flex justify-end mb-4">
         <QuestionBankModal onSelectQuestion={handleQuestionBankSelection} />
       </div>
-      ;
+
       {fields.map((field, index) => (
         <div
           key={field.id}

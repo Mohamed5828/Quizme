@@ -61,12 +61,14 @@ const ExamCreationForm = ({ defaultValues = {} }: ExamCreationFormProps) => {
   const handleSubmit = async (data: FieldValues) => {
     try {
       const { participantsInput, ...restData } = data;
+      restData.startDate = new Date(restData.startDate).toISOString();
+      restData.expirationDate = new Date(restData.expirationDate).toISOString();
       console.log("Exam created:", await postData("/exams/", restData, "v2"));
       toast.success("Exam created successfully!");
       dispatch(resetStep());
       navigate("/dashboard");
     } catch (error) {
-      toast.error("An error occurred while creating the exam.");
+      toast.error(`An error occurred while creating the exam. Error: ${error}`);
     }
   };
 
