@@ -109,7 +109,7 @@ const RegisterForm: React.FC = () => {
             <div className="w-full max-w-lg">
               <div className="bg-Cultured shadow-lg rounded-lg p-6">
                 <h2 className="text-2xl font-bold text-center mb-6">
-                  Create an account
+                  Join us
                 </h2>
 
                 <form onSubmit={handleSubmit}>
@@ -220,7 +220,7 @@ const RegisterForm: React.FC = () => {
                   <div className="text-center">
                     <button
                       type="submit"
-                      className="w-full bg-green-500 text-white py-2 rounded-md hover:bg-green-600 transition-colors"
+                      className="w-full bg-emerald-500 text-white py-2 rounded-md hover:bg-emerald-600 transition-colors"
                     >
                       Register
                     </button>
