@@ -116,18 +116,23 @@ class AttemptViewSet(viewsets.ModelViewSet):
     def get_attempt_by_exam(self, request, exam_code=None):
         # Check if user is authenticated and is a student
         if not hasattr(request.user, "role"):
-            raise PermissionDenied("Only instructor can access this endpoint")
+            raise PermissionDenied("User role is not defined")
 
         try:
             # First verify the exam exists and get its ID
             exam = Exam.objects.get(exam_code=exam_code)
+            if request.user.role == 'instructor' and exam.user_id == request.user:
+                attempts = Attempt.objects.filter(exam_id=exam.id)
+                serializer = self.get_serializer(attempts, many=True)
+                return Response(serializer.data)
 
             # Get the attempt for this student and exam
-            attempt = Attempt.objects.filter(
-                student_id=request.user,  # Assuming student_id is the correct field
-                exam_id=exam.id  # Use the exam.id directly
+            if request.user.role == 'student':
+                attempt = Attempt.objects.filter(
+                student_id=request.user, 
+                exam_id=exam.id 
             ).first()
-
+                
             if not attempt:
                 raise NotFound("No attempt found for this exam")
 
