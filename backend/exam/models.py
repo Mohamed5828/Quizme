@@ -18,30 +18,29 @@ class Exam(models.Model):
     whitelist = models.JSONField(default=list)
     group_name = models.CharField(max_length=100, blank=True, null=True)
     scheduled_task_id = models.CharField(max_length=255, null=True, blank=True)
-    ## to be tested 
+
+    ## to be tested
     # csv_sent = models.BooleanField(default=False)
 
     def save(self, *args, **kwargs):
-    # leave this here to prevent circular imports error
+        # leave this here to prevent circular imports error
         from exam_v2.tasks import evaluate_exam_after_expiry
 
         is_new = self.pk is None
 
         if is_new:
-            # For new instances, generate the exam code first
-            self.exam_code = self.generate_exam_code()
-            # Save once with the final exam code
+            # For new instances, save with minimal data to get an ID
+            self.exam_code = f"placeholder-exam-{self.user_id.username}"
             super().save(*args, **kwargs)
+
+            # Now that we have an ID, generate the real exam code
+            self.exam_code = self.generate_exam_code()
         else:
             # For existing instances, check if expiration date changed
-            try:
-                old_expiration = Exam.objects.get(pk=self.pk).expiration_date
-                if self.scheduled_task_id and old_expiration != self.expiration_date:
-                    app.control.revoke(self.scheduled_task_id, terminate=True)
-                    self.scheduled_task_id = None
-            except Exam.DoesNotExist:
-                # Handle the case where the exam doesn't exist
-                pass
+            old_expiration = Exam.objects.get(pk=self.pk).expiration_date
+            if self.scheduled_task_id and old_expiration != self.expiration_date:
+                app.control.revoke(self.scheduled_task_id, terminate=True)
+                self.scheduled_task_id = None
 
         # Schedule new task and set its id
         if not self.scheduled_task_id:
@@ -50,9 +49,9 @@ class Exam(models.Model):
                 args=(self.id,)
             ).id
 
-        # Save changes only if it's an existing instance
-        if not is_new:
-            super().save(*args, **kwargs)
+        # Save all changes
+        super().save()
+
     def generate_exam_code(self):
         return f"exam{self.id}-{slugify(self.title)}"
     # class Meta:
