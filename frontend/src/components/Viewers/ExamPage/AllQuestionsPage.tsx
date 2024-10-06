@@ -142,7 +142,7 @@ function AllQuestionsPage() {
     }
 
     sessionStorage.removeItem("attemptId");
-    navigate(`/results/${examCode}`);
+    navigate(`/exam-finished/${examCode}`);
   }, [attemptId, userAnswers, examCode, navigate]);
 
   const handleTimerEnd = useCallback(() => {

@@ -1,8 +1,7 @@
 import { Navigate } from "react-router-dom";
-import { useUserContext } from "../../../context/UserContext";
 
 const ProtectedRoute: React.FC<{ element: JSX.Element }> = ({ element }) => {
-  const { isLoggedIn } = useUserContext();
+  const isLoggedIn = !!localStorage.getItem("user"); // Check if 'user' exists in local storage
 
   return isLoggedIn ? element : <Navigate to="/login" />;
 };
