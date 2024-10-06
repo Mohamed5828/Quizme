@@ -4,7 +4,7 @@ from django.db import models
 # Create your models here.
 class Attempt(models.Model):
     student_id = models.ForeignKey('authentication.CustomUser', on_delete=models.CASCADE)
-    exam_id = models.ForeignKey('exam.Exam', on_delete=models.CASCADE)
+    exam_id = models.ForeignKey('exam.Exam', on_delete=models.CASCADE, related_name='attempts')
     score = models.FloatField(null=True, blank=True)
     start_time = models.DateTimeField(auto_now_add=True)  # same as created_at (auto generated now)
     end_time = models.DateTimeField(null=True, blank=True)

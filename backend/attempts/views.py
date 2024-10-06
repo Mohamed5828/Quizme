@@ -121,22 +121,29 @@ class AttemptViewSet(viewsets.ModelViewSet):
         try:
             # First verify the exam exists and get its ID
             exam = Exam.objects.get(exam_code=exam_code)
+            serializer = None
+            if request.user.role == "instructor" and request.user == exam.user_id:
+                # Get the attempt for this exam
+                attempts = Attempt.objects.filter(
+                    exam_id=exam.id  # Use the exam.id directly
+                )
+                serializer = self.get_serializer(attempts, many=True)
+            elif request.user.role == "student":
+                # Get the attempt for this student and exam
+                attempt = Attempt.objects.filter(
+                    student_id=request.user,  # Assuming student_id is the correct field
+                    exam_id=exam.id  # Use the exam.id directly
+                ).first()
 
-            # Get the attempt for this student and exam
-            attempt = Attempt.objects.filter(
-                student_id=request.user,  # Assuming student_id is the correct field
-                exam_id=exam.id  # Use the exam.id directly
-            ).first()
+                if not attempt:
+                    raise NotFound("No attempt found for this exam")
 
-            if not attempt:
-                raise NotFound("No attempt found for this exam")
-
-            serializer = self.get_serializer(attempt)
+                serializer = self.get_serializer(attempt)
             return Response(serializer.data)
 
         except Exam.DoesNotExist:
             raise NotFound("Exam does not exist")
-        
+
 
 class EvaluateAttemptView(APIView):
     # ! Unused for now
