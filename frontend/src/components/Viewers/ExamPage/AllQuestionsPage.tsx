@@ -153,14 +153,6 @@ function AllQuestionsPage() {
     return <BasicSpinner />;
   }
 
-  if (examError || attemptError) {
-    return (
-      <div className="p-4 text-red-600">
-        Error loading exam: {examError?.message || attemptError?.message}
-      </div>
-    );
-  }
-
   if (!attemptId) {
     return <BasicSpinner />;
   }
