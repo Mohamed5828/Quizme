@@ -186,7 +186,17 @@ class ExamDurationView(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
     )
     def retrieve(self, request, exam_code=None, *args, **kwargs):
         exam = get_object_or_404(Exam, exam_code=exam_code)
-
+        instance = self.get_object()
+        current_time = timezone.now()
+        start_time = instance.start_date
+        expiration_time = instance.start_date + instance.duration
+        
+        if current_time < start_time:
+                raise PermissionDenied("The exam has not started yet. You cannot access it before the start time.")
+    
+        if timezone.now() > expiration_time:
+                raise PermissionDenied("You are not authorized to view this exam.")
+  
         # Check if the user is the owner of the exam
         if exam.user_id == request.user:
             serializer = self.get_serializer(exam)
@@ -206,3 +216,5 @@ class ExamDurationView(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
 
         # If the user is not authorized, return a 403 error
         raise PermissionDenied("You are not authorized to view this exam.")
+
+    
