@@ -48,7 +48,7 @@ class CamFrameLogViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class MonitorFrame(views.APIView):
-    permission_classes = [IsStudent]
+    # permission_classes = [IsStudent,IsInstructor]
 
     @swagger_auto_schema(
         tags=["monitor"],
