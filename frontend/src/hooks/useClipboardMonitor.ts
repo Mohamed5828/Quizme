@@ -1,7 +1,7 @@
 import { useCallback, useEffect } from "react";
 import { addLog } from "../state/ActivityLogState/ActivityLogSlice";
 import { useDispatch } from "react-redux";
-const TYPE: "COPY_PASTE" | "COPY_PASTE" = "COPY_PASTE";
+const TYPE = "COPY_PASTE" as const;
 
 const useClipboardMonitor = () => {
   const dispatch = useDispatch();
@@ -28,7 +28,7 @@ const useClipboardMonitor = () => {
         action: "copy",
         type: TYPE,
         additionalInfo: {
-          text: event.clipboardData?.getData("text/plain"),
+          text: window.getSelection()?.toString() || "",
         },
       };
       dispatch(addLog(payload));

@@ -11,7 +11,8 @@ import { toast } from "react-toastify";
 import { getRemainingTime } from "./hooks/getRemainingTime";
 import { useDispatch } from "react-redux";
 import { pushLogsToServer } from "../../../state/ActivityLogState/ActivityLogSlice";
-// const dayjs = require("dayjs");
+import useTabFocusMonitor from "../../../hooks/useTabFocusMonitor";
+import useClipboardMonitor from "../../../hooks/useClipboardMonitor";
 
 interface UserAnswer {
   questionId: number;
@@ -37,9 +38,10 @@ function AllQuestionsPage() {
   const navigate = useNavigate();
   const timerRef = useRef<{ timeRemaining: number }>({ timeRemaining: 0 });
   const dispatch = useDispatch();
-  // const now = dayjs();
-  // const formattedDate = now.format("YYYY-MM-DDTHH:mm:ss");
+
   const formattedDate = new Date().toISOString();
+  useTabFocusMonitor();
+  useClipboardMonitor();
   const {
     data: examMetaData,
     loading: examLoading,
@@ -91,21 +93,33 @@ function AllQuestionsPage() {
   // Handle existing attempt
   useEffect(() => {
     if (statusCode === 404 || !attemptData || !examMetaData) return;
+    if (Array.isArray(attemptData)) {
+      // Filter attempts that belong to the current user
+      const userAttempt = attemptData.find((att) => att.student.id === user.id);
 
-    setAttemptId(attemptData.id);
+      if (userAttempt) {
+        setAttemptId(userAttempt.id); // Set the found attempt ID
+      } else {
+        console.error("No attempt found for the current user");
+      }
+    } else {
+      // If attemptData is a single object
+      setAttemptId(attemptData.id);
+    }
+
+    // Save attemptId to sessionStorage (make sure attemptId is set first)
+    if (attemptId) {
+      sessionStorage.setItem("attemptId", attemptId.toString());
+    } else {
+      console.error("Attempt ID is not set");
+    }
+
     const remainingTime = getRemainingTime(examMetaData, attemptData.startTime);
 
     setTimeRemaining(remainingTime);
+    if (remainingTime == 0) navigate(`/exam-finished/${examCode}`);
     timerRef.current.timeRemaining = remainingTime;
   }, [examMetaData, attemptData, statusCode]);
-
-  // //handling DB formate
-  // function refactorAnswer(answers, attemptId) {
-  //   return answers.map((ans) => ({
-  //     attemptId: attemptId,
-  //     ...ans,
-  //   }));
-  // }
 
   // Sync answers with server
   useEffect(() => {
@@ -146,7 +160,7 @@ function AllQuestionsPage() {
     }
 
     sessionStorage.removeItem("attemptId");
-    navigate(`/results/${examCode}`);
+    navigate(`/exam-finished/${examCode}`);
   }, [attemptId, userAnswers, examCode, navigate]);
 
   const handleTimerEnd = useCallback(() => {
@@ -155,14 +169,6 @@ function AllQuestionsPage() {
 
   if (examLoading || attemptLoading) {
     return <BasicSpinner />;
-  }
-
-  if (examError || attemptError) {
-    return (
-      <div className="p-4 text-red-600">
-        Error loading exam: {examError?.message || attemptError?.message}
-      </div>
-    );
   }
 
   if (!attemptId) {

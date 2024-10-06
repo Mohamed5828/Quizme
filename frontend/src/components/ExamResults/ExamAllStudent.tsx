@@ -9,13 +9,14 @@ const ExamAllStudent = () => {
   const { examCode } = useParams();
   const navigate = useNavigate();
 
-  const { data, loading, error } = useFetchData<ExamResult[]>(
-    `/attempts?examCode=${examCode}/`
+  let { data, loading, error } = useFetchData<ExamResult[]>(
+    `/attempts/exam/${examCode}/`
   );
-
+  console.log(data);
   // Always declare hooks before returning conditions
   const sortedStudents = useMemo(() => {
     if (!data) return [];
+    if (!Array.isArray(data)) data = [data];
     return [...data].sort((a, b) => Number(b.score) - Number(a.score));
   }, [data]);
 

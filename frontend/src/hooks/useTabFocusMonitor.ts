@@ -2,26 +2,28 @@ import { useCallback, useEffect } from "react";
 import { addLog } from "../state/ActivityLogState/ActivityLogSlice";
 import { useDispatch } from "react-redux";
 
-const TYPE: "WIN_FOCUS" | "WIN_FOCUS" = "WIN_FOCUS";
+const TYPE = "WIN_FOCUS" as const;
 
 const useTabFocusMonitor = () => {
   const dispatch = useDispatch();
   const handleFocus = useCallback(() => {
     // console.log("window focus event\n", event);
-    const payload = {
-      action: "focus",
-      type: TYPE,
-    };
-    dispatch(addLog(payload));
+    dispatch(
+      addLog({
+        action: "focus",
+        type: TYPE,
+      })
+    );
   }, [dispatch]);
 
   const handleBlur = useCallback(() => {
     // console.log("window blur event\n", event);
-    const payload = {
-      action: "blur",
-      type: TYPE,
-    };
-    dispatch(addLog(payload));
+    dispatch(
+      addLog({
+        action: "blur",
+        type: TYPE,
+      })
+    );
   }, [dispatch]);
 
   useEffect(() => {

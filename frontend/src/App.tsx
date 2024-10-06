@@ -36,7 +36,7 @@ const App: React.FC = () => {
           <Routes>
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<RegisterForm />} />
-            <Route path="/result/:examCode" element={<ExamResult />} />
+            <Route path="/exam-finished/:examCode" element={<ExamResult />} />
             <Route path="/" element={<Landing />} />
             <Route path="/permission-denied" element={<ForbiddenPage />} />
             <Route path="/Forgot-password" element={<ForgotPassword />} />

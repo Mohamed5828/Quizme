@@ -3,7 +3,7 @@ import postData from "../../utils/postData";
 interface ActivityLogState {
   action: string;
   type: "COPY_PASTE" | "WIN_FOCUS" | "QUES_NAV";
-  attemptId?: string | null;
+  attemptId?: number | null;
   additionalInfo?: {
     text?: string;
   };
@@ -16,7 +16,8 @@ export const activityLogSlice = createSlice({
   reducers: {
     addLog: (state, action: { payload: ActivityLogState }) => {
       action.payload.logTime = new Date().toISOString();
-      action.payload.attemptId = sessionStorage.getItem("attemptId");
+      const attemptId = sessionStorage.getItem("attemptId");
+      action.payload.attemptId = attemptId ? parseInt(attemptId, 10) : 0;
       state.push(action.payload);
     },
     resetLogs: (state) => {
@@ -24,7 +25,10 @@ export const activityLogSlice = createSlice({
     },
     pushLogsToServer: (state) => {
       if (state.length > 0) {
-        postData("activitylogs/?bulk=true", state);
+        const logsToSend = JSON.parse(JSON.stringify(state));
+        postData("activitylogs/?bulk=true", logsToSend).catch((error) =>
+          console.error("Failed to push logs:", error)
+        );
       }
       state.length = 0;
     },
