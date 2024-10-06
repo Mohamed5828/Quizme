@@ -191,6 +191,10 @@ EMAIL_PORT= 587
 EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = os.getenv('EMAIL_ADDRESS')
 ACCOUNT_EMAIL_SUBJECT_PREFIX = ''
+####  google client id ####
+# GOOGLE_OAUTH_CLIENT_ID = os.environ.get('GOOGLE_OAUTH_CLIENT_ID')
+# SECURE_REFERRER_POLICY = 'no-referrer-when-downgrade'
+# SECURE_CROSS_ORIGIN_OPENER_POLICY = "same-origin-allow-popups"
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
