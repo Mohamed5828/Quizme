@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import axios, { AxiosError } from "axios";
-import "../../styles/register.css";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai"; // Import the icons
 import { getAxiosInstance } from "../../utils/axiosInstance";
+import "../../styles/register.css";
 
 const RegisterForm: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -11,10 +12,15 @@ const RegisterForm: React.FC = () => {
     email: "",
     password1: "",
     password2: "",
-    category:"",
+    category: "",
     termsAccepted: false,
     role: "",
   });
+
+  // New state variables for showing passwords
+  const [showPassword1, setShowPassword1] = useState(false);
+  const [showPassword2, setShowPassword2] = useState(false);
+  
   const navigate = useNavigate();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -31,34 +37,34 @@ const RegisterForm: React.FC = () => {
     const requiredFields: (keyof typeof formData)[] = [
       "username", "email", "password1", "password2", "category", "role"
     ];
-  for (const field of requiredFields) {
-    if (!formData[field]) {
-      toast.error(`${field.charAt(0).toUpperCase() + field.slice(1)} is required`);
+    for (const field of requiredFields) {
+      if (!formData[field]) {
+        toast.error(`${field.charAt(0).toUpperCase() + field.slice(1)} is required`);
+        return;
+      }
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) {
+      toast.error("Please enter a valid email address");
       return;
     }
-  }
 
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!emailRegex.test(formData.email)) {
-    toast.error("Please enter a valid email address");
-    return;
-  }
+    const passwordStrengthRegex = /^(?=.*[A-Za-z])(?=.*\d).{6,}$/;
+    if (!passwordStrengthRegex.test(formData.password1)) {
+      toast.error("Password must be at least 6 characters long and include both letters and numbers");
+      return;
+    }
 
-  const passwordStrengthRegex = /^(?=.*[A-Za-z])(?=.*\d).{6,}$/;
-  if (!passwordStrengthRegex.test(formData.password1)) {
-    toast.error("Password must be at least 6 characters long and include both letters and numbers");
-    return;
-  }
+    if (formData.password1 !== formData.password2) {
+      toast.error("Passwords do not match");
+      return;
+    }
 
-  if (formData.password1 !== formData.password2) {
-    toast.error("Passwords do not match");
-    return;
-  }
-
-  if (!formData.termsAccepted) {
-    toast.error("You must accept the terms of service");
-    return;
-  }
+    if (!formData.termsAccepted) {
+      toast.error("You must accept the terms of service");
+      return;
+    }
 
     const axiosInstance = getAxiosInstance();
     try {
@@ -94,14 +100,9 @@ const RegisterForm: React.FC = () => {
       }
     }
   };
+
   return (
-    <section
-      className="min-h-screen bg-cover bg-center"
-      // style={{
-      //   backgroundImage:
-      //     "url('https://mdbcdn.b-cdn.net/img/Photos/new-templates/search-box/img4.webp')",
-      // }}
-    >
+    <section className="min-h-screen bg-cover bg-center">
       <div className="bg-white bg-opacity-50 min-h-screen flex items-center">
         <div className="container mx-auto">
           <div className="flex justify-center items-center min-h-screen">
@@ -135,32 +136,51 @@ const RegisterForm: React.FC = () => {
                   </div>
 
                   <div className="mb-4">
-                    <input
-                      type="password"
-                      id="password1"
-                      className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
-                      placeholder="Password"
-                      value={formData.password1}
-                      onChange={handleChange}
-                    />
+                    <label htmlFor="password1" className="block mb-2">Password</label>
+                    <div className="relative">
+                      <input
+                        type={showPassword1 ? 'text' : 'password'}
+                        id="password1"
+                        className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+                        placeholder="Password"
+                        value={formData.password1}
+                        onChange={handleChange}
+                      />
+                      <span
+                        onClick={() => setShowPassword1(!showPassword1)}
+                        className="absolute right-3 top-2 cursor-pointer"
+                      >
+                        {showPassword1 ? <AiFillEyeInvisible /> : <AiFillEye />}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="mb-4">
+                    <label htmlFor="password2" className="block mb-2">Repeat your password</label>
+                    <div className="relative">
+                      <input
+                        type={showPassword2 ? 'text' : 'password'}
+                        id="password2"
+                        className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+                        placeholder="Repeat your password"
+                        value={formData.password2}
+                        onChange={handleChange}
+                      />
+                      <span
+                        onClick={() => setShowPassword2(!showPassword2)}
+                        className="absolute right-3 top-2 cursor-pointer"
+                      >
+                        {showPassword2 ? <AiFillEyeInvisible /> : <AiFillEye />}
+                      </span>
+                    </div>
                   </div>
 
                   <div className="mb-4">
                     <input
-                      type="password"
-                      id="password2"
-                      className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
-                      placeholder="Repeat your password"
-                      value={formData.password2}
-                      onChange={handleChange}
-                    />
-                  </div>
-                  <div className="mb-4">
-                    <input
-                      type="category"
+                      type="text"
                       id="category"
                       className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
-                      placeholder="category"
+                      placeholder="Category"
                       value={formData.category}
                       onChange={handleChange}
                     />
