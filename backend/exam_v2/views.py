@@ -64,10 +64,19 @@ class ExamViewSet(ModelViewSet):
                 serializer = self.get_serializer(instance)
                 return Response(serializer.data)
 
+        current_time = timezone.now()
+        start_time = instance.start_date
+        expiration_time = instance.start_date + instance.duration
+
         # Check if the user is in the whitelist
         whitelist = instance.whitelist
         for pattern in whitelist:
             if fnmatch.fnmatch(request.user.email, pattern):
+                if current_time < start_time:
+                    raise PermissionDenied("The exam has not started yet. You cannot access it before the start time.")
+                if timezone.now() > expiration_time:
+                    raise PermissionDenied("You are not authorized to view this exam.")
+                
                 serializer = self.get_serializer(instance)
                 # If the user is in the whitelist, return the exam and remove question answers
                 for i, question in enumerate(serializer.data['questions']):
@@ -171,16 +180,16 @@ class ExamDurationView(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
         operation_summary="Retrieve the duration and ID of an exam",
         operation_description="Fetches the duration and ID of an exam by its unique code. Requires authentication. Allowed for exam owner or whitelisted users.",
         manual_parameters=[
-            openapi.Parameter('exam_code', openapi.IN_PATH, 
-                description="The unique code of the exam",
-                type=openapi.TYPE_STRING),
-            openapi.Parameter('Authorization', openapi.IN_HEADER, 
-                description="Bearer token for authentication",
-                type=openapi.TYPE_STRING)
+            openapi.Parameter('exam_code', openapi.IN_PATH,
+                              description="The unique code of the exam",
+                              type=openapi.TYPE_STRING),
+            openapi.Parameter('Authorization', openapi.IN_HEADER,
+                              description="Bearer token for authentication",
+                              type=openapi.TYPE_STRING)
         ],
         responses={
-            200: ExamDurationSerializer(many=False), 
-            404: "Exam not found", 
+            200: ExamDurationSerializer(many=False),
+            404: "Exam not found",
             403: "Forbidden"
         },
     )

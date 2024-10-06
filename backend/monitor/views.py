@@ -1,5 +1,7 @@
+from django.db import transaction
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import viewsets, views, status
+from rest_framework.request import Request
 from rest_framework.response import Response
 
 from monitor.utils import evaluate_frame
@@ -56,10 +58,11 @@ class MonitorFrame(views.APIView):
         operation_description="Get monitor frame",
         responses={200: "OK"}
     )
-    def post(self, request, *args, **kwargs):
+    def post(self, request: Request, *args, **kwargs):
+        blob = request.body
         attempt_id = self.request.query_params.get("attempt_id")
-        serializer = CamFrameLogSerializer(data={**request.data, "attempt": attempt_id})
+        serializer = CamFrameLogSerializer(data={"attempt": attempt_id})
         serializer.is_valid(raise_exception=True)
-        serializer.save()
-        evaluate_frame.delay(request.body, attempt_id)
+        cam_log = serializer.save()
+        transaction.on_commit(lambda: evaluate_frame.delay(blob, cam_log.id))
         return Response('Ok')

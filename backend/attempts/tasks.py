@@ -6,6 +6,7 @@ from django.core.mail import send_mail
 from django.conf import settings
 from exam.models import Exam 
 from django.utils import timezone
+from django.core.mail import EmailMessage
 
 from django.core.mail import send_mail
 from django.conf import settings
@@ -21,26 +22,28 @@ def send_attempts_csv(exam_id, instructor_email):
     writer.writerow(['Student ID', 'Student Email', 'Exam ID', 'Score', 'Start Time', 'End Time'])
 
     for attempt in attempts:
-        student_email = attempt.student_id.email 
+        student_email = attempt.student_id.email
         writer.writerow([attempt.student_id.id, student_email, attempt.exam_id.id, attempt.score, attempt.start_time, attempt.end_time])
 
     subject = f"Exam {exam_id} Attempts CSV"
-    message = "Please find attached the CSV file containing all student attempts for the exam"
-    from_email = settings.DEFAULT_FROM_EMAIL 
+    message = "Please find attached the CSV file containing all student attempts for the exam."
+    from_email = settings.DEFAULT_FROM_EMAIL
     recipient_list = [instructor_email]
     
     csv_content = csv_file.getvalue()
-
-    # Send the email
-    send_mail(
-        subject,
-        message,
-        from_email,
-        recipient_list,
-        fail_silently=False,
-        html_message=None, 
-        attachments=[('exam_attempts.csv', csv_content, 'text/csv')]
+    
+    # Prepare the email with an attachment
+    email = EmailMessage(
+        subject=subject,
+        body=message,
+        from_email=from_email,
+        to=recipient_list,
     )
+    
+    email.attach('exam_attempts.csv', csv_content, 'text/csv')
+    
+    # Send the email
+    email.send(fail_silently=False)
 
     return f'CSV file sent to {instructor_email}'
 
