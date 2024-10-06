@@ -11,7 +11,8 @@ import { toast } from "react-toastify";
 import { getRemainingTime } from "./hooks/getRemainingTime";
 import { useDispatch } from "react-redux";
 import { pushLogsToServer } from "../../../state/ActivityLogState/ActivityLogSlice";
-// const dayjs = require("dayjs");
+import useTabFocusMonitor from "../../../hooks/useTabFocusMonitor";
+import useClipboardMonitor from "../../../hooks/useClipboardMonitor";
 
 interface UserAnswer {
   questionId: number;
@@ -37,9 +38,10 @@ function AllQuestionsPage() {
   const navigate = useNavigate();
   const timerRef = useRef<{ timeRemaining: number }>({ timeRemaining: 0 });
   const dispatch = useDispatch();
-  // const now = dayjs();
-  // const formattedDate = now.format("YYYY-MM-DDTHH:mm:ss");
+
   const formattedDate = new Date().toISOString();
+  useTabFocusMonitor();
+  useClipboardMonitor();
   const {
     data: examMetaData,
     loading: examLoading,
@@ -93,19 +95,13 @@ function AllQuestionsPage() {
     if (statusCode === 404 || !attemptData || !examMetaData) return;
 
     setAttemptId(attemptData.id);
+    sessionStorage.setItem("attemptId", attemptData.id.toString());
+
     const remainingTime = getRemainingTime(examMetaData, attemptData.startTime);
 
     setTimeRemaining(remainingTime);
     timerRef.current.timeRemaining = remainingTime;
   }, [examMetaData, attemptData, statusCode]);
-
-  // //handling DB formate
-  // function refactorAnswer(answers, attemptId) {
-  //   return answers.map((ans) => ({
-  //     attemptId: attemptId,
-  //     ...ans,
-  //   }));
-  // }
 
   // Sync answers with server
   useEffect(() => {

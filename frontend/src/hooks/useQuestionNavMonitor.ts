@@ -5,7 +5,7 @@ import {
 } from "../state/ActivityLogState/ActivityLogSlice";
 import { useDispatch } from "react-redux";
 
-const TYPE: "QUES_NAV" | "QUES_NAV" = "QUES_NAV";
+const TYPE = "QUES_NAV" as const;
 
 const useQuestionNavMonitor = (questionStep: number | null) => {
   const dispatch = useDispatch();
@@ -17,9 +17,6 @@ const useQuestionNavMonitor = (questionStep: number | null) => {
       };
       dispatch(addLog(payload));
     }
-    return () => {
-      dispatch(pushLogsToServer()); // might remove this later
-    };
   }, [questionStep, dispatch]);
 };
 
