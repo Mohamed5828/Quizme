@@ -238,7 +238,9 @@ const QuestionBank: React.FC = () => {
                 >
                   <div className="flex justify-between items-start">
                     <h3 className="text-xl font-semibold text-gray-800">
-                      {question.desc}
+                      {question.desc && question.desc.length > 50
+                        ? `${question.desc.slice(0, 50)}...`
+                        : question.desc}
                     </h3>
                     <div className="flex space-x-2">
                       <button

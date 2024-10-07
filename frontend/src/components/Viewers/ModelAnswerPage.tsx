@@ -40,6 +40,7 @@ const ModelAnswersPage = () => {
     loading,
     error,
   } = useFetchData<ExamData>(`/exams/${examCode}`, "v2");
+  console.log(examData);
 
   const [currentQuestionId, setCurrentQuestionId] = useState<number | null>(
     null

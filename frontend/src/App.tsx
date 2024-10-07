@@ -26,6 +26,10 @@ import ProtectedRoute from "./components/authentication/ProtectedRoute.tsx";
 import StudentExamEntry from "./components/Viewers/ExamEntryNavigator.tsx";
 import ActivityMonitorWrapper from "./components/Wrappers/ActivityMonitorWrapper.tsx";
 import ExamResult from "./components/Viewers/Results.tsx";
+import TermsAndConditions from "./components/Viewers/Terms.tsx";
+// import ActivityTimeline from "./components/logs/Logs.tsx";
+import StudentAnswer from "./components/ExamResults/StudentAnswers.tsx";
+import ActivityTimeline from "./components/ExamLogs/ExamLogs.tsx"
 // import StudentAnswer from "./components/ExamResults/StudentAnswers.tsx";
 
 
@@ -35,12 +39,14 @@ const App: React.FC = () => {
       <Router>
         <HomeLayout>
           <Routes>
+            {/* <Route path="/logs" element={<ActivityTimeline />} /> */}
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<RegisterForm />} />
             <Route path="/exam-finished/:examCode" element={<ExamResult />} />
             <Route path="/" element={<Landing />} />
             <Route path="/permission-denied" element={<ForbiddenPage />} />
             <Route path="/Forgot-password" element={<ForgotPassword />} />
+            <Route path="/exam-logs" element={<ActivityTimeline />} />
             <Route
               path="/api/v1/auth/reset-password/:uidb64/:token"
               element={<ChangePassword />}
@@ -59,14 +65,15 @@ const App: React.FC = () => {
               element={<ProtectedRoute element={<Dashboard />} />}
             />
             <Route path="/enter-exam/:examCode" element={<ExamEntry />} />
-            {/* <Route
+            <Route
               path="/attempt/:examCode/:attemptId"
-              element={<StudentAnswer />}
-            /> */}
+              element={<ProtectedRoute element={<StudentAnswer />} />}
+            />
             <Route path="/enter" element={<StudentExamEntry />} />
             <Route
               path="/exam/:examCode"
               element={
+                // <AllQuestionsPage />
                 <WebcamMonitorWrapper>
                   <ActivityMonitorWrapper>
                     <AllQuestionsPage />
@@ -82,6 +89,7 @@ const App: React.FC = () => {
               path="/exam-result/:examCode"
               element={<ProtectedRoute element={<ExamAllStudent />} />}
             />
+            <Route path="/terms" element={<TermsAndConditions />} />
             <Route
               path="/answer/:examCode"
               element={<ProtectedRoute element={<ModelAnswersPage />} />}

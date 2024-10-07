@@ -24,12 +24,13 @@ const Profile: React.FC = () => {
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-2xl font-bold tracking-widest">Profile</h1>
         <button
-          className="bg-red-400 text-white px-6 py-2 rounded-lg hover:bg-red-500 transition-colors duration-200"
+          className="bg-emerald-400 text-white px-6 py-2 rounded-lg hover:bg-emerald-500 transition-colors duration-200"
           onClick={() => {
             logout();
             axiosInstance
               .post("/auth/logout/")
               .then(() => {
+                navigate("/");
                 toast.success("Logged out successfully");
               })
               .catch((error) => {

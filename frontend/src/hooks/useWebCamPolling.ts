@@ -20,7 +20,7 @@ const useWebCamPolling = (stream: MediaStream | null) => {
     const context = canvas.getContext("2d");
     canvas.width = 640;
     canvas.height = 480;
-    console.log({ context });
+    // console.log({ context });
     if (!context) {
       console.error("Failed to get canvas context for webcam polling");
       return;
@@ -38,7 +38,7 @@ const useWebCamPolling = (stream: MediaStream | null) => {
             );
             return;
           }
-          const attempt_id = sessionStorage.getItem("attempt_id");
+          const attempt_id = sessionStorage.getItem("attemptId");
           if (!attempt_id) {
             console.error("Attempt id not found for webcam polling");
             return;

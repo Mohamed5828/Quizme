@@ -13,6 +13,8 @@ import { useDispatch } from "react-redux";
 import { pushLogsToServer } from "../../../state/ActivityLogState/ActivityLogSlice";
 import useTabFocusMonitor from "../../../hooks/useTabFocusMonitor";
 import useClipboardMonitor from "../../../hooks/useClipboardMonitor";
+import ExamWaitingPage from "./components/ExamStartTime";
+import ExamExpiredPage from "./components/ExamEpired";
 
 interface UserAnswer {
   questionId: number;
@@ -22,6 +24,8 @@ interface UserAnswer {
 export interface ExamMetaData {
   id: number;
   duration: string; // "HH:MM:SS" format
+  startDate: string;
+  expirationDate: string;
 }
 
 interface AttemptResponse {
@@ -33,6 +37,7 @@ function AllQuestionsPage() {
   const [userAnswers, setUserAnswers] = useState<UserAnswer[]>([]);
   const [timeRemaining, setTimeRemaining] = useState<number>(0);
   const [attemptId, setAttemptId] = useState<number>();
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const { user } = useUserContext();
   const { examCode } = useParams();
   const navigate = useNavigate();
@@ -57,11 +62,22 @@ function AllQuestionsPage() {
   } = useFetchData<AttemptResponse>(`attempts/exam/${examCode}/`);
   console.log(statusCode);
 
+  if (!examMetaData?.id) return null;
+  const examStartDate = new Date(examMetaData.startDate);
+  const examEndDate = new Date(examMetaData.expirationDate);
+  const now = new Date();
+  if (examStartDate > now) {
+    // Exam hasn't started yet
+    return <ExamWaitingPage startTime={examMetaData.startDate} />;
+  } else if (examEndDate < now) {
+    // Exam has ended
+    return <ExamExpiredPage endTime={examEndDate} />;
+  }
+
   // Initialize attempt if none exists
   useEffect(() => {
     const initializeAttempt = async () => {
       if (!examMetaData?.id || !user?.id || statusCode !== 404) return;
-
       const initData = {
         answers: [],
         studentId: user.id,
@@ -152,10 +168,13 @@ function AllQuestionsPage() {
       examId: examMetaData.id,
       endTime: new Date().toISOString(),
     });
+    setIsSubmitting(true);
+
     dispatch(pushLogsToServer());
     if (error) {
       console.error("Failed to submit exam:", error);
       toast.error("Failed to submit exam");
+      setIsSubmitting(false);
       return;
     }
 
@@ -184,10 +203,13 @@ function AllQuestionsPage() {
           initialTime={timeRemaining}
         />
         <button
-          className="bg-green-500 text-white px-6 py-2 rounded-lg hover:bg-green-600 transition-colors duration-200"
+          className={`bg-green-500 text-white px-6 py-2 rounded-lg 
+                  ${isSubmitting ? "opacity-50 cursor-not-allowed" : "hover:bg-green-600"} 
+                  transition-colors duration-200`}
           onClick={handleSubmit}
+          disabled={isSubmitting}
         >
-          Submit Answers
+          {isSubmitting ? "Submitting..." : "Submit Answers"}
         </button>
       </div>
       <div className="flex-grow mt-4 overflow-hidden">
