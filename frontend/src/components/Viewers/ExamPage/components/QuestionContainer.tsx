@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import SingleQuestionComponent from "./SingleQuestionComponent";
 import CodeEditorWrapper from "./CodeEditorWrapper";
 import { useFetchData } from "../../../../hooks/useFetchData";
@@ -45,7 +45,8 @@ interface ExamData {
 
 interface UserAnswer {
   questionId: number;
-  answer: string | number;
+  // answer: string | number;
+  choices: string[];
 }
 
 interface QuestionContainerProps {
@@ -82,17 +83,28 @@ function QuestionContainer({
     (q) => q.id === currentQuestionId
   );
 
-  const handleAnswerSelection = (answer: string | number) => {
+  const handleAnswerSelection = (answer: string) => {
     setUserAnswers((prevAnswers) => {
       const existingAnswerIndex = prevAnswers.findIndex(
         (a) => a.questionId === currentQuestionId
       );
       if (existingAnswerIndex !== -1) {
         const newAnswers = [...prevAnswers];
-        newAnswers[existingAnswerIndex].answer = answer;
+        // newAnswers[existingAnswerIndex].answer = answer;
+        if (newAnswers[existingAnswerIndex].choices.includes(answer)) {
+          newAnswers[existingAnswerIndex].choices = newAnswers[
+            existingAnswerIndex
+          ].choices.filter((choice) => choice !== answer);
+        } else {
+          newAnswers[existingAnswerIndex].choices.push(answer);
+        }
         return newAnswers;
       } else {
-        return [...prevAnswers, { questionId: currentQuestionId!, answer }];
+        const newAnswers = [
+          ...prevAnswers,
+          { questionId: currentQuestionId!, choices: [answer] },
+        ];
+        return newAnswers;
       }
     });
   };
@@ -145,13 +157,13 @@ function QuestionContainer({
                   <button
                     key={index}
                     className={`block w-full text-left p-3 rounded-lg transition-colors duration-200 ${
-                      userAnswers.find(
-                        (a) => a.questionId === activeQuestion.id
-                      )?.answer === index
+                      userAnswers
+                        .find((a) => a.questionId === activeQuestion.id)
+                        ?.choices.includes(choice.desc)
                         ? "bg-blue-500 text-white"
                         : "bg-gray-100 hover:bg-gray-200 text-gray-800"
                     }`}
-                    onClick={() => handleAnswerSelection(index)}
+                    onClick={() => handleAnswerSelection(choice.desc)}
                   >
                     {choice.desc}
                   </button>

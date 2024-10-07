@@ -77,7 +77,7 @@ export default function StudentList({ students, examCode }: StudentListProps) {
       {students &&
         students.map((examResult) => (
           <Link
-            to={`/attempt/${examResult.id}`}
+            to={`/attempt/${examCode}/${examResult.id}`}
             key={examResult.student.email}
             className="flex justify-between gap-x-6 py-5 hover:bg-gray-100 rounded-lg transition duration-300 p-3"
           >
