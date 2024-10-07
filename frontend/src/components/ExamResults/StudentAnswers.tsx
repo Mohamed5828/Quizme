@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useFetchData } from "../../hooks/useFetchData";
 import BasicSpinner from "../Basic/BasicSpinner";
 
@@ -88,6 +88,10 @@ const StudentAnswer = () => {
     }
   }, [examData]);
 
+  const navigate = useNavigate();
+  const handleShowExamLogs = () => {
+    navigate(`/exam-logs?attemptId=${attemptId}`);
+  };
   // Find student's answer for current question
   const getStudentAnswer = (questionId: number) => {
     return studAns?.answers?.find((answer) => answer.questionId === questionId);
@@ -185,6 +189,9 @@ const StudentAnswer = () => {
         <p className="text-gray-600">
           Student: {studAns.student.username} | Score: {studAns.score}
         </p>
+        <button className="bg-gray-500 text-white font-semibold mt-4 py-2 px-2 rounded-lg shadow-md hover:bg-gray-600 hover:shadow-lg transition duration-300 ease-in-out active:scale-105" onClick={handleShowExamLogs}>
+              Show Exam Logs
+        </button>
       </header>
       <main className="flex-grow flex overflow-hidden">
         <aside className="w-1/3 bg-white shadow-lg overflow-y-auto">
