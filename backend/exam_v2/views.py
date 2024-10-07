@@ -27,6 +27,7 @@ class ExamViewSet(ModelViewSet):
 
     def get_queryset(self):
         return Exam.objects.filter(user_id=self.request.user)
+        
 
     def get_object(self):
         exam_code = self.kwargs.get('exam_code')
