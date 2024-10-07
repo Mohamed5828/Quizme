@@ -69,12 +69,12 @@ const App: React.FC = () => {
             <Route
               path="/exam/:examCode"
               element={
-                <AllQuestionsPage />
-                // <WebcamMonitorWrapper>
-                //   <ActivityMonitorWrapper>
-                //     <AllQuestionsPage />
-                //   </ActivityMonitorWrapper>
-                // </WebcamMonitorWrapper>
+                // <AllQuestionsPage />
+                <WebcamMonitorWrapper>
+                  <ActivityMonitorWrapper>
+                    <AllQuestionsPage />
+                  </ActivityMonitorWrapper>
+                </WebcamMonitorWrapper>
               }
             />
             <Route

@@ -38,7 +38,7 @@ const useWebCamPolling = (stream: MediaStream | null) => {
             );
             return;
           }
-          const attempt_id = sessionStorage.getItem("attempt_id");
+          const attempt_id = sessionStorage.getItem("attemptId");
           if (!attempt_id) {
             console.error("Attempt id not found for webcam polling");
             return;
