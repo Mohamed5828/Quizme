@@ -26,7 +26,7 @@ import ProtectedRoute from "./components/authentication/ProtectedRoute.tsx";
 import StudentExamEntry from "./components/Viewers/ExamEntryNavigator.tsx";
 import ActivityMonitorWrapper from "./components/Wrappers/ActivityMonitorWrapper.tsx";
 import ExamResult from "./components/Viewers/Results.tsx";
-import ActivityTimeline from "./components/logs/Logs.tsx"
+import ActivityTimeline from "./components/ExamLogs/ExamLogs.tsx"
 // import StudentAnswer from "./components/ExamResults/StudentAnswers.tsx";
 
 const App: React.FC = () => {
