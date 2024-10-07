@@ -151,12 +151,6 @@ const StudentAnswer = () => {
           <pre className="bg-gray-100 p-4 rounded-lg overflow-x-auto text-sm">
             <code>{studentSolutionCode}</code>
           </pre>
-          {activeStudentAnswer?.code && (
-            <p className="text-sm text-gray-600 mt-2">
-              Language: {activeStudentAnswer.code.language}, Version:{" "}
-              {activeStudentAnswer.code.version}
-            </p>
-          )}
         </div>
 
         {/* Test Cases */}
