@@ -109,7 +109,6 @@ def evaluate_test_cases(language, run_code, test_cases, version):
         "version": task_result.get("version")
     }
 @shared_task
-@transaction.atomic
 def update_answer_and_attempt(evaluation_result, attempt_id, question_id, run_code):
     attempt = Attempt.objects.get(id=attempt_id)
     question = Question.objects.get(id=question_id)
@@ -141,7 +140,7 @@ def update_answer_and_attempt(evaluation_result, attempt_id, question_id, run_co
     # Update the attempt's total score
     # attempt_answers = Answer.objects.filter(attempt_id=attempt)
     # attempt.score = sum(a.score or 0 for a in attempt_answers)
-    attempt.save()
+    # attempt.save()
 
     if all_passed:
         return {
