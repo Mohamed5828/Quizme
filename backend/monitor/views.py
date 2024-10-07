@@ -13,12 +13,27 @@ from monitor.models import CamFrameLog
 class CamFrameLogViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = CamFrameLog.objects.all()
     serializer_class = CamFrameLogSerializer
+    model = CamFrameLog
     permission_classes = [IsInstructor]
 
     def get_queryset(self):
         if not self.request.user.is_authenticated:
             return CamFrameLog.objects.none()
-        return CamFrameLog.objects.filter(attempt__exam_id__user_id=self.request.user)
+
+        attempt_id = self.request.query_params.get('attempt_id')
+        student_id = self.request.query_params.get('student_id')
+        exam_id = self.request.query_params.get('exam_id')
+        filter_kwargs = {
+            'attempt__exam_id__user_id': self.request.user,
+        }
+        if attempt_id:
+            filter_kwargs['attempt'] = attempt_id
+        if student_id:
+            filter_kwargs['attempt__student_id'] = student_id
+        if exam_id:
+            filter_kwargs['attempt__exam_id'] = exam_id
+
+        return CamFrameLog.objects.filter(**filter_kwargs)
 
     @swagger_auto_schema(
         tags=["monitor"],

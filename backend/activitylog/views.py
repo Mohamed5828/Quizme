@@ -29,7 +29,7 @@ class ActivityLogViewSet(viewsets.ModelViewSet):
         if attempt_id:
             filter_kwargs['attempt_id'] = attempt_id
         if student_id:
-            filter_kwargs['student_id'] = student_id
+            filter_kwargs['attempt_id__student_id'] = student_id
         if exam_id:
             filter_kwargs['attempt_id__exam_id'] = exam_id
         return ActivityLog.objects.filter(**filter_kwargs)
