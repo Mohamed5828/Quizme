@@ -52,6 +52,7 @@ def send_attempts_csv(exam_id, instructor_email):
 
 @shared_task
 def check_exam_expiration():
+    # * This is unused
     # Fetch exams that have expired and haven't had their CSV sent
     expired_exams = Exam.objects.filter(expiration_date=timezone.now(), csv_sent=False)
 
@@ -68,5 +69,5 @@ def evaluate_attempt(attempt_id):
     Evaluate an attempt
     """
     attempt = Attempt.objects.get(id=attempt_id)
-    if attempt.score is None:
-        attempt.evaluate()
+    # if attempt.score is None:
+    attempt.evaluate()

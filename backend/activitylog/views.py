@@ -29,7 +29,7 @@ class ActivityLogViewSet(viewsets.ModelViewSet):
         if attempt_id:
             filter_kwargs['attempt_id'] = attempt_id
         if student_id:
-            filter_kwargs['student_id'] = student_id
+            filter_kwargs['attempt_id__student_id'] = student_id
         if exam_id:
             filter_kwargs['attempt_id__exam_id'] = exam_id
         return ActivityLog.objects.filter(**filter_kwargs)
@@ -38,7 +38,12 @@ class ActivityLogViewSet(viewsets.ModelViewSet):
         tags=["activitylogs"],
         operation_description="Get activity logs",
         responses={200: ActivityLogSerializer(many=True)},
-        manual_parameters=[AUTH_SWAGGER_PARAM]
+        manual_parameters=[
+            AUTH_SWAGGER_PARAM,
+            openapi.Parameter('attempt_id', openapi.IN_QUERY, type=openapi.TYPE_INTEGER, required=False),
+            openapi.Parameter('student_id', openapi.IN_QUERY, type=openapi.TYPE_INTEGER, required=False),
+            openapi.Parameter('exam_id', openapi.IN_QUERY, type=openapi.TYPE_INTEGER, required=False),
+        ]
     )
     def list(self, request, *args, **kwargs):
         return super().list(request, *args, **kwargs)

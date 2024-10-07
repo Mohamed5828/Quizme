@@ -55,7 +55,6 @@ def execute_code_async(language, code, version, stdin=""):
     Async task for executing code using Piston API.
     """
     return execute_code(language, code, version, stdin)
-
 @shared_task
 def evaluate_test_cases(language, run_code, test_cases, version):
     results = []
@@ -88,14 +87,29 @@ def evaluate_test_cases(language, run_code, test_cases, version):
                 "test_case": index + 1
             }
 
-        passed = task_result.get("output", "").strip() == test.get('output', '').strip()
+        actual_output = task_result.get("output", "").strip()
+        expected_output = test.get('output', '').strip()
+        passed = actual_output == expected_output
+
+        # Add detailed debugging information
         results.append({
             "test_case": index + 1,
             "passed": passed,
             "input": test.get('input', ''),
-            "expected_output": test.get('output', ''),
-            "actual_output": task_result.get("output", "").strip(),
-            "execution_time": task_result.get("execution_time")
+            "expected_output": expected_output,
+            "actual_output": actual_output,
+            "execution_time": task_result.get("execution_time"),
+            "debug_info": {
+                "expected_length": len(expected_output),
+                "actual_length": len(actual_output),
+                "expected_repr": repr(expected_output),
+                "actual_repr": repr(actual_output),
+                "character_differences": [
+                    (i, repr(expected_output[i]), repr(actual_output[i]))
+                    for i in range(min(len(expected_output), len(actual_output)))
+                    if expected_output[i] != actual_output[i]
+                ] if len(expected_output) == len(actual_output) else []
+            }
         })
 
         if not passed:
@@ -109,7 +123,6 @@ def evaluate_test_cases(language, run_code, test_cases, version):
         "version": task_result.get("version")
     }
 @shared_task
-@transaction.atomic
 def update_answer_and_attempt(evaluation_result, attempt_id, question_id, run_code):
     attempt = Attempt.objects.get(id=attempt_id)
     question = Question.objects.get(id=question_id)
@@ -141,7 +154,7 @@ def update_answer_and_attempt(evaluation_result, attempt_id, question_id, run_co
     # Update the attempt's total score
     # attempt_answers = Answer.objects.filter(attempt_id=attempt)
     # attempt.score = sum(a.score or 0 for a in attempt_answers)
-    attempt.save()
+    # attempt.save()
 
     if all_passed:
         return {
