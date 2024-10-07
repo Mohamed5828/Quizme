@@ -23,7 +23,7 @@ interface UserAnswer {
 
 export interface ExamMetaData {
   id: number;
-  duration: string; // "HH:MM:SS" format
+  duration: string;
   startDate: string;
   expirationDate: string;
 }
@@ -38,6 +38,10 @@ function AllQuestionsPage() {
   const [timeRemaining, setTimeRemaining] = useState<number>(0);
   const [attemptId, setAttemptId] = useState<number>();
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [examStatus, setExamStatus] = useState<
+    "loading" | "waiting" | "expired" | "active"
+  >("loading");
+
   const { user } = useUserContext();
   const { examCode } = useParams();
   const navigate = useNavigate();
@@ -45,14 +49,15 @@ function AllQuestionsPage() {
   const dispatch = useDispatch();
 
   const formattedDate = new Date().toISOString();
+
   useTabFocusMonitor();
   useClipboardMonitor();
+
   const {
     data: examMetaData,
     loading: examLoading,
     error: examError,
   } = useFetchData<ExamMetaData>(`exams/exam-durations/${examCode}/`, "v2");
-  console.log(examMetaData);
 
   const {
     data: attemptData,
@@ -60,24 +65,38 @@ function AllQuestionsPage() {
     error: attemptError,
     statusCode,
   } = useFetchData<AttemptResponse>(`attempts/exam/${examCode}/`);
-  console.log(statusCode);
 
-  if (!examMetaData?.id) return null;
-  const examStartDate = new Date(examMetaData.startDate);
-  const examEndDate = new Date(examMetaData.expirationDate);
-  const now = new Date();
-  if (examStartDate > now) {
-    // Exam hasn't started yet
-    return <ExamWaitingPage startTime={examMetaData.startDate} />;
-  } else if (examEndDate < now) {
-    // Exam has ended
-    return <ExamExpiredPage endTime={examEndDate} />;
-  }
+  // Check exam status
+  useEffect(() => {
+    if (!examMetaData || examLoading) {
+      setExamStatus("loading");
+      return;
+    }
 
-  // Initialize attempt if none exists
+    const examStartDate = new Date(examMetaData.startDate);
+    const examEndDate = new Date(examMetaData.expirationDate);
+    const now = new Date();
+
+    if (examStartDate > now) {
+      setExamStatus("waiting");
+    } else if (examEndDate < now) {
+      setExamStatus("expired");
+    } else {
+      setExamStatus("active");
+    }
+  }, [examMetaData, examLoading]);
+
+  // Initialize attempt
   useEffect(() => {
     const initializeAttempt = async () => {
-      if (!examMetaData?.id || !user?.id || statusCode !== 404) return;
+      if (
+        !examMetaData?.id ||
+        !user?.id ||
+        statusCode !== 404 ||
+        examStatus !== "active"
+      )
+        return;
+
       const initData = {
         answers: [],
         studentId: user.id,
@@ -89,9 +108,7 @@ function AllQuestionsPage() {
         "/attempts/",
         initData
       );
-      const remainingTime = getRemainingTime(examMetaData, Date.now());
-      setTimeRemaining(remainingTime);
-      timerRef.current.timeRemaining = remainingTime;
+
       if (error) {
         console.error("Failed to initialize attempt:", error);
         return;
@@ -100,42 +117,45 @@ function AllQuestionsPage() {
       if (resData?.id) {
         setAttemptId(resData.id);
         sessionStorage.setItem("attemptId", resData.id.toString());
+
+        const remainingTime = getRemainingTime(examMetaData, Date.now());
+        setTimeRemaining(remainingTime);
+        timerRef.current.timeRemaining = remainingTime;
       }
     };
 
     initializeAttempt();
-  }, [examMetaData, user, statusCode]);
+  }, [examMetaData, user, statusCode, examStatus]);
 
   // Handle existing attempt
   useEffect(() => {
-    if (statusCode === 404 || !attemptData || !examMetaData) return;
-    if (Array.isArray(attemptData)) {
-      // Filter attempts that belong to the current user
-      const userAttempt = attemptData.find((att) => att.student.id === user.id);
+    if (
+      statusCode === 404 ||
+      !attemptData ||
+      !examMetaData ||
+      examStatus !== "active"
+    )
+      return;
 
-      if (userAttempt) {
-        setAttemptId(userAttempt.id); // Set the found attempt ID
-      } else {
-        console.error("No attempt found for the current user");
+    const currentAttemptId = Array.isArray(attemptData)
+      ? attemptData.find((att) => att.student.id === user.id)?.id
+      : attemptData.id;
+
+    if (currentAttemptId) {
+      setAttemptId(currentAttemptId);
+      sessionStorage.setItem("attemptId", currentAttemptId.toString());
+
+      const remainingTime = getRemainingTime(
+        examMetaData,
+        attemptData.startTime
+      );
+      if (remainingTime === 0) {
+        navigate(`/exam-finished/${examCode}`);
       }
-    } else {
-      // If attemptData is a single object
-      setAttemptId(attemptData.id);
+      setTimeRemaining(remainingTime);
+      timerRef.current.timeRemaining = remainingTime;
     }
-
-    // Save attemptId to sessionStorage (make sure attemptId is set first)
-    if (attemptId) {
-      sessionStorage.setItem("attemptId", attemptId.toString());
-    } else {
-      console.error("Attempt ID is not set");
-    }
-
-    const remainingTime = getRemainingTime(examMetaData, attemptData.startTime);
-
-    setTimeRemaining(remainingTime);
-    if (remainingTime == 0) navigate(`/exam-finished/${examCode}`);
-    timerRef.current.timeRemaining = remainingTime;
-  }, [examMetaData, attemptData, statusCode]);
+  }, [examMetaData, attemptData, statusCode, examStatus]);
 
   // Sync answers with server
   useEffect(() => {
@@ -147,7 +167,9 @@ function AllQuestionsPage() {
         studentId: user.id,
         examId: examMetaData.id,
       });
+
       dispatch(pushLogsToServer());
+
       if (error) {
         console.error("Failed to sync answers:", error);
       } else {
@@ -155,12 +177,14 @@ function AllQuestionsPage() {
       }
     };
 
-    const syncInterval = setInterval(syncAnswers, 3 * 60 * 1000); // Every 3 minutes
+    const syncInterval = setInterval(syncAnswers, 3 * 60 * 1000);
     return () => clearInterval(syncInterval);
   }, [attemptId, userAnswers]);
 
   const handleSubmit = useCallback(async () => {
     if (!attemptId || !user?.id || !examMetaData?.id) return;
+
+    setIsSubmitting(true);
 
     const { error } = await putData(`/attempts/${attemptId}/`, {
       answers: userAnswers,
@@ -168,9 +192,9 @@ function AllQuestionsPage() {
       examId: examMetaData.id,
       endTime: new Date().toISOString(),
     });
-    setIsSubmitting(true);
 
     dispatch(pushLogsToServer());
+
     if (error) {
       console.error("Failed to submit exam:", error);
       toast.error("Failed to submit exam");
@@ -180,7 +204,7 @@ function AllQuestionsPage() {
 
     sessionStorage.removeItem("attemptId");
     navigate(`/exam-finished/${examCode}`);
-  }, [attemptId, userAnswers, examCode, navigate]);
+  }, [attemptId, userAnswers, examCode, navigate, user?.id, examMetaData?.id]);
 
   const handleTimerEnd = useCallback(() => {
     handleSubmit();
@@ -188,6 +212,14 @@ function AllQuestionsPage() {
 
   if (examLoading || attemptLoading) {
     return <BasicSpinner />;
+  }
+
+  if (examStatus === "waiting") {
+    return <ExamWaitingPage startTime={new Date(examMetaData?.startDate)} />;
+  }
+
+  if (examStatus === "expired") {
+    return <ExamExpiredPage endTime={new Date(examMetaData?.expirationDate)} />;
   }
 
   if (!attemptId) {

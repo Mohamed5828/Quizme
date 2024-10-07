@@ -191,9 +191,6 @@ const StudentAnswer = () => {
         <p className="text-gray-600">
           Student: {studAns.student.username} | Score: {studAns.score}
         </p>
-        <p className="text-gray-600">
-          Cheating Metric: {studAns.cheatingMetric}
-        </p>
       </header>
       <main className="flex-grow flex overflow-hidden">
         <aside className="w-1/3 bg-white shadow-lg overflow-y-auto">
