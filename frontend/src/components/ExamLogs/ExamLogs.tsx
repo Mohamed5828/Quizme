@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { Timeline, Spin, message, Image, Badge } from "antd";
+import { Timeline, Spin, message, Badge } from "antd";
 import { useFetchData } from "../../hooks/useFetchData";
+import { useLocation } from "react-router-dom";
 
-// Define the structure of the logs
 interface Log {
   id: number;
   action: string;
@@ -19,7 +19,10 @@ interface CameraLog {
   attempt: number;
 }
 
-// Format the timestamp to a readable format
+const useQuery = () => {
+  return new URLSearchParams(useLocation().search);
+};
+
 const formatDate = (dateString: string) => {
   const options: Intl.DateTimeFormatOptions = {
     year: "numeric",
@@ -33,7 +36,6 @@ const formatDate = (dateString: string) => {
   return new Intl.DateTimeFormat("en-US", options).format(new Date(dateString));
 };
 
-// Function to determine the color based on log type
 const getLogColor = (type: string) => {
   switch (type) {
     case "QUES_NAV":
@@ -47,7 +49,6 @@ const getLogColor = (type: string) => {
   }
 };
 
-// Function to determine the color based on camera log flag
 const getCameraLogColor = (flag: string | null) => {
   switch (flag) {
     case "good":
@@ -66,8 +67,19 @@ const getCameraLogColor = (flag: string | null) => {
 const Logs: React.FC = () => {
   const [logs, setLogs] = useState<Log[]>([]);
   const [cameraLogs, setCameraLogs] = useState<CameraLog[]>([]);
-  const { data, error, loading } = useFetchData<Log[]>("/activitylogs/", "v1");
-  const { data: cameraData, error: cameraError, loading: cameraLoading } = useFetchData<CameraLog[]>("/cam-frames/", "v1");
+  
+  const query = useQuery();
+  const attemptId = query.get("attemptId");
+
+  const { data, error, loading } = useFetchData<Log[]>(
+    `/activitylogs/?attemptId=${attemptId}`,
+    "v1"
+  );
+
+  const { data: cameraData, error: cameraError, loading: cameraLoading } = useFetchData<CameraLog[]>(
+    `/cam-frames/?attemptId=${attemptId}`,
+    "v1"
+  );
 
   useEffect(() => {
     if (data) {
