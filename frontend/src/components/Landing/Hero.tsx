@@ -1,5 +1,6 @@
 import React, { useMemo } from "react";
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom"; 
 import getScrollAnimation from "../../utils/ScrollAnimation";
 import ScrollAnimationWrapper from "./AnimationWrapper";
 import exam from "../../images/9233873_4119036.jpg";
@@ -36,7 +37,12 @@ const Hero: React.FC<HeroProps> = ({
     },
   ],
 }) => {
+  const navigate = useNavigate();
   const scrollAnimation = useMemo(() => getScrollAnimation(), []);
+
+  const handleGetStarted = () => {
+    navigate("/register");
+  };
 
   return (
     <div className="max-w-screen-xl  px-8 xl:px-16 mx-auto" id="about">
@@ -53,7 +59,7 @@ const Hero: React.FC<HeroProps> = ({
               We provide an awesome examination system with all sorts of
               monitoring to ensure a seamless exam experience.
             </p>
-            <button className="bg-emerald-500 text-white font-semibold py-3 px-6 rounded-lg shadow-md hover:bg-emerald-600 hover:shadow-lg transition duration-300 ease-in-out active:scale-105">
+            <button className="bg-emerald-500 text-white font-semibold py-3 px-6 rounded-lg shadow-md hover:bg-emerald-600 hover:shadow-lg transition duration-300 ease-in-out active:scale-105" onClick={handleGetStarted}>
               Get Started
             </button>
           </div>
