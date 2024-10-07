@@ -3,6 +3,7 @@ from datetime import timedelta
 from django.db import models
 from django.utils.text import slugify
 from quizme.celery import app
+from django.db import transaction
 
 
 class Exam(models.Model):
@@ -26,31 +27,32 @@ class Exam(models.Model):
         # leave this here to prevent circular imports error
         from exam_v2.tasks import evaluate_exam_after_expiry
 
-        is_new = self.pk is None
+        with transaction.atomic():
+            is_new = self.pk is None
 
-        if is_new:
-            # For new instances, save with minimal data to get an ID
-            self.exam_code = f"placeholder-exam-{self.user_id.username}"
-            super().save(*args, **kwargs)
+            if is_new:
+                # For new instances, save with minimal data to get an ID
+                self.exam_code = f"placeholder-exam-{self.user_id.username}"
+                super().save(*args, **kwargs)
 
-            # Now that we have an ID, generate the real exam code
-            self.exam_code = self.generate_exam_code()
-        else:
-            # For existing instances, check if expiration date changed
-            old_expiration = Exam.objects.get(pk=self.pk).expiration_date
-            if self.scheduled_task_id and old_expiration != self.expiration_date:
-                app.control.revoke(self.scheduled_task_id, terminate=True)
-                self.scheduled_task_id = None
+                # Now that we have an ID, generate the real exam code
+                self.exam_code = self.generate_exam_code()
+            else:
+                # For existing instances, check if expiration date changed
+                old_expiration = Exam.objects.get(pk=self.pk).expiration_date
+                if self.scheduled_task_id and old_expiration != self.expiration_date:
+                    app.control.revoke(self.scheduled_task_id, terminate=True)
+                    self.scheduled_task_id = None
 
-        # Schedule new task and set its id
-        if not self.scheduled_task_id:
-            self.scheduled_task_id = evaluate_exam_after_expiry.apply_async(
-                eta=self.expiration_date + timedelta(minutes=10),
-                args=(self.id,)
-            ).id
+            # Schedule new task and set its id
+            if not self.scheduled_task_id:
+                self.scheduled_task_id = evaluate_exam_after_expiry.apply_async(
+                    eta=self.expiration_date + timedelta(minutes=10),
+                    args=(self.id,)
+                ).id
 
-        # Save all changes
-        super().save()
+            # Save all changes
+            super().save()
 
     def generate_exam_code(self):
         return f"exam{self.id}-{slugify(self.title)}"
