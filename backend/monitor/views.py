@@ -1,4 +1,5 @@
 from django.db import transaction
+from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import viewsets, views, status
 from rest_framework.request import Request
@@ -13,18 +14,38 @@ from monitor.models import CamFrameLog
 class CamFrameLogViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = CamFrameLog.objects.all()
     serializer_class = CamFrameLogSerializer
+    model = CamFrameLog
     permission_classes = [IsInstructor]
 
     def get_queryset(self):
         if not self.request.user.is_authenticated:
             return CamFrameLog.objects.none()
-        return CamFrameLog.objects.filter(attempt__exam_id__user_id=self.request.user)
+
+        attempt_id = self.request.query_params.get('attempt_id')
+        student_id = self.request.query_params.get('student_id')
+        exam_id = self.request.query_params.get('exam_id')
+        filter_kwargs = {
+            'attempt__exam_id__user_id': self.request.user,
+        }
+        if attempt_id:
+            filter_kwargs['attempt'] = attempt_id
+        if student_id:
+            filter_kwargs['attempt__student_id'] = student_id
+        if exam_id:
+            filter_kwargs['attempt__exam_id'] = exam_id
+
+        return CamFrameLog.objects.filter(**filter_kwargs)
 
     @swagger_auto_schema(
         tags=["monitor"],
         operation_description="Get monitor frame",
         responses={200: CamFrameLogSerializer(many=True)},
-        manual_parameters=[AUTH_SWAGGER_PARAM]
+        manual_parameters=[
+            AUTH_SWAGGER_PARAM,
+            openapi.Parameter('attempt_id', openapi.IN_QUERY, type=openapi.TYPE_INTEGER, required=False),
+            openapi.Parameter('student_id', openapi.IN_QUERY, type=openapi.TYPE_INTEGER, required=False),
+            openapi.Parameter('exam_id', openapi.IN_QUERY, type=openapi.TYPE_INTEGER, required=False),
+        ]
     )
     def list(self, request, *args, **kwargs):
         exam_id = self.request.query_params.get('exam_id')
