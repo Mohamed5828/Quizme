@@ -5,8 +5,10 @@ from attempts.tasks import evaluate_attempt
 
 @shared_task
 def evaluate_exam_after_expiry(exam_id):
-    exam = Exam.objects.get(id=exam_id)
-    if exam is None:
-        return
-    for attempt in exam.attempts.all():
-        evaluate_attempt.delay(attempt.id)
+    try:
+        exam = Exam.objects.get(id=exam_id)
+
+        for attempt in exam.attempts.all():
+            evaluate_attempt.delay(attempt.id)
+    except Exam.DoesNotExist:
+        print(f"Exam with {exam_id=} does not exist evaluation task will abort ")

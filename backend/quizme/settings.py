@@ -187,7 +187,7 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_HOST_USER = os.getenv('EMAIL_ADDRESS')
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
-EMAIL_PORT= 587
+EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = os.getenv('EMAIL_ADDRESS')
 ACCOUNT_EMAIL_SUBJECT_PREFIX = ''
@@ -239,7 +239,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CELERY_RESULT_BACKEND = "redis://localhost:6379"
 CELERY_BROKER_URL = "redis://localhost:6379"
 CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
-CELERY_WORKER_POOL = 'solo'
+# CELERY_WORKER_POOL = 'solo'
 
 # Mediapipe
 MEDIAPIPE_MONITOR_OPTIONS = mp_py.vision.FaceLandmarkerOptions(

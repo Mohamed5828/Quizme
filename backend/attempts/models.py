@@ -25,6 +25,7 @@ class Attempt(models.Model):
         best called inside a celery task
         """
         for answer in self.answers.all():
-            answer.evaluate()
+            if answer.score is None:
+                answer.evaluate()
         self.score = self.answers.aggregate(models.Sum('score'))['score__sum']
         self.save()
