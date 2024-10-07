@@ -72,6 +72,11 @@ const ExamCreationForm = ({ defaultValues = {} }: ExamCreationFormProps) => {
     }
   };
 
+  useEffect(() => {
+    return () => {
+      dispatch(resetStep());
+    };
+  }, [dispatch]);
   return (
     <FormProvider {...methods}>
       <form
