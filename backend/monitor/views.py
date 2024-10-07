@@ -1,4 +1,5 @@
 from django.db import transaction
+from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import viewsets, views, status
 from rest_framework.request import Request
@@ -39,7 +40,12 @@ class CamFrameLogViewSet(viewsets.ReadOnlyModelViewSet):
         tags=["monitor"],
         operation_description="Get monitor frame",
         responses={200: CamFrameLogSerializer(many=True)},
-        manual_parameters=[AUTH_SWAGGER_PARAM]
+        manual_parameters=[
+            AUTH_SWAGGER_PARAM,
+            openapi.Parameter('attempt_id', openapi.IN_QUERY, type=openapi.TYPE_INTEGER, required=False),
+            openapi.Parameter('student_id', openapi.IN_QUERY, type=openapi.TYPE_INTEGER, required=False),
+            openapi.Parameter('exam_id', openapi.IN_QUERY, type=openapi.TYPE_INTEGER, required=False),
+        ]
     )
     def list(self, request, *args, **kwargs):
         exam_id = self.request.query_params.get('exam_id')

@@ -38,7 +38,12 @@ class ActivityLogViewSet(viewsets.ModelViewSet):
         tags=["activitylogs"],
         operation_description="Get activity logs",
         responses={200: ActivityLogSerializer(many=True)},
-        manual_parameters=[AUTH_SWAGGER_PARAM]
+        manual_parameters=[
+            AUTH_SWAGGER_PARAM,
+            openapi.Parameter('attempt_id', openapi.IN_QUERY, type=openapi.TYPE_INTEGER, required=False),
+            openapi.Parameter('student_id', openapi.IN_QUERY, type=openapi.TYPE_INTEGER, required=False),
+            openapi.Parameter('exam_id', openapi.IN_QUERY, type=openapi.TYPE_INTEGER, required=False),
+        ]
     )
     def list(self, request, *args, **kwargs):
         return super().list(request, *args, **kwargs)
