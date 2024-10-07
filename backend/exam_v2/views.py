@@ -16,6 +16,7 @@ from authentication.permissions import IsInstructor, IsOwner
 from exam.models import Exam
 from exam_v2.serializers import ExamSerializer2
 from exam_v2.serializers import ExamDurationSerializer
+from exam_v2.tasks import send_exam_invitation_email
 
 
 class ExamViewSet(ModelViewSet):
@@ -158,8 +159,25 @@ class ExamViewSet(ModelViewSet):
         return super().destroy(request, *args, **kwargs)
 
     def perform_create(self, serializer):
-        serializer.save(user_id=self.request.user)
+        exam = serializer.save(user_id=self.request.user)
+        self.send_emails_to_whitelist(exam)
+        
+        
+    def send_emails_to_whitelist(self, exam):
+        whitelist = exam.whitelist
+        for email_pattern in whitelist:
+            try:
+                if "*" in email_pattern or "?" in email_pattern:
+                    raise ValueError(f"Invalid wildcard pattern in email: {email_pattern}")
 
+                send_exam_invitation_email.delay(
+                email=email_pattern,  
+                exam_title=exam.title,
+                exam_code=exam.exam_code,
+                start_date=exam.start_date
+            )
+            except ValueError as e:
+                continue
 
 # class QuestionViewSet2(ReadOnlyModelViewSet):
 #     queryset = Question.objects.all()
