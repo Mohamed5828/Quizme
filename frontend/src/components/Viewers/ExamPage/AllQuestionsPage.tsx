@@ -16,7 +16,7 @@ import useClipboardMonitor from "../../../hooks/useClipboardMonitor";
 
 interface UserAnswer {
   questionId: number;
-  answer: string | number;
+  choices: string[];
 }
 
 export interface ExamMetaData {
