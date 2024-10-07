@@ -66,4 +66,4 @@ class ExamSerializer2(serializers.ModelSerializer):
 class ExamDurationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Exam
-        fields = ['duration' , 'id']
+        fields = ['duration' , 'id' , 'start_date' , 'expiration_date']

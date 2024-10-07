@@ -19,24 +19,24 @@ class Answer(models.Model):
         #     models.Index(fields=['attempt_id']),
         # ]
 
-    def _eval_code(self):
-        from code_executor.tasks import execute_code_async
-        test_cases = self.question_id.test_cases
+    # def _eval_code(self):
+    #     from code_executor.tasks import execute_code_async
+    #     test_cases = self.question_id.test_cases
 
-        all_passed = True
-        results = []
+    #     all_passed = True
+    #     results = []
 
-        for test_case in test_cases:
-            result = execute_code_async(language=self.code["language"], code=self.code["body"],
-                                        version=self.code["version"],
-                                        stdin=test_case.get('input', ''))
-            if result.get("output") != test_case.get('output', ''):
-                all_passed = False
+    #     for test_case in test_cases:
+    #         result = execute_code_async(language=self.code["language"], code=self.code["body"],
+    #                                     version=self.code["version"],
+    #                                     stdin=test_case.get('input', ''))
+    #         if result.get("output") != test_case.get('output', ''):
+    #             all_passed = False
 
-        if all_passed:
-            self.score = self.question_id.grade
-        else:
-            self.score = 0
+    #     if all_passed:
+    #         self.score = self.question_id.grade
+    #     else:
+    #         self.score = 0
 
     def _eval_mcq(self):
         correct_choices = {c["desc"] for c in self.question_id.choices if c["is_correct"]}

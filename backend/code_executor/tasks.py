@@ -117,18 +117,30 @@ def update_answer_and_attempt(evaluation_result, attempt_id, question_id, run_co
     all_passed = evaluation_result['all_passed']
     question_score = question.grade if all_passed else 0
 
+    existing_answer = Answer.objects.filter(attempt_id=attempt, question_id=question).first()
+    if existing_answer and existing_answer.code:
+        # If there's existing code, update only the body
+        code_data = existing_answer.code
+        code_data['body'] = run_code
+    else:
+        # If no existing code, create new structure with defaults
+        code_data = {
+            'body': run_code,
+            'language': 'any',  # You might want to make this dynamic
+            'version': 'any'      # You might want to make this dynamic
+        }
     answer, created = Answer.objects.update_or_create(
         attempt_id=attempt,
         question_id=question,
         defaults={
-            'code': run_code,
+            'code': code_data,
             'score': question_score
         }
     )
 
     # Update the attempt's total score
-    attempt_answers = Answer.objects.filter(attempt_id=attempt)
-    attempt.score = sum(a.score or 0 for a in attempt_answers)
+    # attempt_answers = Answer.objects.filter(attempt_id=attempt)
+    # attempt.score = sum(a.score or 0 for a in attempt_answers)
     attempt.save()
 
     if all_passed:
