@@ -20,7 +20,7 @@ const useWebCamPolling = (stream: MediaStream | null) => {
     const context = canvas.getContext("2d");
     canvas.width = 640;
     canvas.height = 480;
-    console.log({ context });
+    // console.log({ context });
     if (!context) {
       console.error("Failed to get canvas context for webcam polling");
       return;
