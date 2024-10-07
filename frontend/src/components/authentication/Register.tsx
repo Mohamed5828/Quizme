@@ -26,12 +26,22 @@ const RegisterForm: React.FC = () => {
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { id, value, type } = e.target;
-    setFormData((prevFormData) => ({
-      ...prevFormData,
-      [id]:
-        type === "checkbox" ? (e.target as HTMLInputElement).checked : value,
-    }));
+
+    if (id === "role") {
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        [id]: value,
+        category: value, 
+      }));
+    } else {
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        [id]:
+          type === "checkbox" ? (e.target as HTMLInputElement).checked : value,
+      }));
+    }
   };
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -216,14 +226,7 @@ const RegisterForm: React.FC = () => {
                   </div>
                 </div>
 
-                <input
-                  type="text"
-                  id="category"
-                  className="w-full px-4 py-3 border-2 border-emerald-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:border-transparent transition-all duration-300 placeholder:text-emerald-300"
-                  placeholder="Enter your category"
-                  value={formData.category}
-                  onChange={handleChange}
-                />
+              
 
                 <select
                   id="role"
