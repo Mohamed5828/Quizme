@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import { Table, Spin, message, Button } from "antd";
 import { useFetchData } from "../../hooks/useFetchData";
 import { getAxiosInstance } from "../../utils/axiosInstance";

@@ -26,6 +26,7 @@ import ProtectedRoute from "./components/authentication/ProtectedRoute.tsx";
 import StudentExamEntry from "./components/Viewers/ExamEntryNavigator.tsx";
 import ActivityMonitorWrapper from "./components/Wrappers/ActivityMonitorWrapper.tsx";
 import ExamResult from "./components/Viewers/Results.tsx";
+import ActivityTimeline from "./components/logs/Logs.tsx"
 // import StudentAnswer from "./components/ExamResults/StudentAnswers.tsx";
 
 const App: React.FC = () => {
@@ -34,12 +35,14 @@ const App: React.FC = () => {
       <Router>
         <HomeLayout>
           <Routes>
+          <Route path="/logs" element={<ActivityTimeline />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<RegisterForm />} />
             <Route path="/exam-finished/:examCode" element={<ExamResult />} />
             <Route path="/" element={<Landing />} />
             <Route path="/permission-denied" element={<ForbiddenPage />} />
             <Route path="/Forgot-password" element={<ForgotPassword />} />
+            <Route path="/exam-logs" element={<ActivityTimeline />} />
             <Route
               path="/api/v1/auth/reset-password/:uidb64/:token"
               element={<ChangePassword />}
