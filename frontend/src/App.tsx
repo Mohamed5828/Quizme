@@ -26,6 +26,7 @@ import ProtectedRoute from "./components/authentication/ProtectedRoute.tsx";
 import StudentExamEntry from "./components/Viewers/ExamEntryNavigator.tsx";
 import ActivityMonitorWrapper from "./components/Wrappers/ActivityMonitorWrapper.tsx";
 import ExamResult from "./components/Viewers/Results.tsx";
+import TermsAndConditions from "./components/Viewers/Terms.tsx";
 // import StudentAnswer from "./components/ExamResults/StudentAnswers.tsx";
 
 const App: React.FC = () => {
@@ -82,6 +83,7 @@ const App: React.FC = () => {
               path="/exam-result/:examCode"
               element={<ProtectedRoute element={<ExamAllStudent />} />}
             />
+            <Route path="/terms" element={<TermsAndConditions />} />
             <Route
               path="/answer/:examCode"
               element={<ProtectedRoute element={<ModelAnswersPage />} />}
