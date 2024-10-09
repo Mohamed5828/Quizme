@@ -27,5 +27,11 @@ for branch in $(git branch -r --list "${PREFIX}*main"); do
 	echo "## Contributors for branch: $branch" 
 	echo "loc -> surviving lines of code\\"
     } >> "$FILE_NAME"
-    git-fame --branch="$branch" --enum -e -C -w -M --format=md >> "$FILE_NAME"
+    git-fame --branch="$branch" --enum -e --format=md --bytype --excl '.*\.task' >> "$FILE_NAME"
+    # echo "loc -> inserted lines of code\\"
+    # } >> "$FILE_NAME"
+    # git-fame --branch="$branch" --enum -e --format=md --loc=ins >> "$FILE_NAME"
+    # echo "loc -> deleted lines of code\\"
+    # } >> "$FILE_NAME"
+    # git-fame --branch="$branch" --enum -e --format=md  >> "$FILE_NAME"
 done
