@@ -15,7 +15,7 @@ def send_exam_invitation_email(email, exam_title, exam_code, start_date):
     send_mail(subject, message, email_from, recipient_list)
     
     
-    
+@shared_task
 def evaluate_exam_after_expiry(exam_id):
     try:
         exam = Exam.objects.get(id=exam_id)
