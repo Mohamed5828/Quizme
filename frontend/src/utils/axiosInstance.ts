@@ -65,7 +65,7 @@
 
 // export default useAxiosInstance;
 
-import axios, { AxiosInstance } from "axios";
+import axios, { AxiosError, AxiosInstance } from "axios";
 
 const BASE_URL = "http://127.0.0.1:8000/api"; // Replace with your API base URL
 
@@ -101,7 +101,19 @@ export const getAxiosInstance = (
       return Promise.reject(error);
     }
   );
+  axiosInstance.interceptors.response.use(
+    (response) => response, // If the response is successful, just return it
+    async (error: AxiosError) => {
+      if (error.response?.status === 401) {
+        // Trigger an event or use a callback to show the login modal
+        const event = new CustomEvent("showLoginModal");
+        window.dispatchEvent(event);
+        console.log("dispateched");
+      }
 
+      return Promise.reject(error);
+    }
+  );
   return axiosInstance;
 };
 

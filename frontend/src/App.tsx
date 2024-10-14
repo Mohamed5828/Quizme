@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import ForgotPassword from "./components/authentication/ForgotPassword.tsx";
 import ChangePassword from "./components/authentication/ResetPassword.tsx";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
@@ -27,18 +27,33 @@ import StudentExamEntry from "./components/Viewers/ExamEntryNavigator.tsx";
 import ActivityMonitorWrapper from "./components/Wrappers/ActivityMonitorWrapper.tsx";
 import ExamResult from "./components/Viewers/Results.tsx";
 import TermsAndConditions from "./components/Viewers/Terms.tsx";
-// import ActivityTimeline from "./components/logs/Logs.tsx";
 import StudentAnswer from "./components/ExamResults/StudentAnswers.tsx";
-import ActivityTimeline from "./components/ExamLogs/ExamLogs.tsx"
-// import StudentAnswer from "./components/ExamResults/StudentAnswers.tsx";
+import ActivityTimeline from "./components/ExamLogs/ExamLogs.tsx";
+import LoginModal from "./components/authentication/LoginModal.tsx";
 
 const App: React.FC = () => {
+  const [isLoginModalVisible, setIsLoginModalVisible] = useState(false);
+
+  useEffect(() => {
+    // Event listener for showing login modal when 401 error occurs
+    const handleShowLoginModal = () => {
+      console.log("Event received: Showing login modal"); // Add log to verify
+
+      setIsLoginModalVisible(true);
+    };
+
+    window.addEventListener("showLoginModal", handleShowLoginModal);
+
+    // Cleanup the event listener on component unmount
+    return () => {
+      window.removeEventListener("showLoginModal", handleShowLoginModal);
+    };
+  }, []);
   return (
     <UserProvider>
       <Router>
         <HomeLayout>
           <Routes>
-            {/* <Route path="/logs" element={<ActivityTimeline />} /> */}
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<RegisterForm />} />
             <Route path="/exam-finished/:examCode" element={<ExamResult />} />
@@ -47,7 +62,7 @@ const App: React.FC = () => {
             <Route path="/Forgot-password" element={<ForgotPassword />} />
             <Route path="/exam-logs" element={<ActivityTimeline />} />
             <Route
-              path="/api/v1/auth/reset-password/:uidb64/:token"
+              path="/reset-password/:uidb64/:token"
               element={<ChangePassword />}
             />
 
@@ -72,7 +87,6 @@ const App: React.FC = () => {
             <Route
               path="/exam/:examCode"
               element={
-                // <AllQuestionsPage />
                 <WebcamMonitorWrapper>
                   <ActivityMonitorWrapper>
                     <AllQuestionsPage />
@@ -107,6 +121,10 @@ const App: React.FC = () => {
           </Routes>
           <ToastContainer position="bottom-right" />
         </HomeLayout>
+        <LoginModal
+          isModalVisible={isLoginModalVisible}
+          setIsModalVisible={setIsLoginModalVisible}
+        />
       </Router>
     </UserProvider>
   );
