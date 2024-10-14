@@ -123,6 +123,9 @@ class UserLoginAPIView(GenericAPIView):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.validated_data
+        
+        if not user.is_verified:
+            return Response({'error': 'Email is  not verified. Please verify your email '}, status=status.HTTP_400_BAD_REQUEST)
 
         token = RefreshToken.for_user(user)
 
