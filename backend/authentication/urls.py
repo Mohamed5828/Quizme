@@ -15,7 +15,8 @@ from .views import (
     CustomTokenRefreshView,
     CustomTokenRefreshView,
     PasswordResetConfirmView,
-    PasswordResetRequestView
+    PasswordResetRequestView,
+    EmailVerificationView
 )
 from authentication.views import UserViewSet
 
@@ -27,5 +28,6 @@ urlpatterns = [
     path('token/refresh/', CustomTokenRefreshView.as_view(), name='token_refresh'),
     path('users/<str:category>/', UserViewSet.as_view({'get': 'list'}), name='users-by-category'),
     path('password-reset/', PasswordResetRequestView.as_view(), name='password_reset_request'),
-    path('reset-password/<uidb64>/<token>/', PasswordResetConfirmView.as_view(), name='password_reset_confirm')
+    path('reset-password/<uidb64>/<token>/', PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
+    path('verify-email/<uidb64>/<token>/', EmailVerificationView.as_view(), name='email_verification')
 ]
