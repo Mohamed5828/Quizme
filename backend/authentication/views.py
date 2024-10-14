@@ -62,9 +62,20 @@ class UserRegistrationAPIView(GenericAPIView):
 
         serializer = self.get_serializer(data=request.data)
         try:
-            serializer.is_valid(raise_exception=True)  # This will raise an exception if validation fails
+            serializer.is_valid(raise_exception=True)
             user = serializer.save()  # Save the new user
+            
+            ## creating email verification  link! 
+            token_generator = PasswordResetTokenGenerator()
+            token = token_generator.make_token(user)
+            uid = urlsafe_base64_encode(force_bytes(user.pk))
 
+            # Construct the email verification link
+            verification_url = f"{settings.FRONTEND_URL}/api/v1/auth/verify-email/{uid}/{token}/"
+            subject = 'Email Verification'
+            message = f'Hello {user.username},\n\nclick the link below to verifiy your email:\n{verification_url}\n\nThank you!'
+            send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [user.email])
+            
             # Generate JWT tokens
             token = RefreshToken.for_user(user)
             data = serializer.data
@@ -79,7 +90,26 @@ class UserRegistrationAPIView(GenericAPIView):
             print("Validation Error:", str(e))  # Print the error for debugging
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+## email verification view 
+class EmailVerificationView(GenericAPIView):
+    permission_classes = (AllowAny,)
 
+    def get(self, request, uidb64, token, *args, **kwargs):
+        try:
+            uid = urlsafe_base64_decode(uidb64).decode()
+            user = CustomUser.objects.get(pk=uid)
+        except (TypeError, ValueError, OverflowError, CustomUser.DoesNotExist):
+            user = None
+
+        if user is not None and default_token_generator.check_token(user, token):
+            user.is_verified = True  
+            user.save()
+            return Response({'message': 'Email verified successfully'}, status=status.HTTP_200_OK)
+        else:
+            return Response({'error': 'Invalid link or token'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+###
 class UserLoginAPIView(GenericAPIView):
     permission_classes = (AllowAny,)
     serializer_class = UserLoginSerializer
