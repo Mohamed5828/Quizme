@@ -76,8 +76,15 @@ class UserRegistrationAPIView(GenericAPIView):
             return Response(data, status=status.HTTP_201_CREATED)
         
         except Exception as e:
-            print("Validation Error:", str(e))  # Print the error for debugging
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            # Extract only the string part of the error details
+            error_messages = []
+            for field, errors in serializer.errors.items():
+                for error in errors:
+                    error_messages.append(str(error))  # Convert ErrorDetail to string
+
+            return Response({
+                "message": error_messages  # Return only the string parts of the errors
+            }, status=status.HTTP_400_BAD_REQUEST)
 
 
 class UserLoginAPIView(GenericAPIView):
