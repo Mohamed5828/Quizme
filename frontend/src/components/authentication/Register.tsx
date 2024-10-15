@@ -59,16 +59,16 @@ const RegisterForm: React.FC = () => {
       return;
     }
 
-    const passwordStrengthRegex = /^(?=.*[A-Za-z])(?=.*\d).{6,}$/;
+    const passwordStrengthRegex = /^(?=.*[A-Za-z])(?=.*\d).{8,}$/;
     if (!passwordStrengthRegex.test(formData.password1)) {
       toast.error(
-        "Password must be at least 6 characters long and include both letters and numbers"
+        "Password must be at least 8 characters long and include both letters and numbers"
       );
       return;
     }
 
     if (formData.password1 !== formData.password2) {
-      toast.error("Passwords do not match");
+      toast.error("Passwords do not match. Please make sure both password fields are identical.");
       return;
     }
 
@@ -103,7 +103,7 @@ const RegisterForm: React.FC = () => {
       console.error("Error during registration", error);
       if (error instanceof AxiosError) {
         toast.error(
-          error.response?.data?.message ||
+          error.response?.data?.message[0] ||
             "Registration failed. Please try again."
         );
       } else {
