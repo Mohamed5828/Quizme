@@ -18,7 +18,7 @@ const LoginModal: React.FC<LoginModalProps> = ({
   const [formData, setFormData] = useState({ email: "", password: "" });
 
   const navigate = useNavigate();
-  const axiosInstance = getAxiosInstance("v2", false);
+  const axiosInstance = getAxiosInstance("v1", false);
   const { setUserData } = useUserContext();
 
   const handleCancel = () => {

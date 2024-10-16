@@ -76,7 +76,7 @@ const Dashboard: React.FC = () => {
       key: "examCode",
     },
     {
-      title: "Created At",
+      title: "Starting Date",
       dataIndex: "startDate",
       key: "startDate",
       render: (text: string) => formatDate(text), // Format startDate

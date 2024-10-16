@@ -30,6 +30,7 @@ import TermsAndConditions from "./components/Viewers/Terms.tsx";
 import StudentAnswer from "./components/ExamResults/StudentAnswers.tsx";
 import ActivityTimeline from "./components/ExamLogs/ExamLogs.tsx";
 import LoginModal from "./components/authentication/LoginModal.tsx";
+import PayPalSubscriptionPage from "./components/Viewers/PayPal/Paypal.tsx";
 
 const App: React.FC = () => {
   const [isLoginModalVisible, setIsLoginModalVisible] = useState(false);
@@ -64,6 +65,10 @@ const App: React.FC = () => {
             <Route
               path="/reset-password/:uidb64/:token"
               element={<ChangePassword />}
+            />
+            <Route
+              path="/subscribe/:planId"
+              element={<ProtectedRoute element={<PayPalSubscriptionPage />} />}
             />
 
             <Route
