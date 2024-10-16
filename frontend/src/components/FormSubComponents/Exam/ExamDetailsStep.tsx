@@ -105,7 +105,7 @@ const ExamDetailsStep: React.FC = () => {
             {...register("duration", {
               required: true,
               max: 240,
-              min: 15,
+              min: 5,
             })}
           />
           {errors.duration && (

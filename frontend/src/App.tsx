@@ -31,7 +31,7 @@ import TermsAndConditions from "./components/Viewers/Terms.tsx";
 import StudentAnswer from "./components/ExamResults/StudentAnswers.tsx";
 import ActivityTimeline from "./components/ExamLogs/ExamLogs.tsx"
 // import StudentAnswer from "./components/ExamResults/StudentAnswers.tsx";
-
+import EmailVerification from "./components/authentication/EmailVerification.tsx";
 
 const App: React.FC = () => {
   return (
@@ -51,6 +51,7 @@ const App: React.FC = () => {
               path="/api/v1/auth/reset-password/:uidb64/:token"
               element={<ChangePassword />}
             />
+            <Route path="/api/v1/auth/verify-email/:uid/:token" element={<EmailVerification />} />
 
             <Route
               path="/create-exam"

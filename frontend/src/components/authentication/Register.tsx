@@ -106,7 +106,7 @@ const RegisterForm: React.FC = () => {
         }
       );
 
-      toast.success("Registration successful");
+      toast.success("Registration successful, please check your email for verification !");
       navigate("/login");
       console.log("Registration successful", response.data);
     } catch (error) {

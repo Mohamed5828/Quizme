@@ -61,6 +61,7 @@ const QuestionBankModal: React.FC<QuestionBankModalProps> = ({
         type="primary"
         className="bg-emerald-600 hover:bg-emerald-700 text-white rounded-md transition-colors"
         onClick={openModal}
+        
       >
         Browse Question Bank
       </Button>
