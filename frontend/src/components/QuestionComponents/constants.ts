@@ -3,6 +3,7 @@ export const LANGUAGE_VERSIONS = {
   python: "3.10.0",
   java: "15.0.2",
   sqlite3: "3.36.0",
+  bash: "5.2.0",
 } as const;
 
 export const CODE_SNIPPETS = {
@@ -75,6 +76,20 @@ public class Solution {
 }
 `,
   sqlite3: `CREATE TABLE users (id INTEGER PRIMARY KEY, name TEXT);`,
+  bash: `#!/bin/bash
+
+# Read input
+input=""
+while IFS= read -r line; do
+    input+="$line"
+done
+
+# Implement your solution here
+# Example: result="..."
+
+# Output the result
+echo "$result"
+`,
 } as const;
 
 export type Language = keyof typeof LANGUAGE_VERSIONS;
