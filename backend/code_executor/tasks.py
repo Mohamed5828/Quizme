@@ -59,6 +59,16 @@ def execute_code_async(language, code, version, stdin=""):
 def evaluate_test_cases(language, run_code, test_cases, version):
     results = []
     all_passed = True
+    def normalize_output(output, is_sqlite):
+        if not is_sqlite:
+            return ''.join(output.split())
+        else:
+            # For other languages, normalize spacing around pipes
+            return '\n'.join(
+                '|' + '|'.join(cell.strip() for cell in line.strip('|').split('|')) + '|'
+                for line in output.strip().split('\n')
+            )
+    is_sqlite = language.lower() == 'sqlite3'
 
     for index, test in enumerate(test_cases):
         task_result = execute_code(language, run_code, version, test.get('input', ''))
@@ -77,10 +87,10 @@ def evaluate_test_cases(language, run_code, test_cases, version):
         #         "test_case": index + 1
         #     }
 
-        actual_output = task_result.get("output", "").strip()
-        expected_output = test.get('output', '').strip()
+        actual_output = normalize_output(task_result.get("output", "").strip(), is_sqlite)
+        expected_output = normalize_output(test.get('output', '').strip(), is_sqlite)
         passed = actual_output == expected_output
-
+        
         # Add detailed debugging information
         results.append({
             "test_case": index + 1,
