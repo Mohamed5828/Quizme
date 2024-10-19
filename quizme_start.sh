@@ -1,6 +1,6 @@
 #!/bin/bash
 
-git clone https://github.com/EslamRedaMohamed/Quizme
+git clone https://github.com/Ahmed-Rushdi/Quizme
 cd Quizme
 
 git worktree add --lock ./backend -b backend/main
