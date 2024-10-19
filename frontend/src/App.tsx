@@ -28,7 +28,6 @@ import ActivityMonitorWrapper from "./components/Wrappers/ActivityMonitorWrapper
 import ExamResult from "./components/Viewers/Results.tsx";
 import TermsAndConditions from "./components/Viewers/Terms.tsx";
 import StudentAnswer from "./components/ExamResults/StudentAnswers.tsx";
-import ActivityTimeline from "./components/ExamLogs/ExamLogs.tsx"
 // import StudentAnswer from "./components/ExamResults/StudentAnswers.tsx";
 import EmailVerification from "./components/authentication/EmailVerification.tsx";
 import ActivityTimeline from "./components/ExamLogs/ExamLogs.tsx";
