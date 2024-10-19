@@ -4,6 +4,7 @@ WORKDIR /app
 
 
 #RUN curl -sSL https://install.python-poetry.org | python3 -
+COPY requirements.txt .
 
 RUN pip install --upgrade pip && pip install -r requirements.txt
 
