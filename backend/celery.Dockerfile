@@ -11,7 +11,7 @@ RUN apk add --no-cache \
     openssl-dev \
     && curl -sSL https://install.python-poetry.org | python3 -
 
-RUN python -m pip install mediapipe
+RUN pip install --upgrade pip && pip install mediapipe
 
 
 ENV PATH="/root/.local/bin:$PATH"
