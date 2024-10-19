@@ -41,12 +41,13 @@ services:
     container_name: piston_api
     restart: always
     privileged: true
-    ports:
-        - 2000:2000
     volumes:
         - ./data/piston/packages:/piston/packages
     tmpfs:
         - /tmp:exec
+    networks:
+      - quizme-network
+
 
   # postgres:
   #   image: postgres
