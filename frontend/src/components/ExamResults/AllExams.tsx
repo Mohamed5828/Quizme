@@ -15,7 +15,7 @@ function AllExams() {
   }
 
   if (!data || data.length === 0) {
-    return <p>No exams found.</p>;
+    return <p style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '10vh' }}>No exams found.</p>;
   }
 
   return (
