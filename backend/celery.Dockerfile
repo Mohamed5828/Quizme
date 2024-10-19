@@ -21,4 +21,4 @@ RUN pip install --upgrade pip && pip install -r requirements.txt
 
 COPY . .
 
-CMD ["poetry", "run", "celery", "-A", "quizme", "worker", "--loglevel=info", "--pool=solo"]
+CMD ["python", "celery", "-A", "quizme", "worker", "--loglevel=info", "--pool=solo"]
