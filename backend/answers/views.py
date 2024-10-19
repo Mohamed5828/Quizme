@@ -169,7 +169,7 @@ class EvaluateCode(APIView):
         # Chain Celery tasks
         task_chain = chain(
             evaluate_test_cases.s(language, run_code, question.test_cases, version),
-            update_answer_and_attempt.s(attempt.id, question_id, run_code)
+            # update_answer_and_attempt.s(attempt.id, question_id, run_code)
         )
         result = task_chain.apply_async()
 

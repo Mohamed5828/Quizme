@@ -19,25 +19,45 @@ class Answer(models.Model):
         #     models.Index(fields=['attempt_id']),
         # ]
 
-    # def _eval_code(self):
-    #     from code_executor.tasks import execute_code_async
-    #     test_cases = self.question_id.test_cases
+    def _eval_code(self):
+        from code_executor.tasks import execute_code_async
+        test_cases = self.question_id.test_cases
+        language = self.code.get("language", "any")
+        version = self.code.get("version", "any")
 
-    #     all_passed = True
-    #     results = []
+        evaluation_result = execute_code_async(
+            language=language,
+            code=self.code["body"],
+            version=version,
+            test_cases=test_cases
+        )
 
-    #     for test_case in test_cases:
-    #         result = execute_code_async(language=self.code["language"], code=self.code["body"],
-    #                                     version=self.code["version"],
-    #                                     stdin=test_case.get('input', ''))
-    #         if result.get("output") != test_case.get('output', ''):
-    #             all_passed = False
+        if 'error' in evaluation_result:
+            self.score = 0
+            message = f"{evaluation_result['error']}: {evaluation_result['details']}"
+        else:
+            all_passed = evaluation_result['all_passed']
+            self.score = self.question_id.grade if all_passed else 0
+            message = "All test cases passed" if all_passed else "Some test cases failed"
 
-    #     if all_passed:
-    #         self.score = self.question_id.grade
-    #     else:
-    #         self.score = 0
+        if self.code:
+            self.code['body'] = self.code["body"]
+        else:
+            self.code = {
+                'body': self.code["body"],
+                'language': language,
+                'version': version
+            }
 
+        self.save()
+
+        return {
+            "message": message,
+            "score": self.score,
+            "max_score": self.question_id.grade,
+            "results": evaluation_result.get('results', [])
+        }
+    
     def _eval_mcq(self):
         correct_choices = {c["desc"] for c in self.question_id.choices if c["is_correct"]}
         if set(self.choices) == correct_choices:
