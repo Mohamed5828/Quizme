@@ -59,16 +59,6 @@ def execute_code_async(language, code, version, stdin=""):
 def evaluate_test_cases(language, run_code, test_cases, version):
     results = []
     all_passed = True
-    compile_error = None
-
-    # First, try to compile the code (if the language requires compilation)
-    compile_result = execute_code(language, run_code, version, "")
-    if compile_result.get("error") or compile_result.get("stderr"):
-        compile_error = compile_result.get("error") or compile_result.get("stderr")
-        return {
-            "error": "Compilation error",
-            "details": compile_error
-        }
 
     for index, test in enumerate(test_cases):
         task_result = execute_code(language, run_code, version, test.get('input', ''))
@@ -80,12 +70,12 @@ def evaluate_test_cases(language, run_code, test_cases, version):
                 "test_case": index + 1
             }
         
-        if task_result.get("stderr"):
-            return {
-                "error": "Runtime error",
-                "details": task_result["stderr"],
-                "test_case": index + 1
-            }
+        # if task_result.get("stderr"):
+        #     return {
+        #         "error": "Runtime error",
+        #         "details": task_result["stderr"],
+        #         "test_case": index + 1
+        #     }
 
         actual_output = task_result.get("output", "").strip()
         expected_output = test.get('output', '').strip()
@@ -126,9 +116,16 @@ def evaluate_test_cases(language, run_code, test_cases, version):
 def update_answer_and_attempt(evaluation_result, attempt_id, question_id, run_code):
     attempt = Attempt.objects.get(id=attempt_id)
     question = Question.objects.get(id=question_id)
-    
-    all_passed = evaluation_result['all_passed']
-    question_score = question.grade if all_passed else 0
+
+    if 'error' in evaluation_result:
+        # Handle error case
+        question_score = 0
+        message = f"{evaluation_result['error']}: {evaluation_result['details']}"
+    else:
+        # Handle success case
+        all_passed = evaluation_result['all_passed']
+        question_score = question.grade if all_passed else 0
+        message = "All test cases passed" if all_passed else "Some test cases failed"
 
     existing_answer = Answer.objects.filter(attempt_id=attempt, question_id=question).first()
     if existing_answer and existing_answer.code:
@@ -156,15 +153,10 @@ def update_answer_and_attempt(evaluation_result, attempt_id, question_id, run_co
     # attempt.score = sum(a.score or 0 for a in attempt_answers)
     # attempt.save()
 
-    if all_passed:
-        return {
-            "message": "All test cases passed",
-            "score": question_score,
-            "max_score": question.grade,
-        }
-    else:
-        return {
-            "message": "Some test cases failed",
-            "results": evaluation_result['results']
-        }
+    return {
+        "message": message,
+        "score": question_score,
+        "max_score": question.grade,
+        "results": evaluation_result.get('results', [])
+    }
         # poetry run celery -A quizme worker --loglevel=info --pool=solo
