@@ -11,8 +11,6 @@ RUN apk add --no-cache \
     openssl-dev \
     && curl -sSL https://install.python-poetry.org | python3 -
 
-RUN pip install mediapipe
-
 ENV PATH="/root/.local/bin:$PATH"
 
 COPY poetry.lock pyproject.toml ./
