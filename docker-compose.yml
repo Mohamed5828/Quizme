@@ -47,8 +47,8 @@ services:
         - /tmp:exec
     networks:
       - quizme-network
-    ports:
-      - 2000:2000
+    # ports:
+    #   - 2000:2000
 
 
   # postgres:
