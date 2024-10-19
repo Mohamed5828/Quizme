@@ -1,12 +1,13 @@
 import React, { useMemo } from "react";
 import { motion } from "framer-motion";
-import { useNavigate } from "react-router-dom"; 
+import { useNavigate } from "react-router-dom";
 import getScrollAnimation from "../../utils/ScrollAnimation";
 import ScrollAnimationWrapper from "./AnimationWrapper";
 import exam from "../../images/9233873_4119036.jpg";
 import student from "../../images/student.png";
 import institute from "../../images/education.png";
 import country from "../../images/planet-earth.png";
+import { useUserContext } from "../../../context/UserContext";
 
 interface User {
   name: string;
@@ -39,9 +40,15 @@ const Hero: React.FC<HeroProps> = ({
 }) => {
   const navigate = useNavigate();
   const scrollAnimation = useMemo(() => getScrollAnimation(), []);
-
+  const { user } = useUserContext();
   const handleGetStarted = () => {
-    navigate("/register");
+    if (!user || user === undefined) {
+      navigate("/register");
+    } else if (user.role === "instructor") {
+      navigate("/create-exam");
+    } else {
+      navigate("/enter");
+    }
   };
 
   return (
@@ -59,7 +66,10 @@ const Hero: React.FC<HeroProps> = ({
               We provide an awesome examination system with all sorts of
               monitoring to ensure a seamless exam experience.
             </p>
-            <button className="bg-emerald-500 text-white font-semibold py-3 px-6 rounded-lg shadow-md hover:bg-emerald-600 hover:shadow-lg transition duration-300 ease-in-out active:scale-105" onClick={handleGetStarted}>
+            <button
+              className="bg-emerald-500 text-white font-semibold py-3 px-6 rounded-lg shadow-md hover:bg-emerald-600 hover:shadow-lg transition duration-300 ease-in-out active:scale-105"
+              onClick={handleGetStarted}
+            >
               Get Started
             </button>
           </div>

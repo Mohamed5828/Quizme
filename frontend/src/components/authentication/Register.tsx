@@ -69,16 +69,16 @@ const RegisterForm: React.FC = () => {
       return;
     }
 
-    const passwordStrengthRegex = /^(?=.*[A-Za-z])(?=.*\d).{6,}$/;
+    const passwordStrengthRegex = /^(?=.*[A-Za-z])(?=.*\d).{8,}$/;
     if (!passwordStrengthRegex.test(formData.password1)) {
       toast.error(
-        "Password must be at least 6 characters long and include both letters and numbers"
+        "Password must be at least 8 characters long and include both letters and numbers"
       );
       return;
     }
 
     if (formData.password1 !== formData.password2) {
-      toast.error("Passwords do not match");
+      toast.error("Passwords do not match. Please make sure both password fields are identical.");
       return;
     }
 
@@ -113,7 +113,7 @@ const RegisterForm: React.FC = () => {
       console.error("Error during registration", error);
       if (error instanceof AxiosError) {
         toast.error(
-          error.response?.data?.message ||
+          error.response?.data?.message[0] ||
             "Registration failed. Please try again."
         );
       } else {
@@ -133,8 +133,8 @@ const RegisterForm: React.FC = () => {
               rounded-full blur-xl
               ${i % 3 === 0 ? "w-72 h-72" : "w-96 h-96"}`}
             style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
+              left: `${0.8 * 100}%`,
+              top: `${0.5 * 100}%`,
               animationDelay: `${i * 0.5}s`,
               animationDuration: `${10 + i * 2}s`,
             }}
@@ -144,9 +144,9 @@ const RegisterForm: React.FC = () => {
 
       <div className="relative min-h-screen flex items-center justify-center p-4">
         <div className="w-full max-w-lg">
-          <div className="bg-white/90 shadow-2xl rounded-2xl p-8 transform transition-all duration-300 hover:scale-[1.01]">
+          <div className="bg-white/90 shadow-2xl rounded-2xl p-8 transform transition-all duration-300 ">
             <div className="flex items-center justify-center gap-2 mb-8">
-              <Sparkles className="w-8 h-8 text-emerald-500 animate-pulse" />
+              <Sparkles className="w-8 h-8 text-emerald-500 " />
               <h2 className="text-3xl font-bold bg-gradient-to-r from-emerald-600 to-teal-500 bg-clip-text text-transparent">
                 Join Quizme
               </h2>
@@ -262,7 +262,7 @@ const RegisterForm: React.FC = () => {
               <button
                 type="submit"
                 className="w-full bg-gradient-to-r from-emerald-500 to-teal-500 text-white py-3 rounded-xl font-medium
-                  transform transition-all duration-300 hover:scale-[1.02] hover:shadow-lg
+                  transform transition-all duration-300  hover:shadow-lg
                   focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:ring-offset-2"
               >
                 Create Account

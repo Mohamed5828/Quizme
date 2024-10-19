@@ -40,7 +40,7 @@ const LoginForm: React.FC = () => {
       navigate("/profile");
     } catch (error) {
       console.error("Login error:", error);
-      toast.error("Login failed. Please check your credentials.");
+      toast.error("username or password is not correct");
     }
   };
 

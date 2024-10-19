@@ -1,18 +1,16 @@
-
-
-import React, { useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import axios from 'axios';  
+import React, { useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import axios from "axios";
 import { toast } from "react-toastify";
-import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai"; 
+import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
 
 const ChangePassword: React.FC = () => {
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const { uidb64, token } = useParams<{ uidb64: string; token: string }>();
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -23,15 +21,18 @@ const ChangePassword: React.FC = () => {
     };
 
     try {
-      const response = await axios.post(`http://127.0.0.1:8000/api/v1/auth/reset-password/${uidb64}/${token}/`, requestBody);
-      toast.success("Password Has Been Reset")
+      const response = await axios.post(
+        `http://127.0.0.1:8000/api/v1/auth/reset-password/${uidb64}/${token}/`,
+        requestBody
+      );
+      toast.success("Password Has Been Reset");
       if (response.status === 200) {
-        navigate(`/api/v1/auth/reset-password/${uidb64}/${token}`);
+        navigate(`/auth/reset-password/${uidb64}/${token}`);
       } else {
-        toast.error("Password Reset Failed")
+        toast.error("Password Reset Failed");
       }
     } catch (error) {
-      alert('An error occurred. Please try again.');
+      alert("An error occurred. Please try again.");
     }
   };
 
@@ -42,7 +43,10 @@ const ChangePassword: React.FC = () => {
           <h2 className="mb-1 text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
             Change Password
           </h2>
-          <form className="mt-4 space-y-4 lg:mt-5 md:space-y-5" onSubmit={handleSubmit}>
+          <form
+            className="mt-4 space-y-4 lg:mt-5 md:space-y-5"
+            onSubmit={handleSubmit}
+          >
             <div>
               <label
                 htmlFor="password"
@@ -52,7 +56,7 @@ const ChangePassword: React.FC = () => {
               </label>
               <div className="relative">
                 <input
-                  type={showPassword ? 'text' : 'password'} 
+                  type={showPassword ? "text" : "password"}
                   name="password"
                   id="password"
                   placeholder="••••••••"
@@ -62,10 +66,10 @@ const ChangePassword: React.FC = () => {
                   onChange={(e) => setPassword(e.target.value)}
                 />
                 <span
-                  onClick={() => setShowPassword(!showPassword)} 
+                  onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-3 top-2 cursor-pointer"
                 >
-                  {showPassword ? <AiFillEyeInvisible /> : <AiFillEye />} 
+                  {showPassword ? <AiFillEyeInvisible /> : <AiFillEye />}
                 </span>
               </div>
             </div>
@@ -78,7 +82,7 @@ const ChangePassword: React.FC = () => {
               </label>
               <div className="relative">
                 <input
-                  type={showConfirmPassword ? 'text' : 'password'} 
+                  type={showConfirmPassword ? "text" : "password"}
                   name="confirm-password"
                   id="confirm-password"
                   placeholder="••••••••"
@@ -88,7 +92,7 @@ const ChangePassword: React.FC = () => {
                   onChange={(e) => setConfirmPassword(e.target.value)}
                 />
                 <span
-                  onClick={() => setShowConfirmPassword(!showConfirmPassword)} 
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                   className="absolute right-3 top-2 cursor-pointer"
                 >
                   {showConfirmPassword ? <AiFillEyeInvisible /> : <AiFillEye />}

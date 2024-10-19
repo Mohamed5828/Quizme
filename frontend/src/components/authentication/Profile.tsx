@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { getAxiosInstance } from "../../utils/axiosInstance";
 import { useUserContext } from "../../../context/UserContext";
+import AllExams from "../ExamResults/AllExams";
 
 export interface User {
   email: string;
@@ -45,6 +46,7 @@ const Profile: React.FC = () => {
         </button>
       </div>
       <ProfileForm {...user} />
+      {user?.role === "student" ? <AllExams /> : ""}
     </main>
   );
 };
