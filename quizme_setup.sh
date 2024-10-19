@@ -30,9 +30,13 @@ cd -
 
 
 echo "Starting Docker Compose..."
+
 docker compose up -d
 
+
 echo "Initializing Piston CLI..."
+
 /bin/bash init_piston.sh
+
 
 echo "Setup completed successfully."

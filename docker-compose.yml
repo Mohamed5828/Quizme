@@ -47,7 +47,6 @@ services:
         - ./data/piston/packages:/piston/packages
     tmpfs:
         - /tmp:exec
-    entrypoint: init_piston.sh
 
   # postgres:
   #   image: postgres
