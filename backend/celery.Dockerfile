@@ -3,16 +3,16 @@ FROM python:3.12-slim
 WORKDIR /app
 
 
-RUN curl -sSL https://install.python-poetry.org | python3 -
+#RUN curl -sSL https://install.python-poetry.org | python3 -
 
-RUN pip install --upgrade pip && pip install mediapipe
+RUN pip install --upgrade pip && pip install -r requirements.txt
 
 
-ENV PATH="/root/.local/bin:$PATH"
-
-COPY poetry.lock pyproject.toml ./
-
-RUN poetry install --no-root
+#ENV PATH="/root/.local/bin:$PATH"
+#
+#COPY poetry.lock pyproject.toml ./
+#
+#RUN poetry install --no-root
 
 COPY . .
 

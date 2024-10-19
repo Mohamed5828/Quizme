@@ -1,15 +1,18 @@
-FROM python:3.12-alpine
+FROM python:3.12-slim
 # Set the working directory
 WORKDIR /app
 
 
-RUN curl -sSL https://install.python-poetry.org | python3 -
+#RUN curl -sSL https://install.python-poetry.org | python3 -
 
-ENV PATH="/root/.local/bin:$PATH"
+RUN pip install --upgrade pip && pip install -r requirements.txt
 
-COPY poetry.lock pyproject.toml ./
 
-RUN poetry install --no-root
+#ENV PATH="/root/.local/bin:$PATH"
+#
+#COPY poetry.lock pyproject.toml ./
+#
+#RUN poetry install --no-root
 
 COPY . .
 
