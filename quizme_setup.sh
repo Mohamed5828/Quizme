@@ -11,7 +11,8 @@ echo "Cloning the Quizme repository..."
 
 git clone https://github.com/Ahmed-Rushdi/Quizme
 cd Quizme
-
+git fetch --all
+git reset --hard origin/main
 
 echo "Setting up worktrees..."
 
