@@ -3,13 +3,7 @@ FROM python:3.12-slim
 WORKDIR /app
 
 
-RUN apk add --no-cache \
-    curl \
-    gcc \
-    musl-dev \
-    libffi-dev \
-    openssl-dev \
-    && curl -sSL https://install.python-poetry.org | python3 -
+RUN curl -sSL https://install.python-poetry.org | python3 -
 
 RUN pip install --upgrade pip && pip install mediapipe
 
