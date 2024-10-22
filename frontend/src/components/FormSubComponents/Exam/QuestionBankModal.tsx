@@ -73,6 +73,7 @@ const QuestionBankModal: React.FC<QuestionBankModalProps> = ({
         footer={null}
         width={800}
         className="max-h-[80vh] overflow-y-auto"
+        
       >
         <div className="relative mb-4">
           <Input

@@ -99,6 +99,7 @@ const QuestionsStep = () => {
     }
   };
   const handleQuestionBankSelection = (selectedQuestion: any) => {
+    const currentScroll = window.scrollY;
     append({
       ...selectedQuestion,
       // Ensure all required fields are included
@@ -106,6 +107,9 @@ const QuestionsStep = () => {
       testCases: selectedQuestion.testCases || [],
       code: selectedQuestion.code || [],
     });
+    setTimeout(() => {
+      window.scrollTo(0, currentScroll);
+    }, 0);
   };
   return (
     <div className="space-y-6">
