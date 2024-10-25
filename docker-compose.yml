@@ -1,0 +1,62 @@
+
+services:
+  frontend:
+    build:
+      context: ./frontend/frontend
+      dockerfile: Dockerfile
+    ports:
+      - 5173:5173
+    networks:
+      - quizme-network
+    depends_on:
+      - backend
+
+  backend:
+    build:
+      context: ./backend/backend
+      dockerfile: Dockerfile
+    networks:
+      - quizme-network
+    depends_on:
+      - celery
+      - redis
+      - piston
+
+  celery:
+    build:
+      context: ./backend/backend
+      dockerfile: celery.Dockerfile
+    networks:
+      - quizme-network
+    depends_on:
+      - redis
+
+  redis:
+    image: redis:alpine
+    networks:
+      - quizme-network
+
+  piston:
+    image: ghcr.io/engineer-man/piston
+    container_name: piston_api
+    restart: always
+    privileged: true
+    volumes:
+        - ./data/piston/packages:/piston/packages
+    tmpfs:
+        - /tmp:exec
+    networks:
+      - quizme-network
+    # ports:
+    #   - 2000:2000
+
+
+  # postgres:
+  #   image: postgres
+  #   networks:
+  #     - quizme-network
+
+networks:
+  quizme-network:
+    driver: bridge
+

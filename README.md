@@ -1,5 +1,21 @@
 # Quizme
 
+## Installation
+
+```sh
+curl -sSL "https://raw.githubusercontent.com/Ahmed-Rushdi/Quizme/refs/heads/main/quizme_setup.sh" | bash
+```
+
+This script will:
+
+- Clone the Quizme repository
+- Setup the directory structure
+- Run docker compose up
+- Clone the piston repository
+- Install some languages to piston using the cli
+
+NOTE: the frontend and backend are run with dev mode and not proper production mode.
+
 ## Overview
 This repository contains the source code for the **Exam System**, an online exam platform with real-time monitoring and code execution features. The system comprises multiple components, including a React frontend, Django backend, a machine learning service for monitoring, and a Node.js code execution service.
 
